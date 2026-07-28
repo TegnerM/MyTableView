@@ -1,0 +1,1365 @@
+/*
+ * Staff floor view — light theme on CSS variables.
+ *
+ * The palette lives entirely in the variable block below, so a dark
+ * "night service" variant (for evening terrace glare) can later be a
+ * second block behind a toggle rather than a rewrite.
+ *
+ * Status colours are the same three used on the guest side and in the
+ * reports, so green/amber/red means one thing everywhere.
+ */
+
+.mtv-floor{
+  /* Native widgets (selects, scrollbars) follow the theme too. */
+  color-scheme: light;
+
+  --mtv-bg: #f6f4ef;
+  --mtv-card: #ffffff;
+  --mtv-line: #e5e0d5;
+  --mtv-text: #16293d;
+  --mtv-text-muted: #6b7a89;
+  --mtv-teal: #12a89a;
+  --mtv-teal-deep: #0b5f56;
+  --mtv-teal-wash: #e6f6f4;
+  --mtv-good: #33a35c;
+  --mtv-good-deep: #27824a;
+  --mtv-waiting: #e09a12;
+  --mtv-waiting-deep: #b57c0b;
+  --mtv-overdue: #e5484d;
+  --mtv-overdue-deep: #c03338;
+  /* Reserved for combined parties — must not impersonate any status. */
+  --mtv-combined: #7c3aed;
+  --mtv-sidebar: #0d262e;
+  --mtv-sidebar-2: #123039;
+  --mtv-sidebar-line: #1d4049;
+  --mtv-sidebar-text: #e8f0f2;
+  --mtv-sidebar-muted: #8fadb5;
+  /* Plan surface + furniture, split out so night mode can dim them. */
+  --mtv-plan-bg: #fbf9f4;
+  --mtv-table-line: #d4cdbf;
+  --mtv-chair: #e9e3d7;
+  --mtv-chair-line: rgba(22, 41, 61, 0.16);
+  --mtv-grid-minor-line: rgba(22, 41, 61, 0.05);
+  --mtv-grid-major-line: rgba(22, 41, 61, 0.1);
+  --mtv-danger-wash: #fdeeee;
+  --mtv-danger-wash-2: #fdf6f6;
+  --mtv-shadow: rgba(22, 41, 61, 0.08);
+
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  min-height: 100dvh;
+  background: var(--mtv-bg);
+  color: var(--mtv-text);
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Night service: same layout and status colours, dimmed surfaces for
+   dark dining rooms and evening terraces. Toggled from the sidebar;
+   the choice is remembered per device. */
+.mtv-floor[data-theme="night"]{
+  color-scheme: dark;
+
+  --mtv-bg: #0e1a21;
+  --mtv-card: #15252e;
+  --mtv-line: #24404b;
+  --mtv-text: #e8f0f2;
+  --mtv-text-muted: #8fa7b1;
+  --mtv-teal-deep: #128a7d;
+  --mtv-teal-wash: #113a38;
+  --mtv-good-deep: #4cbd77;
+  --mtv-waiting-deep: #e0a83a;
+  --mtv-overdue-deep: #ef6b6f;
+  --mtv-sidebar: #091319;
+  --mtv-sidebar-2: #0f2028;
+  --mtv-sidebar-line: #1b3540;
+  --mtv-plan-bg: #101f27;
+  --mtv-table-line: #2c4854;
+  --mtv-chair: #24343d;
+  --mtv-chair-line: rgba(232, 240, 242, 0.12);
+  --mtv-grid-minor-line: rgba(232, 240, 242, 0.05);
+  --mtv-grid-major-line: rgba(232, 240, 242, 0.09);
+  --mtv-danger-wash: #331920;
+  --mtv-danger-wash-2: #2a161c;
+  --mtv-shadow: rgba(0, 0, 0, 0.35);
+}
+
+/* --------------------------------------------------------------- */
+/* Sidebar                                                          */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-sidebar{
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  height: 100dvh;
+  padding: 1.1rem 0.9rem;
+  background: var(--mtv-sidebar);
+  color: var(--mtv-sidebar-text);
+}
+
+.mtv-floor .mtv-sidebar-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* "Offline" is wider than "Live" — wrap under the brand rather than
+     spill out of the sidebar. */
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 0.15rem 0.25rem;
+}
+
+.mtv-floor .mtv-sidebar-brand{
+  font-size: 0.875rem;
+  color: var(--mtv-sidebar-text);
+}
+
+.mtv-floor .mtv-sidebar-brand .mtv-brand-mark{
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.mtv-floor .mtv-live-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: none;
+  padding: 0.12rem 0.42rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  border-radius: 999px;
+}
+
+.mtv-floor .mtv-live-badge::before{
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4ade80;
+}
+
+.mtv-floor .mtv-sidebar-nav{
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.mtv-floor .mtv-nav-item{
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.6rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--mtv-sidebar-muted);
+  text-decoration: none;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
+}
+
+.mtv-floor .mtv-nav-item:hover{
+  color: var(--mtv-sidebar-text);
+  background: var(--mtv-sidebar-2);
+}
+
+.mtv-floor .mtv-nav-item[data-active="true"]{
+  color: var(--mtv-sidebar-text);
+  background: var(--mtv-teal-deep);
+}
+
+.mtv-floor .mtv-nav-icon{
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mtv-floor .mtv-sidebar-foot{
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mtv-floor .mtv-user-card{
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.7rem;
+  background: var(--mtv-sidebar-2);
+  border: 1px solid var(--mtv-sidebar-line);
+  border-radius: 0.7rem;
+}
+
+.mtv-floor .mtv-user-avatar{
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--mtv-teal-deep);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.mtv-floor .mtv-user-name{
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.mtv-floor .mtv-user-role{
+  display: block;
+  font-size: 0.6875rem;
+  color: var(--mtv-sidebar-muted);
+  text-transform: capitalize;
+}
+
+.mtv-floor .mtv-signout,
+.mtv-floor .mtv-theme-toggle{
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  background: none;
+  border: none;
+  border-radius: 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--mtv-sidebar-muted);
+  cursor: pointer;
+}
+
+.mtv-floor .mtv-signout:hover,
+.mtv-floor .mtv-theme-toggle:hover{
+  color: var(--mtv-sidebar-text);
+  background: var(--mtv-sidebar-2);
+}
+
+/* --------------------------------------------------------------- */
+/* Main column                                                      */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-main{
+  min-width: 0;
+  padding: 1.1rem 1.5rem 1.75rem;
+}
+
+.mtv-floor .mtv-greeting-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.mtv-floor .mtv-greeting{
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* --------------------------------------------------------------- */
+/* Stat cards                                                       */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-stat-row{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 0.8rem;
+}
+
+.mtv-floor .mtv-stat{
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 0.6rem;
+  align-items: center;
+  padding: 0.6rem 0.8rem;
+  background: var(--mtv-card);
+  border: 1px solid var(--mtv-line);
+  border-radius: 0.8rem;
+  box-shadow: 0 1px 2px rgba(22, 41, 61, 0.04);
+}
+
+.mtv-floor .mtv-stat-icon{
+  grid-row: 1 / 3;
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 0.6rem;
+  background: var(--mtv-teal-wash);
+  color: var(--mtv-teal-deep);
+}
+
+.mtv-floor .mtv-stat-svg{
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mtv-floor .mtv-stat-value{
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.mtv-floor .mtv-stat-label{
+  grid-column: 2;
+  font-size: 0.71875rem;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-floor .mtv-stat[data-tone="good"] .mtv-stat-icon{
+  background: rgba(51, 163, 92, 0.12);
+  color: var(--mtv-good-deep);
+}
+
+.mtv-floor .mtv-stat[data-tone="good"] .mtv-stat-value{
+  color: var(--mtv-good-deep);
+}
+
+.mtv-floor .mtv-stat[data-tone="waiting"] .mtv-stat-icon{
+  background: rgba(224, 154, 18, 0.14);
+  color: var(--mtv-waiting-deep);
+}
+
+.mtv-floor .mtv-stat[data-tone="waiting"] .mtv-stat-value{
+  color: var(--mtv-waiting-deep);
+}
+
+.mtv-floor .mtv-stat[data-tone="overdue"] .mtv-stat-icon{
+  background: rgba(229, 72, 77, 0.12);
+  color: var(--mtv-overdue-deep);
+}
+
+.mtv-floor .mtv-stat[data-tone="overdue"] .mtv-stat-value{
+  color: var(--mtv-overdue-deep);
+}
+
+/* --------------------------------------------------------------- */
+/* Layout                                                           */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-floor-body{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+}
+
+@media (min-width: 1024px) {
+  .mtv-floor .mtv-floor-body{
+    grid-template-columns: minmax(0, 2.2fr) minmax(250px, 1fr);
+    align-items: start;
+  }
+}
+
+.mtv-floor .mtv-floor-plan-panel,
+.mtv-floor .mtv-requests-panel,
+.mtv-floor .mtv-detail-panel{
+  padding: 0.85rem 1rem;
+  background: var(--mtv-card);
+  border: 1px solid var(--mtv-line);
+  border-radius: 0.9rem;
+  box-shadow: 0 1px 2px rgba(22, 41, 61, 0.04);
+}
+
+.mtv-floor .mtv-side-panel{
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.mtv-floor .mtv-panel-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.8rem;
+}
+
+.mtv-floor .mtv-panel-head h2,
+.mtv-floor .mtv-requests-panel h2{
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.mtv-floor .mtv-requests-panel h2{
+  margin-bottom: 0.8rem;
+}
+
+.mtv-floor .mtv-combine-controls{
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8125rem;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-floor .mtv-zone-tabs{
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.8rem;
+}
+
+.mtv-floor .mtv-zone-tab{
+  padding: 0.32rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--mtv-text-muted);
+  background: var(--mtv-bg);
+  border: 1px solid var(--mtv-line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease;
+}
+
+.mtv-floor .mtv-zone-tab:hover{
+  border-color: var(--mtv-teal);
+}
+
+.mtv-floor .mtv-zone-tab[data-active="true"]{
+  color: #ffffff;
+  background: var(--mtv-teal-deep);
+  border-color: var(--mtv-teal-deep);
+}
+
+.mtv-floor .mtv-empty{
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--mtv-text-muted);
+}
+
+/* --------------------------------------------------------------- */
+/* Buttons                                                          */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-btn{
+  padding: 0.45rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--mtv-text);
+  background: var(--mtv-card);
+  border: 1px solid var(--mtv-line);
+  border-radius: 0.55rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+
+.mtv-floor .mtv-btn:hover:not(:disabled){
+  border-color: var(--mtv-teal);
+}
+
+.mtv-floor .mtv-btn:disabled{
+  opacity: 0.45;
+  cursor: default;
+}
+
+.mtv-floor .mtv-btn-small{
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+}
+
+.mtv-floor .mtv-btn-primary{
+  color: #ffffff;
+  background: var(--mtv-teal-deep);
+  border-color: var(--mtv-teal-deep);
+}
+
+.mtv-floor .mtv-btn-primary:hover:not(:disabled){
+  background: var(--mtv-teal);
+  border-color: var(--mtv-teal);
+}
+
+.mtv-floor .mtv-btn-danger{
+  color: var(--mtv-overdue-deep);
+  border-color: rgba(229, 72, 77, 0.4);
+}
+
+.mtv-floor .mtv-btn-danger:hover:not(:disabled){
+  background: rgba(229, 72, 77, 0.08);
+  border-color: var(--mtv-overdue);
+}
+
+/* --------------------------------------------------------------- */
+/* Escalation banner                                                */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-escalation{
+  margin-bottom: 0.8rem;
+  padding: 0.65rem 0.9rem;
+  background: var(--mtv-danger-wash);
+  border: 1px solid rgba(229, 72, 77, 0.35);
+  border-radius: 0.8rem;
+}
+
+.mtv-floor .mtv-escalation-head{
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--mtv-overdue-deep);
+}
+
+.mtv-floor .mtv-escalation-icon{
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--mtv-overdue);
+  color: #ffffff;
+  font-size: 0.8125rem;
+  font-weight: 800;
+}
+
+.mtv-floor .mtv-escalation-list{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mtv-floor .mtv-escalation-item{
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.35rem 0.7rem;
+  background: var(--mtv-card);
+  border: 1px solid rgba(229, 72, 77, 0.35);
+  border-radius: 0.55rem;
+  cursor: pointer;
+  font-size: 0.8125rem;
+}
+
+.mtv-floor .mtv-escalation-item:hover{
+  border-color: var(--mtv-overdue);
+}
+
+.mtv-floor .mtv-escalation-table{
+  font-weight: 700;
+}
+
+.mtv-floor .mtv-escalation-detail{
+  color: var(--mtv-overdue-deep);
+  font-weight: 700;
+}
+
+.mtv-floor .mtv-escalation-age{
+  color: var(--mtv-text-muted);
+}
+
+/* --------------------------------------------------------------- */
+/* Request queue                                                    */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-queue{
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mtv-floor .mtv-queue-group{
+  border: 1px solid var(--mtv-line);
+  border-left-width: 3px;
+  border-radius: 0.7rem;
+  background: var(--mtv-card);
+  overflow: hidden;
+}
+
+.mtv-floor .mtv-queue-group[data-tone="good"]{
+  border-left-color: var(--mtv-good);
+}
+
+.mtv-floor .mtv-queue-group[data-tone="waiting"]{
+  border-left-color: var(--mtv-waiting);
+}
+
+.mtv-floor .mtv-queue-group[data-tone="overdue"]{
+  border-left-color: var(--mtv-overdue);
+}
+
+.mtv-floor .mtv-queue-group[data-repeated="true"]{
+  background: var(--mtv-danger-wash-2);
+}
+
+.mtv-floor .mtv-queue-head{
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.mtv-floor .mtv-queue-table{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mtv-floor .mtv-queue-count{
+  display: grid;
+  place-items: center;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: var(--mtv-teal-wash);
+  color: var(--mtv-teal-deep);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.mtv-floor .mtv-queue-summary{
+  font-size: 0.75rem;
+  color: var(--mtv-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mtv-floor .mtv-queue-repeat{
+  display: inline-block;
+  margin-right: 0.35rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: var(--mtv-overdue);
+  color: #ffffff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.mtv-floor .mtv-queue-age{
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--mtv-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.mtv-floor .mtv-queue-group[data-tone="overdue"] .mtv-queue-age{
+  color: var(--mtv-overdue-deep);
+}
+
+.mtv-floor .mtv-queue-caret{
+  color: var(--mtv-text-muted);
+  font-weight: 700;
+}
+
+.mtv-floor .mtv-queue-actions{
+  padding: 0 0.7rem 0.6rem;
+}
+
+.mtv-floor .mtv-queue-items{
+  margin: 0;
+  padding: 0.35rem 0.7rem 0.65rem;
+  list-style: none;
+  border-top: 1px dashed var(--mtv-line);
+}
+
+.mtv-floor .mtv-queue-items li{
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0;
+}
+
+.mtv-floor .mtv-queue-items li[data-state="acknowledged"] .mtv-queue-item-name{
+  color: var(--mtv-text-muted);
+}
+
+.mtv-floor .mtv-queue-item-name{
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.mtv-floor .mtv-queue-item-age{
+  font-size: 0.71875rem;
+  color: var(--mtv-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.mtv-floor .mtv-queue-item-actions{
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+/* --------------------------------------------------------------- */
+/* Table detail                                                     */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-detail-list{
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0 0 0.9rem;
+}
+
+.mtv-floor .mtv-detail-list div{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.mtv-floor .mtv-detail-list dt{
+  font-size: 0.75rem;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-floor .mtv-detail-list dd{
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.mtv-floor .mtv-detail-list dd[data-over="true"]{
+  color: var(--mtv-overdue-deep);
+}
+
+.mtv-floor .mtv-detail-actions{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--mtv-line);
+}
+
+.mtv-floor .mtv-guest-count{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-floor .mtv-guest-count input{
+  width: 3.4rem;
+  padding: 0.32rem 0.45rem;
+  font-size: 0.875rem;
+  color: var(--mtv-text);
+  background: var(--mtv-bg);
+  border: 1px solid var(--mtv-line);
+  border-radius: 0.45rem;
+}
+
+.mtv-floor .mtv-guest-count input:focus{
+  outline: 2px solid var(--mtv-teal);
+  outline-offset: 1px;
+}
+
+/* --------------------------------------------------------------- */
+/* Legend                                                           */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-legend{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75rem;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-floor .mtv-legend li{
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.mtv-floor .mtv-legend li::before{
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--mtv-line);
+}
+
+.mtv-floor .mtv-legend li[data-status="good"]::before{
+  background: var(--mtv-good);
+}
+.mtv-floor .mtv-legend li[data-status="waiting"]::before{
+  background: var(--mtv-waiting);
+}
+.mtv-floor .mtv-legend li[data-status="overdue"]::before{
+  background: var(--mtv-overdue);
+}
+
+/* --------------------------------------------------------------- */
+/* Floor plan (shared FloorPlan renderer, light surface)            */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-plan-wrap{
+  min-width: 0;
+}
+
+/* Height-capped: a sparse 10 x 6 room must not balloon the canvas and
+   push the rest of the screen away. The cap uses the zone's own aspect
+   so the to-scale geometry is never distorted. */
+.mtv-floor .mtv-plan-stage{
+  /* Overridden per-zone by FloorPlan's inline style. */
+  --mtv-plan-aspect: 1.6;
+
+  position: relative;
+  width: 100%;
+  max-width: min(100%, calc(52vh * var(--mtv-plan-aspect)));
+  margin-inline: auto;
+  background: var(--mtv-plan-bg);
+  border: 1px solid var(--mtv-line);
+  border-radius: 0.7rem;
+  touch-action: none;
+}
+
+.mtv-floor .mtv-plan-grid{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.mtv-floor .mtv-grid-minor{
+  stroke: var(--mtv-grid-minor-line);
+  stroke-width: 0.02;
+}
+
+.mtv-floor .mtv-grid-major{
+  stroke: var(--mtv-grid-major-line);
+  stroke-width: 0.03;
+}
+
+/* Combined-party layer: ring around each member table plus a bar
+   joining them, under the chairs so seats punch through the rope. */
+.mtv-floor .mtv-plan-links{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.mtv-floor .mtv-party-link{
+  stroke: rgba(124, 58, 237, 0.4);
+  stroke-width: 0.14;
+  stroke-linecap: round;
+}
+
+.mtv-floor .mtv-party-ring{
+  fill: none;
+  stroke: var(--mtv-combined);
+  stroke-width: 0.07;
+  opacity: 0.85;
+}
+
+/* Chair layer: drawn under the tables so chairs tuck beneath the
+   tabletop edge. Stroke widths are in metres (viewBox units). */
+.mtv-floor .mtv-plan-chairs{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.mtv-floor .mtv-chair{
+  fill: var(--mtv-chair);
+  stroke: var(--mtv-chair-line);
+  stroke-width: 0.03;
+}
+
+/* Tables: solid status colours like the design — green means fine at a
+   glance from across the room, red means someone is being forgotten. */
+.mtv-floor .mtv-plan-table{
+  position: absolute;
+  display: grid;
+  place-items: center;
+  min-width: 26px;
+  min-height: 26px;
+  background: var(--mtv-card);
+  border: 2px solid var(--mtv-table-line);
+  border-radius: 0.45rem;
+  color: var(--mtv-text-muted);
+  box-shadow: 0 1px 3px var(--mtv-shadow);
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mtv-floor .mtv-plan-table[data-shape="round"]{
+  border-radius: 50%;
+}
+
+.mtv-floor .mtv-plan-stage[data-editable="true"] .mtv-plan-table{
+  cursor: grab;
+}
+
+.mtv-floor .mtv-plan-table[data-dragging="true"]{
+  cursor: grabbing;
+  z-index: 5;
+  box-shadow: 0 8px 24px rgba(22, 41, 61, 0.25);
+  transition: none;
+}
+
+.mtv-floor .mtv-plan-table[data-status="good"]{
+  background: var(--mtv-good);
+  border-color: var(--mtv-good-deep);
+  color: #ffffff;
+}
+
+.mtv-floor .mtv-plan-table[data-status="waiting"]{
+  background: var(--mtv-waiting);
+  border-color: var(--mtv-waiting-deep);
+  color: #ffffff;
+}
+
+.mtv-floor .mtv-plan-table[data-status="overdue"]{
+  background: var(--mtv-overdue);
+  border-color: var(--mtv-overdue-deep);
+  color: #ffffff;
+  animation: mtv-pulse 2s ease-in-out infinite;
+}
+
+@keyframes mtv-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(229, 72, 77, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(229, 72, 77, 0);
+  }
+}
+
+.mtv-floor .mtv-plan-table[data-picked="true"]{
+  border-color: var(--mtv-teal);
+  box-shadow: 0 0 0 3px rgba(18, 168, 154, 0.3);
+}
+
+.mtv-floor .mtv-plan-table[data-selected="true"]{
+  box-shadow: 0 0 0 3px var(--mtv-teal);
+}
+
+.mtv-floor .mtv-plan-number{
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.mtv-floor .mtv-plan-seats{
+  font-size: 0.625rem;
+  opacity: 0.75;
+}
+
+.mtv-floor .mtv-plan-badge{
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  display: grid;
+  place-items: center;
+  font-size: 0.71875rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--mtv-overdue);
+  border: 2px solid var(--mtv-card);
+  border-radius: 999px;
+}
+
+.mtv-floor .mtv-plan-time{
+  font-size: 0.625rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+/* Past the venue's table-time allowance. */
+.mtv-floor .mtv-plan-time[data-over="true"]{
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: rgba(15, 28, 42, 0.45);
+  opacity: 1;
+  font-weight: 800;
+}
+
+.mtv-floor .mtv-plan-combined{
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 5px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--mtv-combined);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.mtv-floor .mtv-plan-scale{
+  margin: 0.45rem 0 0;
+  font-size: 0.6875rem;
+  text-align: right;
+  color: var(--mtv-text-muted);
+}
+
+/* --------------------------------------------------------------- */
+/* Brand signature                                                  */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-brand{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.mtv-floor .mtv-brand-mark{
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.mtv-floor .mtv-brand-word{
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.mtv-floor .mtv-brand-word em{
+  font-style: normal;
+  color: var(--mtv-teal);
+}
+
+
+/* Kept for the header variant used before the sidebar; harmless. */
+.mtv-floor .mtv-floor-brand{
+  font-size: 0.8125rem;
+  color: var(--mtv-text);
+}
+
+/* --------------------------------------------------------------- */
+/* Responsive: sidebar becomes a top strip on narrow screens        */
+/* --------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .mtv-floor{
+    grid-template-columns: 1fr;
+  }
+
+  .mtv-floor .mtv-sidebar{
+    position: static;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 1rem;
+  }
+
+  .mtv-floor .mtv-sidebar-head{
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mtv-floor .mtv-sidebar-nav{
+    flex-direction: row;
+  }
+
+  .mtv-floor .mtv-nav-item{
+    padding: 0.45rem 0.55rem;
+  }
+
+  /* Icons carry the nav on a phone; labels return on wide screens. */
+  .mtv-floor .mtv-nav-item{
+    font-size: 0;
+    gap: 0;
+  }
+
+  .mtv-floor .mtv-sidebar-foot{
+    margin-top: 0;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .mtv-floor .mtv-user-card{
+    padding: 0.3rem;
+    background: none;
+    border: none;
+  }
+
+  .mtv-floor .mtv-user-card > span:last-child{
+    display: none;
+  }
+
+  .mtv-floor .mtv-signout,
+  .mtv-floor .mtv-theme-toggle{
+    font-size: 0;
+    gap: 0;
+    padding: 0.45rem 0.55rem;
+  }
+
+  .mtv-floor .mtv-main{
+    padding: 1rem 1rem 1.5rem;
+  }
+
+  .mtv-floor .mtv-greeting{
+    font-size: 1.2rem;
+  }
+
+  /* Two compact stat cards per row instead of a tall stack. */
+  .mtv-floor .mtv-stat-row{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .mtv-floor .mtv-stat{
+    padding: 0.5rem 0.6rem;
+  }
+
+  /* Portrait phones are width-limited, not height-limited: let the
+     plan take the full column width rather than the desktop 52vh cap. */
+  .mtv-floor .mtv-plan-stage{
+    max-width: 100%;
+  }
+
+  /* On a phone the side panel lives below the fold, which made
+     tapping a table look like it did nothing. The detail panel rises
+     as a bottom sheet instead — tap a table, the panel is simply
+     there. */
+  .mtv-floor .mtv-detail-panel{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    max-height: 72dvh;
+    overflow-y: auto;
+    border-radius: 1rem 1rem 0 0;
+    border-bottom: none;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    box-shadow: 0 -10px 34px rgba(9, 19, 25, 0.35);
+  }
+}
+
+/* --------------------------------------------------------------- */
+/* Connection watchdog                                              */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-live-badge[data-state="offline"]{
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.12);
+  border-color: rgba(248, 113, 113, 0.35);
+}
+
+.mtv-floor .mtv-live-badge[data-state="offline"]::before{
+  background: #f87171;
+  animation: mtv-blink 1s step-end infinite;
+}
+
+@keyframes mtv-blink {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+/* Loud on purpose: a disconnected floor pretending to be calm is the
+   one state a waiter must never mistake for good news. */
+.mtv-floor .mtv-offline-banner{
+  margin-bottom: 0.8rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--mtv-overdue);
+  border-radius: 0.8rem;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.mtv-floor .mtv-act-error{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+  padding: 0.55rem 0.9rem;
+  background: var(--mtv-danger-wash);
+  border: 1px solid rgba(229, 72, 77, 0.35);
+  border-radius: 0.8rem;
+  color: var(--mtv-overdue-deep);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+/* Counter-rotated labels need a box to rotate. */
+.mtv-floor .mtv-plan-number,
+.mtv-floor .mtv-plan-seats,
+.mtv-floor .mtv-plan-time,
+.mtv-floor .mtv-plan-combined{
+  display: inline-block;
+}
+
+/* --------------------------------------------------------------- */
+/* Marker mode: the live floor's compact table circles.             */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-plan-marker{
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  border-radius: 50%;
+  background: var(--mtv-card);
+  border: 2px solid var(--mtv-table-line);
+  color: var(--mtv-text-muted);
+  box-shadow: 0 1px 3px var(--mtv-shadow);
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+.mtv-floor .mtv-plan-marker .mtv-plan-number{
+  font-size: 0.8125rem;
+}
+
+.mtv-floor .mtv-plan-marker .mtv-plan-time{
+  font-size: 0.5625rem;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.mtv-floor .mtv-plan-marker[data-status="good"]{
+  background: var(--mtv-good);
+  border-color: var(--mtv-good-deep);
+  color: #ffffff;
+}
+
+.mtv-floor .mtv-plan-marker[data-status="waiting"]{
+  background: var(--mtv-waiting);
+  border-color: var(--mtv-waiting-deep);
+  color: #ffffff;
+}
+
+.mtv-floor .mtv-plan-marker[data-status="overdue"]{
+  background: var(--mtv-overdue);
+  border-color: var(--mtv-overdue-deep);
+  color: #ffffff;
+  animation: mtv-pulse 2s ease-in-out infinite;
+}
+
+.mtv-floor .mtv-plan-marker[data-picked="true"]{
+  border-color: var(--mtv-teal);
+  box-shadow: 0 0 0 3px rgba(18, 168, 154, 0.3);
+}
+
+.mtv-floor .mtv-plan-marker[data-selected="true"]{
+  box-shadow: 0 0 0 3px var(--mtv-teal);
+}
+
+/* --------------------------------------------------------------- */
+/* Venue switcher — multi-venue accounts only.                      */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-venue-switch{
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0 0.25rem;
+}
+
+.mtv-floor .mtv-venue-switch span{
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mtv-sidebar-muted);
+}
+
+.mtv-floor .mtv-venue-switch select{
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--mtv-sidebar-text);
+  background: var(--mtv-sidebar-2);
+  border: 1px solid var(--mtv-sidebar-line);
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.mtv-floor .mtv-venue-switch select:focus{
+  outline: 2px solid var(--mtv-teal);
+  outline-offset: 1px;
+}
+
+@media (max-width: 900px) {
+  .mtv-floor .mtv-venue-switch{
+    flex: 0 1 auto;
+    min-width: 8rem;
+  }
+
+  .mtv-floor .mtv-venue-switch span{
+    display: none;
+  }
+}

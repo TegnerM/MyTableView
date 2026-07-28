@@ -1,0 +1,52 @@
+/*
+ * Global reset only.
+ *
+ * The guest screen and the staff floor each ship their own scoped
+ * stylesheet, because they are near-opposite surfaces: one is a light,
+ * calm page on a stranger's phone, the other a dark operational
+ * dashboard. Sharing a design system between them would help neither.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100dvh;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+}

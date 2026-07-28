@@ -1,0 +1,197 @@
+/*
+ * Insights — guest satisfaction results.
+ *
+ * Same dark chrome as Settings: these are manager back-office screens,
+ * not service surfaces. Scoped under .mtv-insights like every staff
+ * stylesheet is scoped to its page root.
+ */
+
+/* Day palette; the shell's night mode overrides below. The shell
+   (.mtv-floor) supplies page background, font and padding. */
+.mtv-insights{
+  --mtv-panel: #ffffff;
+  --mtv-panel-2: #f6f4ef;
+  --mtv-line: #e5e0d5;
+  --mtv-text: #16293d;
+  --mtv-text-muted: #6b7a89;
+  --mtv-teal: #12a89a;
+  --mtv-amber: #e09a12;
+
+  max-width: 44rem;
+  margin: 0 auto;
+  color: var(--mtv-text);
+}
+
+.mtv-floor[data-theme="night"] .mtv-insights{
+  --mtv-panel: #15252e;
+  --mtv-panel-2: #1b2937;
+  --mtv-line: #24404b;
+  --mtv-text: #e8f0f2;
+  --mtv-text-muted: #8fa7b1;
+}
+
+.mtv-insights .mtv-insights-header{
+  margin: 0 0 1rem;
+}
+
+.mtv-insights .mtv-insights-header h1{
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.mtv-insights .mtv-insights-header p{
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-insights .mtv-insights-cards{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin: 0 0 1rem;
+}
+
+@media (max-width: 480px) {
+  .mtv-insights .mtv-insights-cards{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.mtv-insights .mtv-score-card{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1.1rem 0.8rem;
+  background: var(--mtv-panel);
+  border: 1px solid var(--mtv-line);
+  border-radius: 0.875rem;
+  text-align: center;
+}
+
+.mtv-insights .mtv-score-card[data-kind="count"]{
+  justify-content: center;
+}
+
+.mtv-insights .mtv-score-face{
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.mtv-insights .mtv-score-value{
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.mtv-insights .mtv-score-value small{
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-insights .mtv-score-title{
+  font-size: 0.8125rem;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-insights .mtv-insights-trend{
+  padding: 1.25rem 1.25rem 1rem;
+  background: var(--mtv-panel);
+  border: 1px solid var(--mtv-line);
+  border-radius: 0.875rem;
+}
+
+.mtv-insights .mtv-insights-trend h2{
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+.mtv-insights .mtv-insights-empty{
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-insights .mtv-trend-grid{
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 0.6rem;
+  align-items: end;
+}
+
+.mtv-insights .mtv-trend-col{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.mtv-insights .mtv-trend-bars{
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 6.5rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.mtv-insights .mtv-trend-bar{
+  width: 0.8rem;
+  min-height: 2px;
+  border-radius: 3px 3px 0 0;
+}
+
+.mtv-insights .mtv-trend-bar[data-series="food"]{
+  background: var(--mtv-teal);
+}
+
+.mtv-insights .mtv-trend-bar[data-series="service"]{
+  background: var(--mtv-amber);
+}
+
+.mtv-insights .mtv-trend-label{
+  font-size: 0.6875rem;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-insights .mtv-trend-count{
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--mtv-text);
+}
+
+.mtv-insights .mtv-trend-legend{
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.9rem;
+  font-size: 0.75rem;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-insights .mtv-trend-legend span{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.mtv-insights .mtv-trend-legend span::before{
+  content: "";
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 2px;
+}
+
+.mtv-insights .mtv-trend-legend span[data-series="food"]::before{
+  background: var(--mtv-teal);
+}
+
+.mtv-insights .mtv-trend-legend span[data-series="service"]::before{
+  background: var(--mtv-amber);
+}
+

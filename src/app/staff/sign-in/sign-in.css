@@ -1,0 +1,114 @@
+.mtv-signin{
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 1.5rem;
+  background: #0d1520;
+  color: #e8eef5;
+}
+
+.mtv-signin .mtv-signin-card{
+  width: 100%;
+  max-width: 22rem;
+  padding: 2rem 1.75rem;
+  background: #141f2e;
+  border: 1px solid #253546;
+  border-radius: 1rem;
+}
+
+.mtv-signin .mtv-brand{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.mtv-signin .mtv-brand-mark{
+  width: 1.7rem;
+  height: 1.7rem;
+}
+
+.mtv-signin .mtv-brand-word{
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.mtv-signin .mtv-brand-word em{
+  font-style: normal;
+  color: #12a89a;
+}
+
+.mtv-signin .mtv-signin-brand{
+  width: 100%;
+  justify-content: center;
+  font-size: 1.35rem;
+  color: #e8eef5;
+}
+
+.mtv-signin .mtv-signin-title{
+  margin: 1.75rem 0 1.25rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  text-align: center;
+  color: #8fa3b8;
+}
+
+.mtv-signin .mtv-signin-form{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mtv-signin .mtv-field{
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.mtv-signin .mtv-field span{
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #8fa3b8;
+}
+
+.mtv-signin .mtv-field input{
+  padding: 0.75rem 0.875rem;
+  font-size: 1rem;
+  color: #e8eef5;
+  background: #1b2937;
+  border: 1px solid #253546;
+  border-radius: 0.5rem;
+}
+
+.mtv-signin .mtv-field input:focus{
+  outline: 2px solid #12a89a;
+  outline-offset: 1px;
+}
+
+.mtv-signin .mtv-signin-error{
+  margin: 0;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  color: #ffb4b6;
+  background: rgba(229, 72, 77, 0.14);
+  border: 1px solid rgba(229, 72, 77, 0.4);
+  border-radius: 0.5rem;
+}
+
+.mtv-signin .mtv-signin-button{
+  padding: 0.8125rem;
+  font-size: 1rem;
+  font-weight: 650;
+  color: #04201d;
+  background: #12a89a;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.mtv-signin .mtv-signin-button:hover:not(:disabled){
+  background: #16bfaf;
+}
+
+.mtv-signin .mtv-signin-button:disabled{
+  opacity: 0.5;
+  cursor: default;
+}

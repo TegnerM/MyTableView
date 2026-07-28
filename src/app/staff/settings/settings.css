@@ -1,0 +1,140 @@
+/* Day palette; the shell's night mode overrides below. The shell
+   (.mtv-floor) supplies page background, font and padding. */
+.mtv-settings{
+  --mtv-panel: #ffffff;
+  --mtv-panel-2: #f6f4ef;
+  --mtv-line: #e5e0d5;
+  --mtv-text: #16293d;
+  --mtv-text-muted: #6b7a89;
+  --mtv-teal: #12a89a;
+  --mtv-overdue: #e5484d;
+
+  max-width: 44rem;
+  margin: 0 auto;
+  color: var(--mtv-text);
+}
+
+.mtv-floor[data-theme="night"] .mtv-settings{
+  --mtv-panel: #15252e;
+  --mtv-panel-2: #1b2937;
+  --mtv-line: #24404b;
+  --mtv-text: #e8f0f2;
+  --mtv-text-muted: #8fa7b1;
+}
+
+.mtv-settings .mtv-settings-header{
+  margin: 0 0 1rem;
+}
+
+.mtv-settings .mtv-settings-header h1{
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.mtv-settings .mtv-settings-header p{
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-settings .mtv-settings-card{
+  margin: 0 0 1rem;
+  padding: 1.5rem;
+  background: var(--mtv-panel);
+  border: 1px solid var(--mtv-line);
+  border-radius: 0.875rem;
+}
+
+.mtv-settings .mtv-settings-card h2{
+  margin: 0 0 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 650;
+}
+
+.mtv-settings .mtv-settings-intro{
+  margin: 0 0 1.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-settings .mtv-settings-field{
+  display: block;
+  margin-bottom: 1.25rem;
+}
+
+.mtv-settings .mtv-settings-label{
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.mtv-settings .mtv-settings-field select{
+  width: 100%;
+  max-width: 16rem;
+  padding: 0.625rem 0.75rem;
+  font-size: 1rem;
+  color: var(--mtv-text);
+  background: var(--mtv-panel-2);
+  border: 1px solid var(--mtv-line);
+  border-radius: 0.5rem;
+}
+
+.mtv-settings .mtv-settings-field select:focus{
+  outline: 2px solid var(--mtv-teal);
+  outline-offset: 1px;
+}
+
+.mtv-settings .mtv-settings-help{
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-settings .mtv-settings-actions{
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--mtv-line);
+}
+
+.mtv-settings .mtv-settings-status{
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--mtv-teal);
+}
+
+.mtv-settings .mtv-settings-status-error{
+  color: var(--mtv-overdue);
+}
+
+.mtv-settings .mtv-btn{
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--mtv-text);
+  background: var(--mtv-panel-2);
+  border: 1px solid var(--mtv-line);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.mtv-settings .mtv-btn-primary{
+  color: #04201d;
+  background: var(--mtv-teal);
+  border-color: var(--mtv-teal);
+}
+
+.mtv-settings .mtv-btn:disabled{
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Brand signature */

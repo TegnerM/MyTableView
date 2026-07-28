@@ -1,0 +1,819 @@
+/*
+ * Floor layout editor — light Mediterranean, viewport-locked.
+ *
+ * Everything fits one screen with no page scroll. An earlier version
+ * put the selected-table controls in a strip below a tall canvas, so
+ * rotating a table meant scrolling away from it. Palette left, canvas
+ * centre, properties right — all three visible while dragging.
+ *
+ * Deliberately dense. This is a setup screen used before service on a
+ * desktop or tablet, not a handheld in a dark room, so small controls
+ * are correct here even though the guest and waiter surfaces need large
+ * ones.
+ *
+ * The live floor stays dark; that palette exists because it runs during
+ * evening service where a bright screen glares across a terrace.
+ */
+
+.mtv-layout{
+  --sand: #f7f5f1;
+  --sand-deep: #efeae1;
+  --card: #ffffff;
+  --line: #e0dace;
+  --navy: #16293d;
+  --navy-soft: #24405c;
+  --text: #16293d;
+  --muted: #6b7a89;
+  --teal: #12a89a;
+  --teal-dark: #0d8478;
+  --teal-wash: #e6f6f4;
+  --terracotta: #c2643f;
+  --terracotta-wash: #fbeee8;
+
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+  padding: 0.75rem;
+  gap: 0.75rem;
+  background: var(--sand);
+  color: var(--text);
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --------------------------------------------------------------- */
+/* Single top bar — title, zones, room size, status                 */
+/* --------------------------------------------------------------- */
+
+.mtv-layout .mtv-bar{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  flex: 0 0 auto;
+  padding: 0.5rem 0.875rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 0.625rem;
+}
+
+.mtv-layout .mtv-bar-title{
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  min-width: 0;
+}
+
+.mtv-layout .mtv-bar-title h1{
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+  white-space: nowrap;
+}
+
+.mtv-layout .mtv-bar-title span{
+  font-size: 0.8125rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mtv-layout .mtv-bar-zones{
+  display: flex;
+  gap: 0.3rem;
+}
+
+.mtv-layout .mtv-zone-tab{
+  padding: 0.25rem 0.7rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--sand);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease;
+}
+
+.mtv-layout .mtv-zone-tab:hover{
+  border-color: var(--teal);
+}
+
+.mtv-layout .mtv-zone-tab[data-active="true"]{
+  color: #ffffff;
+  background: var(--navy);
+  border-color: var(--navy);
+}
+
+.mtv-layout .mtv-bar-size{
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.mtv-layout .mtv-bar-size label{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.mtv-layout .mtv-bar-size input{
+  width: 3.75rem;
+  padding: 0.25rem 0.4rem;
+  font-size: 0.875rem;
+  color: var(--text);
+  background: var(--sand);
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+}
+
+.mtv-layout .mtv-bar-size input:focus{
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+
+.mtv-layout .mtv-unit{
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.mtv-layout .mtv-bar-end{
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-left: auto;
+}
+
+.mtv-layout .mtv-status{
+  min-width: 4.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: right;
+  color: var(--muted);
+}
+
+.mtv-layout .mtv-status[data-state="saved"]{
+  color: var(--teal-dark);
+}
+
+.mtv-layout .mtv-status[data-state="failed"]{
+  color: var(--terracotta);
+}
+
+/* --------------------------------------------------------------- */
+/* Three columns. The canvas column is the only one that flexes.    */
+/* --------------------------------------------------------------- */
+
+.mtv-layout .mtv-grid{
+  display: grid;
+  /* Wide enough for the bulk-add rows (template name + count input). */
+  grid-template-columns: 11rem minmax(0, 1fr) 12.5rem;
+  gap: 0.75rem;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+@media (max-width: 900px) {
+  .mtv-layout .mtv-grid{
+    grid-template-columns: 7rem minmax(0, 1fr);
+    grid-template-areas:
+      "palette canvas"
+      "props   props";
+  }
+
+  .mtv-layout .mtv-col-palette{
+    grid-area: palette;
+  }
+  .mtv-layout .mtv-col-canvas{
+    grid-area: canvas;
+  }
+  .mtv-layout .mtv-col-props{
+    grid-area: props;
+  }
+}
+
+.mtv-layout .mtv-col{
+  min-width: 0;
+  min-height: 0;
+}
+
+.mtv-layout .mtv-col-palette,
+.mtv-layout .mtv-col-props{
+  padding: 0.75rem;
+  overflow-y: auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 0.625rem;
+}
+
+.mtv-layout .mtv-col h2{
+  margin: 0 0 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mtv-layout .mtv-note{
+  margin: 0.75rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+/* --------------------------------------------------------------- */
+/* Palette                                                          */
+/* --------------------------------------------------------------- */
+
+.mtv-layout .mtv-palette-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.4rem;
+}
+
+.mtv-layout .mtv-chip{
+  display: grid;
+  place-items: center;
+  padding: 0.5rem 0.25rem;
+  background: var(--sand-deep);
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  cursor: grab;
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease;
+  user-select: none;
+}
+
+.mtv-layout .mtv-chip:hover{
+  border-color: var(--teal);
+  background: var(--teal-wash);
+}
+
+.mtv-layout .mtv-chip:active{
+  cursor: grabbing;
+}
+
+.mtv-layout .mtv-chip-mark{
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--navy);
+  background: var(--card);
+  border: 1.5px solid var(--navy-soft);
+}
+
+.mtv-layout .mtv-chip[data-shape="round"] .mtv-chip-mark{
+  border-radius: 50%;
+}
+
+.mtv-layout .mtv-chip[data-shape="square"] .mtv-chip-mark{
+  border-radius: 0.2rem;
+}
+
+/* --------------------------------------------------------------- */
+/* Properties                                                       */
+/* --------------------------------------------------------------- */
+
+.mtv-layout .mtv-props{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0 0 0.875rem;
+}
+
+.mtv-layout .mtv-props div{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.mtv-layout .mtv-props dt{
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.mtv-layout .mtv-props dd{
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--navy);
+}
+
+.mtv-layout .mtv-rotate{
+  padding-top: 0.75rem;
+  margin-bottom: 0.875rem;
+  border-top: 1px solid var(--line);
+}
+
+.mtv-layout .mtv-rotate-head{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.mtv-layout .mtv-rotate-head output{
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--navy);
+}
+
+.mtv-layout .mtv-rotate input[type="range"]{
+  width: 100%;
+  margin: 0 0 0.5rem;
+  accent-color: var(--teal);
+}
+
+.mtv-layout .mtv-rotate-steps{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.25rem;
+}
+
+/* --------------------------------------------------------------- */
+/* Buttons                                                          */
+/* --------------------------------------------------------------- */
+
+.mtv-layout .mtv-btn{
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--navy);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 120ms ease;
+}
+
+.mtv-layout .mtv-btn:hover{
+  border-color: var(--teal);
+}
+
+.mtv-layout .mtv-btn-tiny{
+  padding: 0.25rem 0;
+  font-size: 0.6875rem;
+  text-align: center;
+}
+
+.mtv-layout .mtv-btn-tiny[data-active="true"]{
+  color: #ffffff;
+  background: var(--navy);
+  border-color: var(--navy);
+}
+
+.mtv-layout .mtv-btn-block{
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.mtv-layout .mtv-btn-danger{
+  color: var(--terracotta);
+  background: var(--terracotta-wash);
+  border-color: rgba(194, 100, 63, 0.35);
+}
+
+.mtv-layout .mtv-btn-danger:hover{
+  border-color: var(--terracotta);
+}
+
+/* --------------------------------------------------------------- */
+/* Canvas — light variant of the shared renderer.                   */
+/*                                                                  */
+/* The stage sizes to fit its column rather than growing with room  */
+/* depth, so a deep room never pushes the page into scrolling.      */
+/* --------------------------------------------------------------- */
+
+.mtv-layout .mtv-col-canvas{
+  display: grid;
+  place-items: center;
+  padding: 0.5rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 0.625rem;
+  overflow: hidden;
+}
+
+.mtv-layout .mtv-plan-wrap{
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.mtv-layout .mtv-plan-stage{
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+  background:
+    linear-gradient(160deg, rgba(18, 168, 154, 0.05), transparent 55%),
+    var(--card);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.mtv-layout .mtv-plan-grid{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.mtv-layout .mtv-grid-minor{
+  stroke: rgba(22, 41, 61, 0.06);
+  stroke-width: 0.02;
+}
+
+.mtv-layout .mtv-grid-major{
+  stroke: rgba(22, 41, 61, 0.13);
+  stroke-width: 0.03;
+}
+
+/* Combined-party layer. The editor never renders it (showStatus is
+   off), but FloorPlan is shared and every class it can emit must have
+   a rule in every stylesheet that carries it. */
+.mtv-layout .mtv-plan-links{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.mtv-layout .mtv-party-link{
+  stroke: rgba(124, 58, 237, 0.4);
+  stroke-width: 0.14;
+  stroke-linecap: round;
+}
+
+.mtv-layout .mtv-party-ring{
+  fill: none;
+  stroke: #7c3aed;
+  stroke-width: 0.07;
+  opacity: 0.8;
+}
+
+/* Chair layer: same full-stage SVG treatment as the grid, drawn under
+   the tables so chairs tuck beneath the tabletop edge. Stroke widths
+   are in metres (viewBox units). */
+.mtv-layout .mtv-plan-chairs{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.mtv-layout .mtv-chair{
+  fill: #ddd2bf;
+  stroke: rgba(36, 64, 92, 0.35);
+  stroke-width: 0.03;
+}
+
+.mtv-layout .mtv-plan-table{
+  position: absolute;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  min-width: 20px;
+  min-height: 20px;
+  background: var(--sand-deep);
+  border: 2px solid var(--navy-soft);
+  border-radius: 0.3rem;
+  color: var(--navy);
+  box-shadow: 0 1px 2px rgba(22, 41, 61, 0.08);
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+  touch-action: none;
+  user-select: none;
+}
+
+.mtv-layout .mtv-plan-table[data-shape="round"]{
+  border-radius: 50%;
+}
+
+.mtv-layout .mtv-plan-stage[data-editable="true"] .mtv-plan-table{
+  cursor: grab;
+}
+
+.mtv-layout .mtv-plan-table[data-dragging="true"]{
+  cursor: grabbing;
+  z-index: 5;
+  border-color: var(--teal);
+  box-shadow: 0 8px 20px rgba(22, 41, 61, 0.2);
+  transition: none;
+}
+
+/* Neutral state whenever showStatus is off — which is always here. */
+.mtv-layout .mtv-plan-table[data-status="layout"]{
+  background: var(--sand-deep);
+  border-color: var(--navy-soft);
+}
+
+.mtv-layout .mtv-plan-table[data-selected="true"]{
+  border-color: var(--teal);
+  background: var(--teal-wash);
+  box-shadow: 0 0 0 3px rgba(18, 168, 154, 0.25);
+}
+
+.mtv-layout .mtv-plan-table[data-picked="true"]{
+  border-color: var(--teal);
+  background: var(--teal-wash);
+}
+
+.mtv-layout .mtv-plan-number{
+  font-size: clamp(0.625rem, 1.2vw, 0.9375rem);
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.mtv-layout .mtv-plan-seats{
+  font-size: 0.5625rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.mtv-layout .mtv-plan-scale{
+  position: absolute;
+  right: 0.4rem;
+  bottom: 0.3rem;
+  margin: 0;
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.mtv-layout /*
+ * Service-state decorations. Unreachable while this page passes
+ * showStatus={false}, but styled so enabling status here later cannot
+ * ship unstyled elements.
+ */
+
+.mtv-layout .mtv-plan-badge{
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  display: grid;
+  place-items: center;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--terracotta);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.mtv-layout .mtv-plan-time{
+  font-size: 0.5625rem;
+  line-height: 1;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.mtv-layout .mtv-plan-combined{
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 4px;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--teal);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mtv-layout .mtv-plan-table,
+.mtv-layout .mtv-chip,
+.mtv-layout .mtv-zone-tab,
+.mtv-layout .mtv-btn{
+    transition: none;
+  }
+}
+
+/* Brand signature */
+.mtv-layout .mtv-brand{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.mtv-layout .mtv-brand-mark{
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.mtv-layout .mtv-brand-word{
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.mtv-layout .mtv-brand-word em{
+  font-style: normal;
+  color: var(--teal);
+}
+
+.mtv-layout .mtv-bar-brand{
+  font-size: 0.875rem;
+  color: var(--navy);
+  align-self: center;
+}
+
+/* --------------------------------------------------------------- */
+/* Zones: the + tab, the rename box, and bulk table add.            */
+/* --------------------------------------------------------------- */
+
+.mtv-layout .mtv-zone-add{
+  padding: 0.25rem 0.7rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--teal-dark);
+  background: var(--teal-wash);
+  border: 1px dashed var(--teal);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+
+.mtv-layout .mtv-zone-add:hover{
+  background: var(--card);
+  border-style: solid;
+}
+
+.mtv-layout .mtv-bulk{
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.mtv-layout .mtv-bulk-row{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.4rem;
+  background: var(--sand);
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+}
+
+.mtv-layout .mtv-bulk-glyph{
+  width: 0.85rem;
+  height: 0.85rem;
+  background: var(--card);
+  border: 1.5px solid var(--navy-soft);
+}
+
+.mtv-layout .mtv-bulk-row[data-shape="round"] .mtv-bulk-glyph,
+.mtv-layout .mtv-bulk-glyph[data-shape="round"]{
+  border-radius: 50%;
+}
+
+.mtv-layout .mtv-bulk-glyph[data-shape="square"]{
+  border-radius: 0.15rem;
+}
+
+.mtv-layout .mtv-bulk-label{
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.mtv-layout .mtv-bulk-count{
+  width: 2.9rem;
+  padding: 0.25rem 0.4rem;
+  font-size: 0.875rem;
+  text-align: center;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+}
+
+.mtv-layout .mtv-bulk-count:focus{
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+
+.mtv-layout .mtv-bulk .mtv-btn{
+  margin-top: 0.35rem;
+}
+
+.mtv-layout .mtv-btn-primary{
+  color: #ffffff;
+  background: var(--teal-dark);
+  border-color: var(--teal-dark);
+}
+
+.mtv-layout .mtv-btn-primary:hover:not(:disabled){
+  background: var(--teal);
+  border-color: var(--teal);
+}
+
+.mtv-layout .mtv-btn:disabled{
+  opacity: 0.45;
+  cursor: default;
+}
+
+.mtv-layout .mtv-zone-box{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mtv-layout .mtv-zone-name{
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.mtv-layout .mtv-zone-name input{
+  padding: 0.35rem 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text);
+  background: var(--sand);
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+}
+
+.mtv-layout .mtv-zone-name input:focus{
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+
+.mtv-layout .mtv-col-palette h2:not(:first-child){
+  margin-top: 1.1rem;
+}
+
+.mtv-layout .mtv-bulk-label{
+  white-space: nowrap;
+}
+
+/* Counter-rotated labels need a box to rotate. */
+.mtv-layout .mtv-plan-number,
+.mtv-layout .mtv-plan-seats,
+.mtv-layout .mtv-plan-time,
+.mtv-layout .mtv-plan-combined{
+  display: inline-block;
+}
+
+/* Marker mode belongs to the live floor; the editor renders
+   furniture. Present here because the renderer is shared. */
+.mtv-layout .mtv-plan-marker{
+  display: none;
+}

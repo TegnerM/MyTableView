@@ -1,0 +1,529 @@
+/*
+ * Guest screen styles — Armonía / Beach Club Luxury Theme.
+ * External redesign, integrated. Additions beyond the delivered file:
+ * request-card states, the rating card (larger faces), error screens,
+ * the discreet MyTableView mark, localized-content tweaks. The
+ * floating bottom navigation was removed at the owner's request.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&display=swap');
+
+.mtv-guest {
+  /* Design Tokens */
+  --mtv-bg: #F8F6F0;
+  --mtv-card: #FFFFFF;
+  --mtv-gold: #C5A059;
+  --mtv-gold-light: #F9F5EB;
+  --mtv-text-dark: #1A232A;
+  --mtv-text-muted: #7A858F;
+  --mtv-border: #ECE8E1;
+  --mtv-nav-bg: #15222E;
+  --mtv-active-gold: #D4AF37;
+  --mtv-good: #2E8B57;
+  --mtv-bad: #C03338;
+
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0 0 1.1rem 0;
+  background: var(--mtv-bg);
+  color: var(--mtv-text-dark);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --------------------------------------------------------------- */
+/* Hero Header with Background Image                               */
+/* --------------------------------------------------------------- */
+
+.mtv-guest-hero {
+  position: relative;
+  min-height: min(19.5rem, 37dvh);
+  padding: 1.1rem 1.25rem 2.9rem;
+  background-size: cover;
+  /* Compressed hero: the sky (top third of the artwork) is cropped
+     out, showing lights, sea and the set table; the copy sits low. */
+  background-position: 62% 68%;
+  background-repeat: no-repeat;
+  color: var(--mtv-text-dark);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* A light veil, not a dark one: the design reads dark serif text on
+   the bright sky, like the original. */
+.mtv-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(248, 246, 240, 0.55) 0%,
+    rgba(248, 246, 240, 0.1) 40%,
+    rgba(248, 246, 240, 0.25) 100%
+  );
+  z-index: 1;
+}
+
+.mtv-hero-content-wrapper {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  /* Stretch to the hero's full height so margin-top:auto on the
+     welcome block genuinely pushes it to the bottom. */
+  flex: 1;
+}
+
+/* Top Navigation Bar */
+.mtv-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mtv-brand-header {
+  flex: 1;
+  text-align: center;
+}
+
+.mtv-venue-title {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mtv-text-dark);
+}
+
+.mtv-venue-subtitle {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(26, 35, 42, 0.75);
+  margin-top: 0.2rem;
+}
+
+/* Welcome Text */
+.mtv-welcome-container {
+  margin-top: auto;
+}
+
+.mtv-welcome-title {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 2.1rem;
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--mtv-text-dark);
+  text-shadow: 0 1px 12px rgba(248, 246, 240, 0.55);
+}
+
+.mtv-welcome-sub {
+  margin: 0.35rem 0 0;
+  font-size: 1.0625rem;
+  color: rgba(26, 35, 42, 0.85);
+  text-shadow: 0 1px 10px rgba(248, 246, 240, 0.55);
+}
+
+/* --------------------------------------------------------------- */
+/* Main Card Body Overlay                                          */
+/* --------------------------------------------------------------- */
+
+.mtv-guest-body {
+  position: relative;
+  z-index: 3;
+  margin-top: -2rem;
+  padding: 1.25rem 1.1rem 0;
+  background: var(--mtv-bg);
+  border-radius: 2rem 2rem 0 0;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.mtv-section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mtv-section-divider::before,
+.mtv-section-divider::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: var(--mtv-border);
+}
+
+.mtv-section-title {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mtv-text-dark);
+}
+
+/* 2-Column Request Grid Layout */
+.mtv-request-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.7rem;
+}
+
+.mtv-request-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 70px;
+  padding: 0.7rem 0.85rem;
+  background: var(--mtv-card);
+  border: 1px solid var(--mtv-border);
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease,
+    border-color 120ms ease, background-color 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Make the 5th card ("Need Assistance") full width */
+.mtv-request-card:nth-child(5) {
+  grid-column: 1 / -1;
+}
+
+.mtv-request-card:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Request feedback states: sent glows gold, failed reads as failed. */
+.mtv-request-card[data-state="sent"] {
+  border-color: var(--mtv-gold);
+  background: var(--mtv-gold-light);
+}
+
+.mtv-request-card[data-state="sent"] .mtv-request-chevron {
+  color: var(--mtv-good);
+}
+
+.mtv-request-card[data-state="failed"] .mtv-request-sublabel {
+  color: var(--mtv-bad);
+}
+
+.mtv-request-card:disabled {
+  cursor: default;
+}
+
+.mtv-request-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--mtv-gold-light);
+  color: var(--mtv-gold);
+}
+
+.mtv-icon-svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mtv-request-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.mtv-request-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--mtv-text-dark);
+}
+
+.mtv-request-sublabel {
+  font-size: 0.8125rem;
+  color: var(--mtv-text-muted);
+}
+
+.mtv-request-chevron {
+  flex: 0 0 auto;
+  color: var(--mtv-text-dark);
+}
+
+.mtv-chevron-svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* --------------------------------------------------------------- */
+/* Session Summary Status Bar                                       */
+/* --------------------------------------------------------------- */
+
+.mtv-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.9rem;
+  padding: 0.75rem 1rem;
+  background: var(--mtv-card);
+  border: 1px solid var(--mtv-border);
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.mtv-status-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.mtv-status-item + .mtv-status-item {
+  border-left: 1px solid var(--mtv-border);
+  padding-left: 0.75rem;
+}
+
+.mtv-status-icon {
+  color: var(--mtv-text-muted);
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.mtv-status-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mtv-status-value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--mtv-text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mtv-status-label {
+  font-size: 0.75rem;
+  color: var(--mtv-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Footer note */
+.mtv-guest-footer-note {
+  text-align: center;
+  margin-top: 0.9rem;
+  font-size: 0.8125rem;
+  color: var(--mtv-text-muted);
+}
+
+/* Discreet product mark — the logo appears on every page. */
+.mtv-guest-powered {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.6rem;
+}
+
+.mtv-guest-brand {
+  font-size: 0.75rem;
+  color: var(--mtv-text-muted);
+  opacity: 0.8;
+}
+
+.mtv-guest-brand .mtv-brand-mark {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.mtv-guest .mtv-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.mtv-guest .mtv-brand-word {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.mtv-guest .mtv-brand-word em {
+  font-style: normal;
+  color: var(--mtv-gold);
+}
+
+/* --------------------------------------------------------------- */
+/* Satisfaction card, shown after asking for the bill.              */
+/* --------------------------------------------------------------- */
+
+.mtv-guest .mtv-rating-card {
+  position: fixed;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  z-index: 40;
+  padding: 1.1rem 1.2rem calc(1rem + env(safe-area-inset-bottom));
+  background: var(--mtv-card);
+  border: 1px solid var(--mtv-border);
+  border-radius: 1.5rem;
+  box-shadow: 0 12px 40px rgba(26, 35, 42, 0.28);
+  animation: mtv-rating-rise 220ms ease-out;
+}
+
+@keyframes mtv-rating-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mtv-guest .mtv-rating-title {
+  margin: 0 0 0.8rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--mtv-text-dark);
+}
+
+.mtv-guest .mtv-rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+}
+
+.mtv-guest .mtv-rating-q {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--mtv-text-dark);
+}
+
+.mtv-guest .mtv-rating-faces {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.mtv-guest .mtv-face {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.8rem;
+  line-height: 1;
+  background: var(--mtv-bg);
+  border: 1px solid var(--mtv-border);
+  border-radius: 0.8rem;
+  cursor: pointer;
+  filter: grayscale(0.55);
+  transition:
+    filter 100ms ease,
+    transform 100ms ease,
+    border-color 100ms ease,
+    background-color 100ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mtv-guest .mtv-face[data-active="true"] {
+  filter: none;
+  transform: scale(1.1);
+  background: #FFFFFF;
+  border-color: var(--mtv-gold);
+  box-shadow: 0 0 0 2px rgba(197, 160, 89, 0.35);
+}
+
+.mtv-guest .mtv-face:disabled {
+  cursor: default;
+}
+
+.mtv-guest .mtv-rating-skip {
+  display: block;
+  margin: 0.55rem 0 0 auto;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--mtv-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.mtv-guest .mtv-rating-thanks {
+  margin: 0.4rem 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--mtv-gold);
+}
+
+/* --------------------------------------------------------------- */
+/* Error screens (unknown tag, closed venue, ...)                   */
+/* --------------------------------------------------------------- */
+
+.mtv-guest-error {
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.mtv-error-card {
+  max-width: 22rem;
+  padding: 2rem 1.75rem;
+  background: var(--mtv-card);
+  border: 1px solid var(--mtv-border);
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.mtv-error-title {
+  margin: 0 0 0.6rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--mtv-text-dark);
+}
+
+.mtv-error-body {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--mtv-text-muted);
+}
+
+/* --------------------------------------------------------------- */
+/* Media Queries                                                   */
+/* --------------------------------------------------------------- */
+
+@media (min-width: 640px) {
+  .mtv-guest-hero,
+  .mtv-guest-body {
+    max-width: 28rem;
+    margin-inline: auto;
+  }
+
+  .mtv-guest .mtv-rating-card {
+    width: 26rem;
+    left: 50%;
+    right: auto;
+    margin-left: -13rem;
+  }
+}
