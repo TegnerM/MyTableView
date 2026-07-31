@@ -75,7 +75,24 @@ export async function POST(request: Request) {
     );
   }
 
-  const service = getServiceClient();
+  let service;
+  try {
+    service = getServiceClient();
+  } catch (configError) {
+    // SUPABASE_SERVICE_ROLE_KEY missing in this deployment.
+    console.error("signup: service client unavailable", configError);
+    return NextResponse.json(
+      {
+        ok: false,
+        reason: "server_misconfigured",
+        detail:
+          configError instanceof Error
+            ? configError.message
+            : "service client unavailable",
+      },
+      { status: 500 }
+    );
+  }
 
   // One venue per signup call; a user who already belongs somewhere is
   // signed in, not re-onboarded. (Multi-venue owners get venue #2 via a
@@ -103,8 +120,25 @@ export async function POST(request: Request) {
   });
 
   if (error || !venueId) {
-    console.error("signup: create venue failed", error?.message);
-    return NextResponse.json({ ok: false, reason: "error" }, { status: 500 });
+    console.error(
+      "signup: create venue failed",
+      error?.message,
+      error?.details,
+      error?.hint,
+      error?.code
+    );
+    // detail is surfaced to the (signed-in) user while we stabilise
+    // signup — a real error message beats "please try again".
+    return NextResponse.json(
+      {
+        ok: false,
+        reason: "error",
+        detail: error
+          ? `${error.code ?? ""} ${error.message}${error.details ? ` — ${error.details}` : ""}`.trim()
+          : "function returned no venue id",
+      },
+      { status: 500 }
+    );
   }
 
   const store = await cookies();

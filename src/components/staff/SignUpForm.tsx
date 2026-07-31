@@ -82,12 +82,15 @@ export function SignUpForm({ alreadySignedIn = false }: Props) {
       if (!response.ok) {
         const payload = (await response.json().catch(() => null)) as {
           reason?: string;
+          detail?: string;
         } | null;
 
         setError(
           payload?.reason === "already_staff"
             ? "This account already belongs to a restaurant — just sign in."
-            : "Could not create your restaurant. Please try again."
+            : payload?.detail
+              ? `Could not create your restaurant: ${payload.detail}`
+              : "Could not create your restaurant. Please try again."
         );
         return;
       }
