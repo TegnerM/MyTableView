@@ -17,14 +17,14 @@ const EN = {
     logIn: "Log in",
   },
   hero: {
-    titleLine1: "See every table.",
-    titleLine2: "Miss nothing.",
+    titleLine1: "See all tables",
+    titleLine2: "at a glance.",
     sub: "No guest should ever sit waving at nobody. One tap on the table tells your floor who needs what — before anyone feels forgotten.",
     posLine1: "Your POS manages orders.",
     posLine2: "MyTableView manages the guest experience.",
     ctaHow: "See how it works",
     ctaWho: "Who it's for",
-    trustCard: "No credit card required",
+    trustCard: "14-day free trial — no credit card",
     trustSetup: "Setup in minutes",
     trustCancel: "Cancel anytime",
     photoAlt:
@@ -71,7 +71,7 @@ const EN = {
       "See who needs help without constantly scanning the whole room. That efficiency makes the experience better for your guests — and a better experience translates into better tips.",
     bizEyebrow: "For your business",
     bizCopy:
-      "Real insight into how your guests experience the service guides you in the right direction — and when no guest is left hanging, you never miss a sale.",
+      "Real insight into how your guests experience the service guides you in the right direction — and when no guest is left hanging, you never miss a sale. The moment a guest asks for the bill, two quick questions rate the food and the service — you hear about a bad experience instantly, not in tomorrow's online review.",
     chartCaption: "Response time by hour",
   },
   how: {
@@ -110,7 +110,7 @@ const EN = {
   },
   demo: {
     title: "Put it on one table and see",
-    body: "No demos, no sales calls. Sign up free, print a QR code for your first table and try it tonight — your NFC tags arrive by post. No credit card, cancel anytime.",
+    body: "No demos, no sales calls. Try it free for 14 days — print a QR code for your first table and start tonight, your NFC tags arrive by post. No credit card, cancel anytime.",
     cta: "Get early access",
     mailSubject: "MyTableView early access",
   },
@@ -127,14 +127,14 @@ const ES: LandingStrings = {
     logIn: "Entrar",
   },
   hero: {
-    titleLine1: "Ve cada mesa.",
-    titleLine2: "No pierdas nada.",
+    titleLine1: "Todas tus mesas",
+    titleLine2: "de un vistazo.",
     sub: "Ningún cliente debería quedarse haciendo señas a nadie. Un toque en la mesa le dice a tu sala quién necesita qué — antes de que alguien se sienta olvidado.",
     posLine1: "Tu TPV gestiona los pedidos.",
     posLine2: "MyTableView gestiona la experiencia del cliente.",
     ctaHow: "Mira cómo funciona",
     ctaWho: "Para quién es",
-    trustCard: "Sin tarjeta de crédito",
+    trustCard: "14 días gratis — sin tarjeta",
     trustSetup: "Listo en minutos",
     trustCancel: "Cancela cuando quieras",
     photoAlt:
@@ -181,7 +181,7 @@ const ES: LandingStrings = {
       "Ve quién necesita ayuda sin tener que vigilar toda la sala. Esa eficiencia mejora la experiencia de tus clientes — y una mejor experiencia se traduce en mejores propinas.",
     bizEyebrow: "Para tu negocio",
     bizCopy:
-      "Conocer de verdad la experiencia de tus clientes te guía en la dirección correcta — y si ningún cliente se queda esperando, nunca pierdes una venta.",
+      "Conocer de verdad la experiencia de tus clientes te guía en la dirección correcta — y si ningún cliente se queda esperando, nunca pierdes una venta. En cuanto piden la cuenta, dos preguntas rápidas puntúan la comida y el servicio — te enteras al instante, no en la reseña del día siguiente.",
     chartCaption: "Tiempo de respuesta por hora",
   },
   how: {
@@ -220,7 +220,7 @@ const ES: LandingStrings = {
   },
   demo: {
     title: "Ponlo en una mesa y compruébalo",
-    body: "Sin demos ni llamadas comerciales. Regístrate gratis, imprime un código QR para tu primera mesa y pruébalo esta noche — las etiquetas NFC llegan por correo. Sin tarjeta, cancela cuando quieras.",
+    body: "Sin demos ni llamadas comerciales. Pruébalo gratis 14 días — imprime un código QR para tu primera mesa y empieza esta noche; las etiquetas NFC llegan por correo. Sin tarjeta, cancela cuando quieras.",
     cta: "Consigue acceso anticipado",
     mailSubject: "Acceso anticipado a MyTableView",
   },

@@ -16,19 +16,29 @@
  */
 
 .mtv-layout{
-  --sand: #f7f5f1;
+  /* Aliases of the shared brand tokens (globals.css), with the same
+     values as fallbacks. --sand matches the floor shell's page
+     background so switching between floor and editor doesn't shift. */
+  --sand: var(--mtv-brand-sand, #f6f4ef);
   --sand-deep: #efeae1;
-  --card: #ffffff;
-  --line: #e0dace;
-  --navy: #16293d;
-  --navy-soft: #24405c;
-  --text: #16293d;
+  --card: var(--mtv-brand-card, #ffffff);
+  --line: var(--mtv-brand-line, #e0dace);
+  --navy: var(--mtv-brand-navy, #16293d);
+  --navy-soft: var(--mtv-brand-navy-soft, #24405c);
+  --text: var(--mtv-brand-navy, #16293d);
   --muted: #6b7a89;
-  --teal: #12a89a;
-  --teal-dark: #0d8478;
-  --teal-wash: #e6f6f4;
+  --teal: var(--mtv-brand-teal, #12a89a);
+  --teal-dark: var(--mtv-brand-teal-dark, #0d8478);
+  --teal-deep: var(--mtv-brand-teal-deep, #0b5f56);
+  --teal-wash: var(--mtv-brand-teal-wash, #e6f6f4);
   --terracotta: #c2643f;
   --terracotta-wash: #fbeee8;
+  /* Dark chrome, same as the staff shell sidebar. */
+  --chrome: var(--mtv-brand-chrome, #0d262e);
+  --chrome-2: var(--mtv-brand-chrome-2, #123039);
+  --chrome-line: var(--mtv-brand-chrome-line, #1d4049);
+  --chrome-text: var(--mtv-brand-chrome-text, #e8f0f2);
+  --chrome-muted: var(--mtv-brand-chrome-muted, #8fadb5);
 
   display: flex;
   flex-direction: column;
@@ -52,6 +62,8 @@
 /* Single top bar — title, zones, room size, status                 */
 /* --------------------------------------------------------------- */
 
+/* Dark branded bar — the editor's stand-in for the staff sidebar, so
+   the page reads as the same app even though it runs full-screen. */
 .mtv-layout .mtv-bar{
   display: flex;
   flex-wrap: wrap;
@@ -59,9 +71,20 @@
   gap: 0.75rem 1.25rem;
   flex: 0 0 auto;
   padding: 0.5rem 0.875rem;
-  background: var(--card);
-  border: 1px solid var(--line);
+  background: var(--chrome);
+  border: 1px solid var(--chrome);
   border-radius: 0.625rem;
+  color: var(--chrome-text);
+}
+
+.mtv-layout .mtv-bar .mtv-btn{
+  color: var(--chrome-text);
+  background: var(--chrome-2);
+  border-color: var(--chrome-line);
+}
+
+.mtv-layout .mtv-bar .mtv-btn:hover{
+  border-color: var(--teal);
 }
 
 .mtv-layout .mtv-bar-title{
@@ -76,13 +99,13 @@
   font-size: 1.0625rem;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--navy);
+  color: var(--chrome-text);
   white-space: nowrap;
 }
 
 .mtv-layout .mtv-bar-title span{
   font-size: 0.8125rem;
-  color: var(--muted);
+  color: var(--chrome-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -97,9 +120,9 @@
   padding: 0.25rem 0.7rem;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--muted);
-  background: var(--sand);
-  border: 1px solid var(--line);
+  color: var(--chrome-muted);
+  background: transparent;
+  border: 1px solid var(--chrome-line);
   border-radius: 999px;
   cursor: pointer;
   transition:
@@ -109,13 +132,15 @@
 }
 
 .mtv-layout .mtv-zone-tab:hover{
+  color: var(--chrome-text);
   border-color: var(--teal);
 }
 
+/* Active pill = the shell's active-nav green. */
 .mtv-layout .mtv-zone-tab[data-active="true"]{
   color: #ffffff;
-  background: var(--navy);
-  border-color: var(--navy);
+  background: var(--teal-deep);
+  border-color: var(--teal-deep);
 }
 
 .mtv-layout .mtv-bar-size{
@@ -130,16 +155,16 @@
   gap: 0.3rem;
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--muted);
+  color: var(--chrome-muted);
 }
 
 .mtv-layout .mtv-bar-size input{
   width: 3.75rem;
   padding: 0.25rem 0.4rem;
   font-size: 0.875rem;
-  color: var(--text);
-  background: var(--sand);
-  border: 1px solid var(--line);
+  color: var(--chrome-text);
+  background: var(--chrome-2);
+  border: 1px solid var(--chrome-line);
   border-radius: 0.3rem;
 }
 
@@ -151,7 +176,7 @@
 .mtv-layout .mtv-unit{
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--muted);
+  color: var(--chrome-muted);
 }
 
 .mtv-layout .mtv-bar-end{
@@ -166,15 +191,15 @@
   font-size: 0.75rem;
   font-weight: 600;
   text-align: right;
-  color: var(--muted);
+  color: var(--chrome-muted);
 }
 
 .mtv-layout .mtv-status[data-state="saved"]{
-  color: var(--teal-dark);
+  color: #4ade80;
 }
 
 .mtv-layout .mtv-status[data-state="failed"]{
-  color: var(--terracotta);
+  color: #ef6b6f;
 }
 
 /* --------------------------------------------------------------- */
@@ -439,9 +464,8 @@
   max-width: 100%;
   max-height: 100%;
   width: 100%;
-  background:
-    linear-gradient(160deg, rgba(18, 168, 154, 0.05), transparent 55%),
-    var(--card);
+  /* Same warm plan surface as the live floor — no cool tint. */
+  background: #fbf9f4;
   border: 1px solid var(--line);
   border-radius: 0.5rem;
   overflow: hidden;
@@ -504,8 +528,9 @@
 }
 
 .mtv-layout .mtv-chair{
-  fill: #ddd2bf;
-  stroke: rgba(36, 64, 92, 0.35);
+  /* Same furniture colours as the live floor. */
+  fill: #e9e3d7;
+  stroke: rgba(22, 41, 61, 0.16);
   stroke-width: 0.03;
 }
 
@@ -665,7 +690,7 @@
 
 .mtv-layout .mtv-bar-brand{
   font-size: 0.875rem;
-  color: var(--navy);
+  color: var(--chrome-text);
   align-self: center;
 }
 
@@ -677,8 +702,8 @@
   padding: 0.25rem 0.7rem;
   font-size: 0.8125rem;
   font-weight: 700;
-  color: var(--teal-dark);
-  background: var(--teal-wash);
+  color: #58c7ba;
+  background: rgba(18, 168, 154, 0.12);
   border: 1px dashed var(--teal);
   border-radius: 999px;
   cursor: pointer;
@@ -688,7 +713,7 @@
 }
 
 .mtv-layout .mtv-zone-add:hover{
-  background: var(--card);
+  background: rgba(18, 168, 154, 0.22);
   border-style: solid;
 }
 

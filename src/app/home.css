@@ -822,9 +822,11 @@
 
 /* ------------------------------------------------------- integrations */
 
-/* Contained card like every other section — not an edge-to-edge band. */
+/* Contained card like every other section — not an edge-to-edge band.
+   68rem = the 72rem container minus its 2rem side padding, so this
+   card's edges line up exactly with the sections above. */
 .lp-integrations {
-  max-width: 72rem;
+  max-width: 68rem;
   width: calc(100% - 4rem);
   margin: 0 auto 2.5rem;
   border: 1px solid var(--lp-line);

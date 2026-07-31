@@ -1,11 +1,39 @@
 /*
- * Global reset only.
+ * Global reset + shared brand tokens.
  *
- * The guest screen and the staff floor each ship their own scoped
- * stylesheet, because they are near-opposite surfaces: one is a light,
- * calm page on a stranger's phone, the other a dark operational
- * dashboard. Sharing a design system between them would help neither.
+ * Each surface still ships its own scoped stylesheet, but every colour
+ * comes from the token block below so pages cannot drift into their own
+ * mini design systems. The guest surface is the one deliberate
+ * exception: it lives on a stranger's phone and keeps its own look.
  */
+
+:root {
+  /* Warm Mediterranean ground */
+  --mtv-brand-sand: #f6f4ef;
+  --mtv-brand-cream: #fbf9f5;
+  --mtv-brand-card: #ffffff;
+  --mtv-brand-line: #e0dace;
+
+  /* Ink */
+  --mtv-brand-navy: #16293d;
+  --mtv-brand-navy-soft: #24405c;
+  --mtv-brand-muted: #5c6b7a;
+  --mtv-brand-ink: #0f1c2a;
+
+  /* Accents */
+  --mtv-brand-teal: #12a89a;
+  --mtv-brand-teal-dark: #0d8478;
+  --mtv-brand-teal-deep: #0b5f56;
+  --mtv-brand-teal-wash: #e6f6f4;
+  --mtv-brand-gold: #c9963f;
+
+  /* Dark app chrome (staff sidebar / editor bar) */
+  --mtv-brand-chrome: #0d262e;
+  --mtv-brand-chrome-2: #123039;
+  --mtv-brand-chrome-line: #1d4049;
+  --mtv-brand-chrome-text: #e8f0f2;
+  --mtv-brand-chrome-muted: #8fadb5;
+}
 
 *,
 *::before,

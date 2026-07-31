@@ -1,19 +1,27 @@
+/*
+ * Staff sign-in — same warm light theme as the landing page, so
+ * clicking "Log in" never feels like leaving the site. Colours come
+ * from the shared brand tokens in globals.css (with literal fallbacks
+ * so the page cannot render unstyled if the tokens ever move).
+ */
+
 .mtv-signin{
   display: grid;
   place-items: center;
   min-height: 100dvh;
   padding: 1.5rem;
-  background: #0d1520;
-  color: #e8eef5;
+  background: var(--mtv-brand-sand, #f6f4ef);
+  color: var(--mtv-brand-navy, #16293d);
 }
 
 .mtv-signin .mtv-signin-card{
   width: 100%;
   max-width: 22rem;
   padding: 2rem 1.75rem;
-  background: #141f2e;
-  border: 1px solid #253546;
+  background: var(--mtv-brand-card, #ffffff);
+  border: 1px solid var(--mtv-brand-line, #e0dace);
   border-radius: 1rem;
+  box-shadow: 0 18px 40px rgba(22, 41, 61, 0.08);
 }
 
 .mtv-signin .mtv-brand{
@@ -34,14 +42,14 @@
 
 .mtv-signin .mtv-brand-word em{
   font-style: normal;
-  color: #12a89a;
+  color: var(--mtv-brand-teal, #12a89a);
 }
 
 .mtv-signin .mtv-signin-brand{
   width: 100%;
   justify-content: center;
   font-size: 1.35rem;
-  color: #e8eef5;
+  color: var(--mtv-brand-navy, #16293d);
 }
 
 .mtv-signin .mtv-signin-title{
@@ -49,7 +57,7 @@
   font-size: 1.0625rem;
   font-weight: 600;
   text-align: center;
-  color: #8fa3b8;
+  color: var(--mtv-brand-muted, #5c6b7a);
 }
 
 .mtv-signin .mtv-signin-form{
@@ -67,20 +75,20 @@
 .mtv-signin .mtv-field span{
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #8fa3b8;
+  color: var(--mtv-brand-navy-soft, #24405c);
 }
 
 .mtv-signin .mtv-field input{
   padding: 0.75rem 0.875rem;
   font-size: 1rem;
-  color: #e8eef5;
-  background: #1b2937;
-  border: 1px solid #253546;
+  color: var(--mtv-brand-navy, #16293d);
+  background: var(--mtv-brand-cream, #fbf9f5);
+  border: 1px solid var(--mtv-brand-line, #e0dace);
   border-radius: 0.5rem;
 }
 
 .mtv-signin .mtv-field input:focus{
-  outline: 2px solid #12a89a;
+  outline: 2px solid var(--mtv-brand-teal, #12a89a);
   outline-offset: 1px;
 }
 
@@ -88,8 +96,8 @@
   margin: 0;
   padding: 0.625rem 0.75rem;
   font-size: 0.875rem;
-  color: #ffb4b6;
-  background: rgba(229, 72, 77, 0.14);
+  color: #c03338;
+  background: #fdeeee;
   border: 1px solid rgba(229, 72, 77, 0.4);
   border-radius: 0.5rem;
 }
@@ -98,14 +106,15 @@
   padding: 0.8125rem;
   font-size: 1rem;
   font-weight: 650;
-  color: #04201d;
-  background: #12a89a;
+  color: #ffffff;
+  background: var(--mtv-brand-teal-deep, #0b5f56);
   border-radius: 0.5rem;
   cursor: pointer;
+  transition: background-color 140ms ease;
 }
 
 .mtv-signin .mtv-signin-button:hover:not(:disabled){
-  background: #16bfaf;
+  background: var(--mtv-brand-teal-dark, #0d8478);
 }
 
 .mtv-signin .mtv-signin-button:disabled{
