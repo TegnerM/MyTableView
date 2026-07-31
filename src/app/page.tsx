@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { Fraunces } from "next/font/google";
 import { EmailLink } from "@/components/EmailLink";
 import {
@@ -33,11 +34,20 @@ const TABLE_STATUS_COLORS = ["#3fb950", "#d4a017", "#e5484d", "#b8b1a5"];
 const TABLE_STATUS_VALUES = [9, 3, 1, 13];
 
 type PageProps = {
-  searchParams: Promise<{ lang?: string }>;
+  searchParams: Promise<{ lang?: string; code?: string }>;
 };
 
 export default async function HomePage({ searchParams }: PageProps) {
-  const { lang } = await searchParams;
+  const { lang, code } = await searchParams;
+
+  // Supabase's default confirmation-email flow redirects here with
+  // ?code=... — forward it to the auth callback, which exchanges it
+  // for a session and continues signup. Without this, a confirming
+  // user just lands on the marketing page, signed out.
+  if (code) {
+    redirect(`/auth/callback?code=${encodeURIComponent(code)}`);
+  }
+
   const headerList = await headers();
   const locale = resolveLandingLocale(lang, headerList.get("accept-language"));
   const t = getLandingStrings(locale);
