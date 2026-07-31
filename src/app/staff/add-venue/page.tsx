@@ -25,6 +25,8 @@ export default async function AddVenuePage() {
     redirect("/staff/floor");
   }
 
+  const venueCount = identity.venues?.length ?? 1;
+
   return (
     <main className="mtv-signin">
       <div className="mtv-signin-card">
@@ -33,8 +35,8 @@ export default async function AddVenuePage() {
         <h1 className="mtv-signin-title">Add a restaurant</h1>
         <p className="mtv-signin-sub">
           It gets its own floor, its own QR codes and its own 14-day free
-          trial. You currently run {identity.venues.length}{" "}
-          {identity.venues.length === 1 ? "restaurant" : "restaurants"}.
+          trial. You currently run {venueCount}{" "}
+          {venueCount === 1 ? "restaurant" : "restaurants"}.
         </p>
 
         <AddVenueForm />

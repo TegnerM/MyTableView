@@ -44,7 +44,7 @@ export default async function StaffSettingsPage() {
         venueName={identity.venueName}
         isOwner={identity.role === "owner"}
         reason={billing.lockReason}
-        venueCount={identity.venues.length}
+        venueCount={identity.venues?.length ?? 1}
       />
     );
   }
@@ -103,7 +103,7 @@ export default async function StaffSettingsPage() {
           accountStatus={billing.accountStatus}
           plan={billing.plan}
           trialDaysLeft={billing.trialDaysLeft}
-          venueCount={identity.venues.length}
+          venueCount={identity.venues?.length ?? 1}
           maxVenues={billing.maxVenues}
           isOwner={identity.role === "owner"}
         />

@@ -35,7 +35,7 @@ export default async function StaffLayoutPage() {
         venueName={identity.venueName}
         isOwner={identity.role === "owner"}
         reason={billing.lockReason}
-        venueCount={identity.venues.length}
+        venueCount={identity.venues?.length ?? 1}
       />
     );
   }
