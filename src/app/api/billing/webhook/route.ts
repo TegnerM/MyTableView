@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getServiceClient } from "@/lib/supabase/service";
-import { getStripe, planFromPriceId } from "@/lib/billing/stripe";
+import { getPlan } from "@/lib/billing/plans";
+import { getStripe, planKeyFromPriceId } from "@/lib/billing/stripe";
 
 /**
  * POST /api/billing/webhook — Stripe events.
  *
- * The single writer of venue billing state after signup. Checkout and
- * the customer portal both funnel through here, so the database always
- * reflects what Stripe believes, never what the browser claims.
+ * The single writer of ACCOUNT billing state after signup. Checkout
+ * and the customer portal both funnel through here, so the database
+ * always reflects what Stripe believes, never what the browser claims.
+ * Tier changes made in the portal land here too — the price id maps
+ * back to the plan and its venue limit.
  *
  * Signature-verified against STRIPE_WEBHOOK_SECRET; the raw body is
  * read as text BEFORE any JSON parsing, which the verification needs.
@@ -48,20 +51,21 @@ export async function POST(request: Request) {
   try {
     switch (event.type) {
       case "checkout.session.completed": {
-        const session = event.data.object as Stripe.Checkout.Session;
-        await handleCheckoutCompleted(session);
+        await handleCheckoutCompleted(
+          event.data.object as Stripe.Checkout.Session
+        );
         break;
       }
 
       case "customer.subscription.updated":
       case "customer.subscription.deleted": {
-        const subscription = event.data.object as Stripe.Subscription;
-        await handleSubscriptionChange(subscription);
+        await handleSubscriptionChange(
+          event.data.object as Stripe.Subscription
+        );
         break;
       }
 
       default:
-        // Unhandled event types are fine — Stripe sends many.
         break;
     }
   } catch (error) {
@@ -77,10 +81,10 @@ export async function POST(request: Request) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  const venueId = session.metadata?.venue_id;
+  const accountId = session.metadata?.billing_account_id;
 
-  if (!venueId) {
-    console.error("webhook: checkout session without venue_id", session.id);
+  if (!accountId) {
+    console.error("webhook: checkout session without account id", session.id);
     return;
   }
 
@@ -94,70 +98,69 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       ? session.customer
       : (session.customer?.id ?? null);
 
-  const plan =
-    session.metadata?.plan === "monthly" || session.metadata?.plan === "yearly"
-      ? session.metadata.plan
-      : null;
+  const plan = getPlan(session.metadata?.plan);
 
   const service = getServiceClient();
 
   const { error } = await service
-    .from("venues")
+    .from("billing_accounts")
     .update({
       billing_status: "active",
-      plan,
+      plan: plan?.key ?? null,
+      max_venues: plan?.maxVenues ?? 1,
       stripe_subscription_id: subscriptionId,
       ...(customerId ? { stripe_customer_id: customerId } : {}),
     })
-    .eq("id", venueId);
+    .eq("id", accountId);
 
   if (error) {
-    throw new Error(`venue update failed: ${error.message}`);
+    throw new Error(`account update failed: ${error.message}`);
   }
 }
 
 async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   const service = getServiceClient();
 
-  // Prefer the metadata we planted at checkout; fall back to the ids.
-  const venueId = subscription.metadata?.venue_id ?? null;
+  const accountId = subscription.metadata?.billing_account_id ?? null;
 
   const status = mapStatus(subscription.status);
 
   if (status === null) {
     // incomplete / incomplete_expired: checkout never finished — the
-    // venue is still on whatever state it had. Nothing to write.
+    // account keeps whatever state it had. Nothing to write.
     return;
   }
 
+  // Portal upgrades/downgrades arrive as subscription.updated with a
+  // new price — map it back to the tier and its venue limit.
   const priceId = subscription.items.data[0]?.price?.id ?? null;
-  const plan = planFromPriceId(priceId);
+  const plan = getPlan(planKeyFromPriceId(priceId));
 
-  const update: Record<string, string | null> = {
+  const update: Record<string, string | number | null> = {
     billing_status: status,
     stripe_subscription_id: subscription.id,
   };
 
   if (plan) {
-    update.plan = plan;
+    update.plan = plan.key;
+    update.max_venues = plan.maxVenues;
   }
 
-  const query = service.from("venues").update(update);
+  const query = service.from("billing_accounts").update(update);
 
-  const { error } = venueId
-    ? await query.eq("id", venueId)
+  const { error } = accountId
+    ? await query.eq("id", accountId)
     : await query.eq("stripe_subscription_id", subscription.id);
 
   if (error) {
-    throw new Error(`venue update failed: ${error.message}`);
+    throw new Error(`account update failed: ${error.message}`);
   }
 }
 
 /**
- * Stripe subscription status → our billing_status. Null = don't touch.
- *
- * past_due stays OPEN on the floor (see lib/billing/status); Stripe
- * retries the card and either recovers to active or ends at canceled.
+ * Stripe subscription status → account billing_status. Null = don't
+ * touch. past_due stays OPEN on the floor (see lib/billing/status);
+ * Stripe retries the card and either recovers or ends at canceled.
  */
 function mapStatus(
   status: Stripe.Subscription.Status

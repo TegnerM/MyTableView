@@ -1,5 +1,5 @@
 import { getServiceClient } from "@/lib/supabase/service";
-import { isBillingLocked } from "@/lib/billing/status";
+import { isVenueLocked } from "@/lib/billing/status";
 
 /**
  * Resolves an NFC tag to a live guest context.
@@ -93,8 +93,8 @@ type TagRow = {
     locales: string[];
     service_mode: ServiceMode;
     branding: Record<string, unknown>;
-    billing_status: string | null;
     trial_ends_at: string | null;
+    billing_accounts: { billing_status: string | null } | null;
   } | null;
 };
 
@@ -146,8 +146,8 @@ export async function resolveTag(rawTagId: string): Promise<ResolveResult> {
           locales,
           service_mode,
           branding,
-          billing_status,
-          trial_ends_at
+          trial_ends_at,
+          billing_accounts:billing_account_id ( billing_status )
         )
       `
     )
@@ -189,7 +189,9 @@ export async function resolveTag(rawTagId: string): Promise<ResolveResult> {
   // Same rule as the staff lock screen (lib/billing/status), same guest
   // copy as any other unavailable venue — the guest never learns the
   // restaurant's billing situation.
-  if (isBillingLocked(venue.billing_status, venue.trial_ends_at)) {
+  if (
+    isVenueLocked(venue.trial_ends_at, venue.billing_accounts?.billing_status)
+  ) {
     return { ok: false, reason: "venue_unavailable" };
   }
 

@@ -49,7 +49,8 @@ export default async function StaffInsightsPage() {
       <TrialLocked
         venueName={identity.venueName}
         isOwner={identity.role === "owner"}
-        reason={billing.status === "trialing" ? "trial" : "canceled"}
+        reason={billing.lockReason}
+        venueCount={identity.venues.length}
       />
     );
   }

@@ -1,45 +1,57 @@
 import { getServerClient } from "@/lib/supabase/server";
 import {
-  isBillingLocked,
+  isVenueLocked,
   trialDaysLeft,
-  type BillingStatus,
+  type AccountBillingStatus,
 } from "@/lib/billing/status";
+import { getPlan, type PlanKey } from "@/lib/billing/plans";
 
 /**
- * Venue billing state for staff surfaces.
+ * Venue + account billing state for staff surfaces.
  *
- * Read through RLS as the signed-in staff member — staff can already
- * select their own venue row, and the billing columns ride along.
+ * Read through RLS as the signed-in staff member: staff can select
+ * their venue row, and the billing_accounts policy lets staff of any
+ * venue in the account read the account.
  *
- * FAILS OPEN. If the query errors (columns missing because the
- * migration hasn't run yet, transient outage), the venue is treated as
- * active and the failure is logged. A billing bug must never lock a
- * restaurant's floor during service.
+ * FAILS OPEN. If the query errors (migration not applied yet,
+ * transient outage), the venue is treated as active and the failure is
+ * logged. A billing bug must never lock a restaurant's floor during
+ * service.
  */
 
 export type VenueBilling = {
-  status: BillingStatus;
-  trialEndsAt: string | null;
-  plan: "monthly" | "yearly" | null;
+  /** The account's subscription state. */
+  accountStatus: AccountBillingStatus;
+  plan: PlanKey | null;
+  maxVenues: number;
   stripeCustomerId: string | null;
-  locked: boolean;
+  /** This venue's own trial. */
+  trialEndsAt: string | null;
   trialDaysLeft: number | null;
+  locked: boolean;
+  /** Why a locked venue is locked — drives the lock screen copy. */
+  lockReason: "trial" | "canceled";
 };
 
 const OPEN_FALLBACK: VenueBilling = {
-  status: "active",
-  trialEndsAt: null,
+  accountStatus: "active",
   plan: null,
+  maxVenues: 0,
   stripeCustomerId: null,
-  locked: false,
+  trialEndsAt: null,
   trialDaysLeft: null,
+  locked: false,
+  lockReason: "trial",
 };
 
-type VenueBillingRow = {
-  billing_status: string | null;
+type Row = {
   trial_ends_at: string | null;
-  plan: string | null;
-  stripe_customer_id: string | null;
+  billing_accounts: {
+    billing_status: string | null;
+    plan: string | null;
+    max_venues: number | null;
+    stripe_customer_id: string | null;
+  } | null;
 };
 
 export async function getVenueBilling(venueId: string): Promise<VenueBilling> {
@@ -47,9 +59,11 @@ export async function getVenueBilling(venueId: string): Promise<VenueBilling> {
 
   const { data, error } = await supabase
     .from("venues")
-    .select("billing_status, trial_ends_at, plan, stripe_customer_id")
+    .select(
+      "trial_ends_at, billing_accounts:billing_account_id ( billing_status, plan, max_venues, stripe_customer_id )"
+    )
     .eq("id", venueId)
-    .maybeSingle<VenueBillingRow>();
+    .maybeSingle<Row>();
 
   if (error || !data) {
     if (error) {
@@ -58,14 +72,17 @@ export async function getVenueBilling(venueId: string): Promise<VenueBilling> {
     return OPEN_FALLBACK;
   }
 
-  const status = (data.billing_status ?? "active") as BillingStatus;
+  const account = data.billing_accounts;
+  const accountStatus = (account?.billing_status ?? "none") as AccountBillingStatus;
 
   return {
-    status,
+    accountStatus,
+    plan: getPlan(account?.plan)?.key ?? null,
+    maxVenues: account?.max_venues ?? 0,
+    stripeCustomerId: account?.stripe_customer_id ?? null,
     trialEndsAt: data.trial_ends_at,
-    plan: data.plan === "monthly" || data.plan === "yearly" ? data.plan : null,
-    stripeCustomerId: data.stripe_customer_id,
-    locked: isBillingLocked(data.billing_status, data.trial_ends_at),
-    trialDaysLeft: trialDaysLeft(data.billing_status, data.trial_ends_at),
+    trialDaysLeft: trialDaysLeft(data.trial_ends_at),
+    locked: isVenueLocked(data.trial_ends_at, accountStatus),
+    lockReason: accountStatus === "canceled" ? "canceled" : "trial",
   };
 }

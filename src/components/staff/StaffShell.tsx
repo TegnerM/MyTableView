@@ -160,6 +160,16 @@ export function StaffShell({
           </label>
         ) : null}
 
+        {role === "owner" ? (
+          <Link
+            href="/staff/add-venue"
+            prefetch={false}
+            className="mtv-add-venue"
+          >
+            + Add restaurant
+          </Link>
+        ) : null}
+
         <nav className="mtv-sidebar-nav" aria-label="Staff">
           {NAV.filter((item) => isManager || !item.managerOnly).map((item) =>
             item.key === active ? (

@@ -43,7 +43,8 @@ export default async function StaffSettingsPage() {
       <TrialLocked
         venueName={identity.venueName}
         isOwner={identity.role === "owner"}
-        reason={billing.status === "trialing" ? "trial" : "canceled"}
+        reason={billing.lockReason}
+        venueCount={identity.venues.length}
       />
     );
   }
@@ -99,9 +100,11 @@ export default async function StaffSettingsPage() {
         </header>
 
         <BillingCard
-          status={billing.status}
+          accountStatus={billing.accountStatus}
           plan={billing.plan}
           trialDaysLeft={billing.trialDaysLeft}
+          venueCount={identity.venues.length}
+          maxVenues={billing.maxVenues}
           isOwner={identity.role === "owner"}
         />
 

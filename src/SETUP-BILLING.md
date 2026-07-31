@@ -13,6 +13,22 @@ npm install stripe qrcode
 npm install -D @types/qrcode
 ```
 
+## 2a. Run BOTH database migrations (order matters)
+
+Run `src/sql/2026-07-31_billing_and_signup.sql` first (if you haven't
+already), then `src/sql/2026-07-31_multi_venue_tiers.sql` — the second
+one moves subscriptions up to a billing ACCOUNT that covers several
+restaurants (tiers 1/3/5/10) while every restaurant keeps its own
+14-day trial. Existing owners are grandfathered active with room for
+10 venues. All 8 tier price IDs are baked into the code as sandbox
+defaults, so no new env vars are needed for sandbox; for live you'll
+set STRIPE_PRICE_MONTHLY_1 … STRIPE_PRICE_YEARLY_10.
+
+Multi-venue behaviour: owners get "+ Add restaurant" in the sidebar
+and Settings → Billing. Up to 3 restaurants while unsubscribed (each
+with its own trial clock); after subscribing, the tier's size. Tier
+changes happen in the Stripe portal and sync back via the webhook.
+
 ## 2. Run the database migration
 
 Open **Supabase Dashboard → SQL Editor**, paste the whole of

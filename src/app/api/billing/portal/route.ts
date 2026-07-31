@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 import { resolveStaff } from "@/lib/staff/venue-context";
+import { getServerClient } from "@/lib/supabase/server";
 import { getServiceClient } from "@/lib/supabase/service";
 import { getStripe, resolveOrigin } from "@/lib/billing/stripe";
 
 /**
  * POST /api/billing/portal
  *
- * Owner only. Opens the Stripe customer portal — change card, switch
- * plan, download invoices, cancel. All resulting changes flow back
- * through the webhook.
+ * Owner only. Opens the Stripe customer portal for the owner's billing
+ * ACCOUNT — change card, switch tier, download invoices, cancel. All
+ * resulting changes flow back through the webhook.
  */
 
 export const runtime = "nodejs";
@@ -31,15 +32,27 @@ export async function POST(request: Request) {
     );
   }
 
+  const supabase = await getServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json(
+      { ok: false, reason: "not_signed_in" },
+      { status: 401 }
+    );
+  }
+
   const service = getServiceClient();
 
-  const { data: venue, error } = await service
-    .from("venues")
+  const { data: account, error } = await service
+    .from("billing_accounts")
     .select("stripe_customer_id")
-    .eq("id", resolved.current.venueId)
+    .eq("owner_user_id", user.id)
     .maybeSingle<{ stripe_customer_id: string | null }>();
 
-  if (error || !venue?.stripe_customer_id) {
+  if (error || !account?.stripe_customer_id) {
     return NextResponse.json(
       { ok: false, reason: "no_billing" },
       { status: 400 }
@@ -48,7 +61,7 @@ export async function POST(request: Request) {
 
   try {
     const session = await getStripe().billingPortal.sessions.create({
-      customer: venue.stripe_customer_id,
+      customer: account.stripe_customer_id,
       return_url: `${resolveOrigin(request)}/staff/settings`,
     });
 

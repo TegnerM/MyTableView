@@ -1,11 +1,12 @@
 import Stripe from "stripe";
+import { getPlan, type PlanKey } from "@/lib/billing/plans";
 
 /**
- * Stripe client + price map.
+ * Stripe client + price resolution.
  *
- * Server-side only. The secret key and the two sandbox price IDs come
- * from the environment — nothing Stripe-related is hardcoded, so
- * promoting sandbox → live is an env change, not a code change.
+ * Server-side only. Price IDs resolve per plan from the environment,
+ * falling back to the baked-in sandbox IDs (see lib/billing/plans) so
+ * sandbox needs no configuration. Live mode = set the env vars.
  */
 
 let cached: Stripe | null = null;
@@ -25,36 +26,35 @@ export function getStripe(): Stripe {
   return cached;
 }
 
-export type Plan = "monthly" | "yearly";
+export function getPriceId(planKey: PlanKey): string {
+  const plan = getPlan(planKey);
 
-export function getPriceId(plan: Plan): string {
-  const id =
-    plan === "monthly"
-      ? process.env.STRIPE_PRICE_MONTHLY
-      : process.env.STRIPE_PRICE_YEARLY;
-
-  if (!id) {
-    throw new Error(
-      plan === "monthly"
-        ? "STRIPE_PRICE_MONTHLY is not set"
-        : "STRIPE_PRICE_YEARLY is not set"
-    );
+  if (!plan) {
+    throw new Error(`Unknown plan: ${planKey}`);
   }
 
-  return id;
+  return process.env[plan.envVar] ?? plan.sandboxPriceId;
 }
 
 /** Reverse lookup for webhooks: which plan does this price id mean? */
-export function planFromPriceId(priceId: string | null | undefined): Plan | null {
+export function planKeyFromPriceId(
+  priceId: string | null | undefined
+): PlanKey | null {
   if (!priceId) {
     return null;
   }
-  if (priceId === process.env.STRIPE_PRICE_MONTHLY) {
-    return "monthly";
+
+  for (const plan of (
+    [
+      "monthly-1", "yearly-1", "monthly-3", "yearly-3",
+      "monthly-5", "yearly-5", "monthly-10", "yearly-10",
+    ] as PlanKey[]
+  )) {
+    if (getPriceId(plan) === priceId) {
+      return plan;
+    }
   }
-  if (priceId === process.env.STRIPE_PRICE_YEARLY) {
-    return "yearly";
-  }
+
   return null;
 }
 

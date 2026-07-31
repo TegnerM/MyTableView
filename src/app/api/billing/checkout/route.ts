@@ -2,32 +2,35 @@ import { NextResponse } from "next/server";
 import { resolveStaff } from "@/lib/staff/venue-context";
 import { getServerClient } from "@/lib/supabase/server";
 import { getServiceClient } from "@/lib/supabase/service";
-import { getStripe, getPriceId, resolveOrigin, type Plan } from "@/lib/billing/stripe";
+import { getPlan, isPlanKey } from "@/lib/billing/plans";
+import { getStripe, getPriceId, resolveOrigin } from "@/lib/billing/stripe";
 
 /**
- * POST /api/billing/checkout  { plan: "monthly" | "yearly" }
+ * POST /api/billing/checkout  { plan: PlanKey }
  *
- * Owner only. Creates (or reuses) the venue's Stripe customer and
- * returns a Checkout session URL. The venue id travels in BOTH the
- * session metadata and the subscription metadata so the webhook can
- * always find its way home.
+ * Owner only. The subscription lives on the owner's billing ACCOUNT
+ * and covers up to the tier's number of restaurants. The chosen tier
+ * must be big enough for the venues the account already runs.
+ *
+ * The account id travels in both the session metadata and the
+ * subscription metadata so the webhook can always find its way home.
  */
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  let plan: Plan;
+  let planKey;
 
   try {
     const body = (await request.json()) as { plan?: unknown };
-    if (body.plan !== "monthly" && body.plan !== "yearly") {
+    if (!isPlanKey(body.plan)) {
       return NextResponse.json(
         { ok: false, reason: "invalid_plan" },
         { status: 400 }
       );
     }
-    plan = body.plan;
+    planKey = body.plan;
   } catch {
     return NextResponse.json(
       { ok: false, reason: "invalid_input" },
@@ -45,7 +48,7 @@ export async function POST(request: Request) {
   }
 
   // Billing is the owner's alone — a manager can run the floor, not
-  // commit the restaurant to a subscription.
+  // commit the restaurant group to a subscription.
   if (resolved.current.role !== "owner") {
     return NextResponse.json(
       { ok: false, reason: "forbidden" },
@@ -53,43 +56,62 @@ export async function POST(request: Request) {
     );
   }
 
-  const venueId = resolved.current.venueId;
-
   const supabase = await getServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (!user) {
+    return NextResponse.json(
+      { ok: false, reason: "not_signed_in" },
+      { status: 401 }
+    );
+  }
+
   const service = getServiceClient();
 
-  const { data: venue, error: venueError } = await service
-    .from("venues")
-    .select("name, stripe_customer_id")
-    .eq("id", venueId)
-    .maybeSingle<{ name: string; stripe_customer_id: string | null }>();
+  const { data: account, error: accountError } = await service
+    .from("billing_accounts")
+    .select("id, stripe_customer_id")
+    .eq("owner_user_id", user.id)
+    .maybeSingle<{ id: string; stripe_customer_id: string | null }>();
 
-  if (venueError || !venue) {
-    console.error("checkout: venue lookup failed", venueError?.message);
+  if (accountError || !account) {
+    console.error("checkout: account lookup failed", accountError?.message);
     return NextResponse.json({ ok: false, reason: "error" }, { status: 500 });
+  }
+
+  // The tier must cover every venue the account already runs.
+  const { count: venueCount } = await service
+    .from("venues")
+    .select("id", { count: "exact", head: true })
+    .eq("billing_account_id", account.id);
+
+  const plan = getPlan(planKey);
+
+  if (plan && venueCount !== null && venueCount > plan.maxVenues) {
+    return NextResponse.json(
+      { ok: false, reason: "tier_too_small", venueCount },
+      { status: 400 }
+    );
   }
 
   try {
     const stripe = getStripe();
 
-    let customerId = venue.stripe_customer_id;
+    let customerId = account.stripe_customer_id;
 
     if (!customerId) {
       const customer = await stripe.customers.create({
-        name: venue.name,
-        email: user?.email ?? undefined,
-        metadata: { venue_id: venueId },
+        email: user.email ?? undefined,
+        metadata: { billing_account_id: account.id },
       });
       customerId = customer.id;
 
       const { error: saveError } = await service
-        .from("venues")
+        .from("billing_accounts")
         .update({ stripe_customer_id: customerId })
-        .eq("id", venueId);
+        .eq("id", account.id);
 
       if (saveError) {
         console.error("checkout: saving customer id failed", saveError.message);
@@ -101,11 +123,11 @@ export async function POST(request: Request) {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       customer: customerId,
-      line_items: [{ price: getPriceId(plan), quantity: 1 }],
+      line_items: [{ price: getPriceId(planKey), quantity: 1 }],
       allow_promotion_codes: true,
-      metadata: { venue_id: venueId, plan },
+      metadata: { billing_account_id: account.id, plan: planKey },
       subscription_data: {
-        metadata: { venue_id: venueId, plan },
+        metadata: { billing_account_id: account.id, plan: planKey },
       },
       success_url: `${origin}/staff/settings?billing=success`,
       cancel_url: `${origin}/staff/settings?billing=cancelled`,

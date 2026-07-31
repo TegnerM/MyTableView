@@ -1363,3 +1363,22 @@
     display: none;
   }
 }
+
+/* ------------------------------------------------- add restaurant */
+/* Owner-only entry under the venue switcher (also in Settings). */
+
+.mtv-floor .mtv-add-venue{
+  display: block;
+  margin: -0.5rem 0 0;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+  color: var(--mtv-sidebar-muted);
+  text-decoration: none;
+  border-radius: 0.5rem;
+}
+
+.mtv-floor .mtv-add-venue:hover{
+  color: var(--mtv-sidebar-text);
+  background: var(--mtv-sidebar-2);
+}

@@ -124,3 +124,95 @@
   cursor: pointer;
   text-decoration: underline;
 }
+
+/* ---------------------------------------------------- plan picker */
+/* Shared by the lock screen and the Settings billing card (both load
+   this sheet), so the tiers look identical everywhere. */
+
+.mtv-plans{
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.mtv-plans-toggle{
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.25rem;
+  margin-bottom: 0.75rem;
+  background: var(--mtv-brand-sand, #f6f4ef);
+  border: 1px solid var(--mtv-brand-line, #e0dace);
+  border-radius: 0.6rem;
+}
+
+.mtv-plans-toggle button{
+  flex: 1;
+  padding: 0.45rem 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  color: var(--mtv-brand-muted, #5c6b7a);
+  background: transparent;
+  border: none;
+  border-radius: 0.45rem;
+  cursor: pointer;
+}
+
+.mtv-plans-toggle button[data-active="true"]{
+  color: var(--mtv-brand-teal-deep, #0b5f56);
+  background: var(--mtv-brand-card, #ffffff);
+  box-shadow: 0 1px 3px rgba(22, 41, 61, 0.12);
+}
+
+.mtv-plans-list{
+  display: grid;
+  gap: 0.5rem;
+}
+
+.mtv-plans-option{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--mtv-brand-card, #ffffff);
+  border: 1.5px solid var(--mtv-brand-line, #e0dace);
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.mtv-plans-option:hover:not(:disabled){
+  border-color: var(--mtv-brand-teal, #12a89a);
+  background: var(--mtv-brand-teal-wash, #e6f6f4);
+}
+
+.mtv-plans-option:disabled{
+  opacity: 0.6;
+  cursor: default;
+}
+
+.mtv-plans-option:first-child{
+  border-color: var(--mtv-brand-teal, #12a89a);
+}
+
+.mtv-plans-label{
+  font-size: 0.9375rem;
+  font-weight: 650;
+  color: var(--mtv-brand-navy, #16293d);
+}
+
+.mtv-plans-price{
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--mtv-brand-teal-deep, #0b5f56);
+  white-space: nowrap;
+}
+
+.mtv-plans-error{
+  margin: 0.75rem 0 0;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.8125rem;
+  color: #c03338;
+  background: #fdeeee;
+  border: 1px solid rgba(229, 72, 77, 0.4);
+  border-radius: 0.5rem;
+}
