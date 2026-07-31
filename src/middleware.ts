@@ -42,7 +42,25 @@ export async function middleware(request: NextRequest) {
   });
 
   // Touching getUser() is what triggers the refresh. Do not remove.
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // Outer layer of the admin gate: no session → no admin URL renders
+  // at all. The REAL checks (platform_admins membership + TOTP) run
+  // server-side inside every admin page and API route; this only
+  // spares them the traffic.
+  const { pathname } = request.nextUrl;
+  if (
+    pathname.startsWith("/admin") &&
+    pathname !== "/admin/sign-in" &&
+    !user
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/admin/sign-in";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
 
   return response;
 }

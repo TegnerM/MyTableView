@@ -1,0 +1,447 @@
+/*
+ * Admin area — MyTableView brand: dark chrome sidebar, warm content.
+ * Deliberately shares the design language of the staff shell without
+ * sharing its stylesheet, so admin can evolve independently.
+ */
+
+.mtv-admin{
+  display: grid;
+  grid-template-columns: 13rem minmax(0, 1fr);
+  min-height: 100dvh;
+  background: var(--mtv-brand-sand, #f6f4ef);
+  color: var(--mtv-brand-navy, #16293d);
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ------------------------------------------------------- sidebar */
+
+.mtv-admin .mtv-admin-sidebar{
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  height: 100dvh;
+  padding: 1.1rem 0.9rem;
+  background: var(--mtv-brand-chrome, #0d262e);
+  color: var(--mtv-brand-chrome-text, #e8f0f2);
+}
+
+.mtv-admin .mtv-admin-brand{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.15rem 0.25rem;
+  font-size: 0.9375rem;
+}
+
+.mtv-admin .mtv-admin-chip{
+  padding: 0.1rem 0.45rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f0c869;
+  background: rgba(240, 200, 105, 0.12);
+  border: 1px solid rgba(240, 200, 105, 0.35);
+  border-radius: 999px;
+}
+
+.mtv-admin .mtv-admin-nav{
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.mtv-admin .mtv-admin-nav a{
+  display: block;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.6rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--mtv-brand-chrome-muted, #8fadb5);
+  text-decoration: none;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.mtv-admin .mtv-admin-nav a:hover{
+  color: var(--mtv-brand-chrome-text, #e8f0f2);
+  background: var(--mtv-brand-chrome-2, #123039);
+}
+
+.mtv-admin .mtv-admin-nav a[data-active="true"]{
+  color: #ffffff;
+  background: var(--mtv-brand-teal-deep, #0b5f56);
+}
+
+.mtv-admin .mtv-admin-foot{
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--mtv-brand-chrome-muted, #8fadb5);
+}
+
+.mtv-admin .mtv-admin-signout{
+  padding: 0.45rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: left;
+  color: var(--mtv-brand-chrome-muted, #8fadb5);
+  background: none;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.mtv-admin .mtv-admin-signout:hover{
+  color: var(--mtv-brand-chrome-text, #e8f0f2);
+  background: var(--mtv-brand-chrome-2, #123039);
+}
+
+/* ------------------------------------------------------- content */
+
+.mtv-admin .mtv-admin-main{
+  padding: 1.5rem 1.75rem 2.5rem;
+  min-width: 0;
+}
+
+.mtv-admin .mtv-admin-head{
+  margin: 0 0 1.25rem;
+}
+
+.mtv-admin .mtv-admin-head h1{
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.mtv-admin .mtv-admin-head p{
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+/* KPI strip */
+
+.mtv-admin .mtv-kpis{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1.25rem;
+}
+
+.mtv-admin .mtv-kpi{
+  padding: 0.9rem 1rem;
+  background: var(--mtv-brand-card, #ffffff);
+  border: 1px solid var(--mtv-brand-line, #e0dace);
+  border-radius: 0.8rem;
+}
+
+.mtv-admin .mtv-kpi-label{
+  margin: 0;
+  font-size: 0.71875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+.mtv-admin .mtv-kpi-value{
+  margin: 0.25rem 0 0;
+  font-size: 1.45rem;
+  font-weight: 750;
+  color: var(--mtv-brand-ink, #0f1c2a);
+}
+
+.mtv-admin .mtv-kpi-sub{
+  margin: 0.1rem 0 0;
+  font-size: 0.75rem;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+/* Cards + tables */
+
+.mtv-admin .mtv-admin-card{
+  padding: 1.1rem 1.2rem;
+  background: var(--mtv-brand-card, #ffffff);
+  border: 1px solid var(--mtv-brand-line, #e0dace);
+  border-radius: 0.9rem;
+}
+
+.mtv-admin .mtv-admin-table{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.mtv-admin .mtv-admin-table th{
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--mtv-brand-muted, #5c6b7a);
+  border-bottom: 1px solid var(--mtv-brand-line, #e0dace);
+  white-space: nowrap;
+}
+
+.mtv-admin .mtv-admin-table td{
+  padding: 0.6rem;
+  vertical-align: top;
+  border-bottom: 1px solid var(--mtv-brand-line, #e0dace);
+}
+
+.mtv-admin .mtv-admin-table tr:last-child td{
+  border-bottom: 0;
+}
+
+.mtv-admin .mtv-cell-title{
+  font-weight: 650;
+  color: var(--mtv-brand-ink, #0f1c2a);
+}
+
+.mtv-admin .mtv-cell-sub{
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.71875rem;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+/* Status chips */
+
+.mtv-admin .mtv-chip-status{
+  display: inline-block;
+  padding: 0.18rem 0.55rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.mtv-admin .mtv-chip-status[data-tone="trial"]{
+  color: #7a5a12;
+  background: #faf0d7;
+  border: 1px solid #ecd9a4;
+}
+
+.mtv-admin .mtv-chip-status[data-tone="active"]{
+  color: var(--mtv-brand-teal-deep, #0b5f56);
+  background: var(--mtv-brand-teal-wash, #e6f6f4);
+  border: 1px solid #b5e3dc;
+}
+
+.mtv-admin .mtv-chip-status[data-tone="locked"]{
+  color: #c03338;
+  background: #fdeeee;
+  border: 1px solid #f2c4c6;
+}
+
+.mtv-admin .mtv-chip-status[data-tone="closed"]{
+  color: #5c6b7a;
+  background: #efece5;
+  border: 1px solid #ddd6c8;
+}
+
+/* Buttons */
+
+.mtv-admin .mtv-admin-btn{
+  padding: 0.35rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+  color: var(--mtv-brand-navy, #16293d);
+  background: var(--mtv-brand-card, #ffffff);
+  border: 1px solid var(--mtv-brand-line, #e0dace);
+  border-radius: 0.45rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.mtv-admin .mtv-admin-btn:hover:not(:disabled){
+  border-color: var(--mtv-brand-teal, #12a89a);
+}
+
+.mtv-admin .mtv-admin-btn:disabled{
+  opacity: 0.5;
+  cursor: default;
+}
+
+.mtv-admin .mtv-admin-btn[data-tone="danger"]{
+  color: #c03338;
+  background: #fdeeee;
+  border-color: #f2c4c6;
+}
+
+.mtv-admin .mtv-admin-btn[data-tone="danger"]:hover:not(:disabled){
+  border-color: #c03338;
+}
+
+.mtv-admin .mtv-admin-actions{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.mtv-admin .mtv-admin-error{
+  margin: 0.75rem 0 0;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.8125rem;
+  color: #c03338;
+  background: #fdeeee;
+  border: 1px solid rgba(229, 72, 77, 0.4);
+  border-radius: 0.5rem;
+}
+
+.mtv-admin .mtv-notes-input{
+  width: 100%;
+  min-width: 10rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--mtv-brand-navy, #16293d);
+  background: var(--mtv-brand-cream, #fbf9f5);
+  border: 1px solid var(--mtv-brand-line, #e0dace);
+  border-radius: 0.4rem;
+}
+
+.mtv-admin .mtv-notes-input:focus{
+  outline: 2px solid var(--mtv-brand-teal, #12a89a);
+  outline-offset: 1px;
+}
+
+/* ------------------------------------------- auth screens (no shell) */
+
+.mtv-adminauth{
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 1.5rem;
+  background: var(--mtv-brand-chrome, #0d262e);
+  color: var(--mtv-brand-navy, #16293d);
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+}
+
+.mtv-adminauth .mtv-adminauth-card{
+  width: 100%;
+  max-width: 22rem;
+  padding: 2rem 1.75rem;
+  background: var(--mtv-brand-card, #ffffff);
+  border-radius: 1rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+
+.mtv-adminauth h1{
+  margin: 1.25rem 0 0.4rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.mtv-adminauth .mtv-adminauth-sub{
+  margin: 0 0 1.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+.mtv-adminauth form{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mtv-adminauth label{
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--mtv-brand-navy-soft, #24405c);
+}
+
+.mtv-adminauth input{
+  padding: 0.7rem 0.85rem;
+  font-size: 1rem;
+  color: var(--mtv-brand-navy, #16293d);
+  background: var(--mtv-brand-cream, #fbf9f5);
+  border: 1px solid var(--mtv-brand-line, #e0dace);
+  border-radius: 0.5rem;
+}
+
+.mtv-adminauth input:focus{
+  outline: 2px solid var(--mtv-brand-teal, #12a89a);
+  outline-offset: 1px;
+}
+
+.mtv-adminauth .mtv-adminauth-button{
+  padding: 0.8125rem;
+  font-size: 1rem;
+  font-weight: 650;
+  color: #ffffff;
+  background: var(--mtv-brand-teal-deep, #0b5f56);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.mtv-adminauth .mtv-adminauth-button:hover:not(:disabled){
+  background: var(--mtv-brand-teal-dark, #0d8478);
+}
+
+.mtv-adminauth .mtv-adminauth-button:disabled{
+  opacity: 0.5;
+  cursor: default;
+}
+
+.mtv-adminauth .mtv-adminauth-error{
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.8125rem;
+  color: #c03338;
+  background: #fdeeee;
+  border: 1px solid rgba(229, 72, 77, 0.4);
+  border-radius: 0.5rem;
+}
+
+.mtv-adminauth .mtv-adminauth-qr{
+  display: flex;
+  justify-content: center;
+  margin: 0 0 0.75rem;
+}
+
+.mtv-adminauth .mtv-adminauth-qr svg,
+.mtv-adminauth .mtv-adminauth-qr img{
+  width: 11rem;
+  height: 11rem;
+}
+
+.mtv-adminauth .mtv-adminauth-secret{
+  margin: 0 0 1rem;
+  padding: 0.5rem 0.6rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+  text-align: center;
+  word-break: break-all;
+  color: var(--mtv-brand-navy-soft, #24405c);
+  background: var(--mtv-brand-cream, #fbf9f5);
+  border: 1px dashed var(--mtv-brand-line, #e0dace);
+  border-radius: 0.5rem;
+}
