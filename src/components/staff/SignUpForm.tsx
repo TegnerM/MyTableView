@@ -16,7 +16,17 @@ import { getBrowserClient } from "@/lib/supabase/browser";
  * the form explains the confirm-first path instead of failing.
  */
 
-export function SignUpForm() {
+type Props = {
+  /**
+   * True when the visitor already holds a session (confirmed their
+   * email, or an interrupted signup). The account step is skipped —
+   * calling signUp again for an existing user would fail — and the
+   * form only asks for what's still missing: the restaurant.
+   */
+  alreadySignedIn?: boolean;
+};
+
+export function SignUpForm({ alreadySignedIn = false }: Props) {
   const [venueName, setVenueName] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,24 +42,28 @@ export function SignUpForm() {
     setBusy(true);
 
     try {
-      const supabase = getBrowserClient();
+      if (!alreadySignedIn) {
+        const supabase = getBrowserClient();
 
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: email.trim(),
-        password,
-      });
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email: email.trim(),
+          password,
+        });
 
-      if (signUpError) {
-        setError(signUpError.message);
-        return;
-      }
+        if (signUpError) {
+          setError(signUpError.message);
+          return;
+        }
 
-      if (!data.session) {
-        // Email confirmation is enabled in Supabase Auth settings.
-        setNotice(
-          "Check your inbox to confirm your email, then sign in — we'll finish setting up your restaurant from there."
-        );
-        return;
+        if (!data.session) {
+          // Email confirmation is enabled in Supabase Auth settings.
+          // The confirmation email links to /auth/confirm, which signs
+          // them in and sends them back here to finish this form.
+          setNotice(
+            "Check your inbox to confirm your email — the link brings you straight back here to finish setting up your restaurant."
+          );
+          return;
+        }
       }
 
       const timezone =
@@ -115,34 +129,42 @@ export function SignUpForm() {
         />
       </label>
 
-      <label className="mtv-field">
-        <span>Email</span>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="username"
-          required
-        />
-      </label>
+      {alreadySignedIn ? null : (
+        <>
+          <label className="mtv-field">
+            <span>Email</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="username"
+              required
+            />
+          </label>
 
-      <label className="mtv-field">
-        <span>Password</span>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          autoComplete="new-password"
-          minLength={8}
-          required
-        />
-      </label>
+          <label className="mtv-field">
+            <span>Password</span>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+              minLength={8}
+              required
+            />
+          </label>
+        </>
+      )}
 
       {error ? <p className="mtv-signin-error">{error}</p> : null}
       {notice ? <p className="mtv-signin-notice">{notice}</p> : null}
 
       <button type="submit" className="mtv-signin-button" disabled={busy}>
-        {busy ? "Setting up…" : "Start your 14-day free trial"}
+        {busy
+          ? "Setting up…"
+          : alreadySignedIn
+            ? "Create your restaurant"
+            : "Start your 14-day free trial"}
       </button>
     </form>
   );

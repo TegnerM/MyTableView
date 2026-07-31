@@ -24,11 +24,16 @@ export default async function SignUpPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  let alreadySignedIn = false;
+
   if (user) {
     const resolved = await resolveStaff();
     if (resolved) {
       redirect("/staff/floor");
     }
+    // Signed in but no restaurant yet: confirmed email or interrupted
+    // signup. The form skips the account step and just creates the venue.
+    alreadySignedIn = true;
   }
 
   return (
@@ -36,12 +41,16 @@ export default async function SignUpPage() {
       <div className="mtv-signin-card">
         <BrandMark className="mtv-signin-brand" />
 
-        <h1 className="mtv-signin-title">Start your 14-day free trial</h1>
+        <h1 className="mtv-signin-title">
+          {alreadySignedIn
+            ? "Almost there — name your restaurant"
+            : "Start your 14-day free trial"}
+        </h1>
         <p className="mtv-signin-sub">
           No credit card. Print QR codes for your tables and be live tonight.
         </p>
 
-        <SignUpForm />
+        <SignUpForm alreadySignedIn={alreadySignedIn} />
 
         <p className="mtv-signin-alt">
           Already have an account?{" "}
