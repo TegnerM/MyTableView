@@ -250,6 +250,10 @@ export default async function HomePage({ searchParams }: PageProps) {
             </div>
           </article>
 
+          <h2 className={`${fraunces.className} lp-features-pair-title`}>
+            {t.features.pairTitle}
+          </h2>
+
           <article className="lp-feature">
             <div className="lp-feature-text">
               <span className="lp-feature-icon" data-tone="gold">
@@ -258,7 +262,6 @@ export default async function HomePage({ searchParams }: PageProps) {
               <p className="lp-feature-eyebrow" data-tone="gold">
                 {t.features.staffEyebrow}
               </p>
-              <h2>{t.features.staffTitle}</h2>
               <p className="lp-feature-copy">{t.features.staffCopy}</p>
             </div>
 
@@ -288,7 +291,6 @@ export default async function HomePage({ searchParams }: PageProps) {
               <p className="lp-feature-eyebrow" data-tone="teal">
                 {t.features.bizEyebrow}
               </p>
-              <h2>{t.features.bizTitle}</h2>
               <p className="lp-feature-copy">{t.features.bizCopy}</p>
             </div>
 

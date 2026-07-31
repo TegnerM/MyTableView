@@ -65,14 +65,13 @@ const EN = {
       "See the menu, call a waiter, ask for the bill — from their own phone, in their own language.",
     phoneAlt:
       "Guest phone screen: make a request — drinks, dessert menu, coffee, request the bill, need assistance",
+    pairTitle: "Don't ignore your guests — they are your bread and butter",
     staffEyebrow: "For your staff",
-    staffTitle: "Know who needs you, before they mind waiting",
     staffCopy:
-      "Every request lands on the live floor the second it's made — with how long it has waited.",
+      "See who needs help without constantly scanning the whole room. That efficiency makes the experience better for your guests — and a better experience translates into better tips.",
     bizEyebrow: "For your business",
-    bizTitle: "Proof of the service your guests actually got",
     bizCopy:
-      "Response times, repeat asks and busiest hours — measured, not guessed.",
+      "Real insight into how your guests experience the service guides you in the right direction — and when no guest is left hanging, you never miss a sale.",
     chartCaption: "Response time by hour",
   },
   how: {
@@ -80,7 +79,7 @@ const EN = {
     sub: "From tap to table served — no app, no account, no training.",
     step1Title: "Tag every table",
     step1Body:
-      "Each table gets an NFC tag. Setup is sticking it down — there's nothing to install and nothing for guests to download.",
+      "Each table gets an NFC tag — or a printed QR code, so you can start tonight while your tags are in the post. Nothing to install, nothing for guests to download.",
     step2Title: "Guests tap, once",
     step2Body:
       "A phone tap opens the table's own page: drinks, the bill, assistance — in the guest's language. One press and it's logged and timed.",
@@ -111,7 +110,7 @@ const EN = {
   },
   demo: {
     title: "Put it on one table and see",
-    body: "No demos, no sales calls. Set up in minutes, try it on a single table tonight — no credit card, cancel anytime.",
+    body: "No demos, no sales calls. Sign up free, print a QR code for your first table and try it tonight — your NFC tags arrive by post. No credit card, cancel anytime.",
     cta: "Get early access",
     mailSubject: "MyTableView early access",
   },
@@ -176,14 +175,13 @@ const ES: LandingStrings = {
       "Ver la carta, llamar al camarero, pedir la cuenta — desde su propio móvil, en su propio idioma.",
     phoneAlt:
       "Pantalla del cliente: hacer una petición — bebidas, carta de postres, café, pedir la cuenta, asistencia",
+    pairTitle: "No ignores a tus clientes: son tu pan de cada día",
     staffEyebrow: "Para tu equipo",
-    staffTitle: "Sabe quién te necesita, antes de que le pese esperar",
     staffCopy:
-      "Cada petición llega a la sala en directo en el mismo segundo — con el tiempo que lleva esperando.",
+      "Ve quién necesita ayuda sin tener que vigilar toda la sala. Esa eficiencia mejora la experiencia de tus clientes — y una mejor experiencia se traduce en mejores propinas.",
     bizEyebrow: "Para tu negocio",
-    bizTitle: "La prueba del servicio que tus clientes recibieron de verdad",
     bizCopy:
-      "Tiempos de respuesta, peticiones repetidas y horas punta — medidos, no supuestos.",
+      "Conocer de verdad la experiencia de tus clientes te guía en la dirección correcta — y si ningún cliente se queda esperando, nunca pierdes una venta.",
     chartCaption: "Tiempo de respuesta por hora",
   },
   how: {
@@ -191,7 +189,7 @@ const ES: LandingStrings = {
     sub: "Del toque a la mesa atendida — sin app, sin cuenta, sin formación.",
     step1Title: "Etiqueta cada mesa",
     step1Body:
-      "Cada mesa lleva una etiqueta NFC. La instalación es pegarla — no hay nada que instalar ni nada que el cliente deba descargar.",
+      "Cada mesa lleva una etiqueta NFC — o un código QR impreso, para empezar esta misma noche mientras llegan tus etiquetas. Nada que instalar ni nada que el cliente deba descargar.",
     step2Title: "El cliente toca, una vez",
     step2Body:
       "Un toque con el móvil abre la página de esa mesa: bebidas, la cuenta, asistencia — en el idioma del cliente. Una pulsación y queda registrada y cronometrada.",
@@ -222,7 +220,7 @@ const ES: LandingStrings = {
   },
   demo: {
     title: "Ponlo en una mesa y compruébalo",
-    body: "Sin demos ni llamadas comerciales. Listo en minutos, pruébalo esta noche en una sola mesa — sin tarjeta, cancela cuando quieras.",
+    body: "Sin demos ni llamadas comerciales. Regístrate gratis, imprime un código QR para tu primera mesa y pruébalo esta noche — las etiquetas NFC llegan por correo. Sin tarjeta, cancela cuando quieras.",
     cta: "Consigue acceso anticipado",
     mailSubject: "Acceso anticipado a MyTableView",
   },
