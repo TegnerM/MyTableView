@@ -111,7 +111,7 @@ const EN = {
   demo: {
     title: "Put it on one table and see",
     body: "No demos, no sales calls. Try it free for 14 days — print a QR code for your first table and start tonight, your NFC tags arrive by post. No credit card, cancel anytime.",
-    cta: "Get early access",
+    cta: "Start your free trial",
     mailSubject: "MyTableView early access",
   },
 };
@@ -221,7 +221,7 @@ const ES: LandingStrings = {
   demo: {
     title: "Ponlo en una mesa y compruébalo",
     body: "Sin demos ni llamadas comerciales. Pruébalo gratis 14 días — imprime un código QR para tu primera mesa y empieza esta noche; las etiquetas NFC llegan por correo. Sin tarjeta, cancela cuando quieras.",
-    cta: "Consigue acceso anticipado",
+    cta: "Empieza tu prueba gratis",
     mailSubject: "Acceso anticipado a MyTableView",
   },
 };

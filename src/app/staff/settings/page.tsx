@@ -1,8 +1,11 @@
 import { redirect } from "next/navigation";
 import { getStaffIdentity } from "@/lib/staff/floor-state";
+import { getVenueBilling } from "@/lib/staff/billing";
 import { getServerClient } from "@/lib/supabase/server";
 import { EscalationSettingsForm } from "@/components/staff/EscalationSettingsForm";
 import { TurnSettingsForm } from "@/components/staff/TurnSettingsForm";
+import { BillingCard } from "@/components/staff/BillingCard";
+import { TrialLocked } from "@/components/staff/TrialLocked";
 import { StaffShell } from "@/components/staff/StaffShell";
 import {
   DEFAULT_ESCALATION_SETTINGS,
@@ -10,6 +13,7 @@ import {
 } from "@/lib/staff/floor-types";
 import "../floor/floor.css";
 import "./settings.css";
+import "../trial-locked.css";
 
 /**
  * Venue settings.
@@ -30,6 +34,18 @@ export default async function StaffSettingsPage() {
 
   if (identity.role !== "owner" && identity.role !== "manager") {
     redirect("/staff/floor");
+  }
+
+  const billing = await getVenueBilling(identity.venueId);
+
+  if (billing.locked) {
+    return (
+      <TrialLocked
+        venueName={identity.venueName}
+        isOwner={identity.role === "owner"}
+        reason={billing.status === "trialing" ? "trial" : "canceled"}
+      />
+    );
   }
 
   const supabase = await getServerClient();
@@ -81,6 +97,13 @@ export default async function StaffSettingsPage() {
             <p>{identity.venueName}</p>
           </div>
         </header>
+
+        <BillingCard
+          status={billing.status}
+          plan={billing.plan}
+          trialDaysLeft={billing.trialDaysLeft}
+          isOwner={identity.role === "owner"}
+        />
 
         <EscalationSettingsForm current={current} />
         <TurnSettingsForm current={currentTurns} />

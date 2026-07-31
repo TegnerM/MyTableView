@@ -1,0 +1,165 @@
+/*
+ * QR print sheet. On screen: brand-light page with a toolbar. On paper:
+ * just the cards, laid out to cut apart.
+ */
+
+.mtv-qr{
+  min-height: 100dvh;
+  padding: 1.5rem;
+  background: var(--mtv-brand-sand, #f6f4ef);
+  color: var(--mtv-brand-navy, #16293d);
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+}
+
+.mtv-qr .mtv-qr-bar{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  max-width: 60rem;
+  margin: 0 auto 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--mtv-brand-card, #ffffff);
+  border: 1px solid var(--mtv-brand-line, #e0dace);
+  border-radius: 0.9rem;
+}
+
+.mtv-qr .mtv-qr-brand{
+  font-size: 1rem;
+  color: var(--mtv-brand-navy, #16293d);
+}
+
+.mtv-qr .mtv-qr-bar-text{
+  min-width: 0;
+  flex: 1;
+}
+
+.mtv-qr .mtv-qr-bar-text h1{
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.mtv-qr .mtv-qr-bar-text p{
+  margin: 0.2rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+.mtv-qr .mtv-qr-bar-actions{
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mtv-qr .mtv-qr-print{
+  padding: 0.55rem 1.2rem;
+  font-size: 0.9375rem;
+  font-weight: 650;
+  color: #ffffff;
+  background: var(--mtv-brand-teal-deep, #0b5f56);
+  border-radius: 0.55rem;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.mtv-qr .mtv-qr-print:hover{
+  background: var(--mtv-brand-teal-dark, #0d8478);
+}
+
+.mtv-qr .mtv-qr-back{
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--mtv-brand-muted, #5c6b7a);
+  text-decoration: none;
+}
+
+.mtv-qr .mtv-qr-back:hover{
+  color: var(--mtv-brand-teal-dark, #0d8478);
+}
+
+.mtv-qr .mtv-qr-empty{
+  max-width: 60rem;
+  margin: 3rem auto;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+.mtv-qr .mtv-qr-empty a{
+  color: var(--mtv-brand-teal-dark, #0d8478);
+  font-weight: 650;
+}
+
+.mtv-qr .mtv-qr-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: 1rem;
+  max-width: 60rem;
+  margin: 0 auto;
+}
+
+.mtv-qr .mtv-qr-card{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1.25rem 1rem 1rem;
+  background: #ffffff;
+  border: 1.5px dashed var(--mtv-brand-line, #e0dace);
+  border-radius: 0.75rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.mtv-qr .mtv-qr-code{
+  width: 9rem;
+  height: 9rem;
+}
+
+.mtv-qr .mtv-qr-code svg{
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.mtv-qr .mtv-qr-label{
+  margin: 0.6rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 750;
+}
+
+.mtv-qr .mtv-qr-hint{
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+@media print {
+  .mtv-qr{
+    padding: 0;
+    background: #ffffff;
+  }
+
+  .mtv-qr .mtv-qr-bar,
+  .mtv-qr .mtv-qr-empty{
+    display: none;
+  }
+
+  .mtv-qr .mtv-qr-grid{
+    max-width: none;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5cm;
+  }
+
+  .mtv-qr .mtv-qr-card{
+    border-color: #bbbbbb;
+    border-radius: 0.4rem;
+  }
+}

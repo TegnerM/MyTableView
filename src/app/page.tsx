@@ -377,12 +377,12 @@ export default async function HomePage({ searchParams }: PageProps) {
         <section className="lp-demo" id="get-started">
           <h2 className={fraunces.className}>{t.demo.title}</h2>
           <p>{t.demo.body}</p>
-          <EmailLink
-            subject={t.demo.mailSubject}
+          <Link
+            href="/staff/sign-up"
             className="lp-btn lp-btn-primary lp-btn-large"
           >
             {t.demo.cta}
-          </EmailLink>
+          </Link>
         </section>
       </main>
 

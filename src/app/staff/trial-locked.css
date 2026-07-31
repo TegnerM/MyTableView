@@ -1,0 +1,126 @@
+/*
+ * Trial-ended lock screen — shown in place of any staff page when the
+ * venue's trial has run out (or the subscription was cancelled). Same
+ * warm brand language as sign-in: the door is closed, not slammed.
+ */
+
+.mtv-locked{
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 1.5rem;
+  background: var(--mtv-brand-sand, #f6f4ef);
+  color: var(--mtv-brand-navy, #16293d);
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+}
+
+.mtv-locked .mtv-locked-card{
+  width: 100%;
+  max-width: 26rem;
+  padding: 2.25rem 2rem;
+  text-align: center;
+  background: var(--mtv-brand-card, #ffffff);
+  border: 1px solid var(--mtv-brand-line, #e0dace);
+  border-radius: 1rem;
+  box-shadow: 0 18px 40px rgba(22, 41, 61, 0.08);
+}
+
+.mtv-locked .mtv-locked-brand{
+  justify-content: center;
+  width: 100%;
+  font-size: 1.2rem;
+  color: var(--mtv-brand-navy, #16293d);
+}
+
+.mtv-locked h1{
+  margin: 1.4rem 0 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.mtv-locked .mtv-locked-body{
+  margin: 0.7rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+.mtv-locked .mtv-locked-note{
+  margin: 1rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+.mtv-locked .mtv-locked-plans{
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+
+.mtv-locked .mtv-locked-plan{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 650;
+  color: #ffffff;
+  background: var(--mtv-brand-teal-deep, #0b5f56);
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.mtv-locked .mtv-locked-plan:hover:not(:disabled){
+  background: var(--mtv-brand-teal-dark, #0d8478);
+}
+
+.mtv-locked .mtv-locked-plan:disabled{
+  opacity: 0.6;
+  cursor: default;
+}
+
+.mtv-locked .mtv-locked-plan span{
+  font-weight: 500;
+  font-size: 0.8125rem;
+  opacity: 0.9;
+}
+
+.mtv-locked .mtv-locked-plan[data-variant="ghost"]{
+  color: var(--mtv-brand-teal-dark, #0d8478);
+  background: var(--mtv-brand-card, #ffffff);
+  border: 1px solid var(--mtv-brand-teal, #12a89a);
+}
+
+.mtv-locked .mtv-locked-plan[data-variant="ghost"]:hover:not(:disabled){
+  background: var(--mtv-brand-teal-wash, #e6f6f4);
+}
+
+.mtv-locked .mtv-locked-error{
+  margin: 0.9rem 0 0;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.8125rem;
+  color: #c03338;
+  background: #fdeeee;
+  border: 1px solid rgba(229, 72, 77, 0.4);
+  border-radius: 0.5rem;
+}
+
+.mtv-locked .mtv-locked-signout{
+  margin-top: 1.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--mtv-brand-muted, #5c6b7a);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}

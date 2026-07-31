@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
 import { getStaffIdentity, loadFloorState } from "@/lib/staff/floor-state";
+import { getVenueBilling } from "@/lib/staff/billing";
 import { LayoutEditor } from "@/components/staff/LayoutEditor";
+import { TrialLocked } from "@/components/staff/TrialLocked";
 import "./layout-editor.css";
+import "../trial-locked.css";
 
 /**
  * Floor layout editor.
@@ -22,6 +25,18 @@ export default async function StaffLayoutPage() {
 
   if (identity.role !== "owner" && identity.role !== "manager") {
     redirect("/staff/floor");
+  }
+
+  const billing = await getVenueBilling(identity.venueId);
+
+  if (billing.locked) {
+    return (
+      <TrialLocked
+        venueName={identity.venueName}
+        isOwner={identity.role === "owner"}
+        reason={billing.status === "trialing" ? "trial" : "canceled"}
+      />
+    );
   }
 
   const state = await loadFloorState(identity);

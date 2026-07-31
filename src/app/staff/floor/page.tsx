@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
 import { getStaffIdentity, loadFloorState } from "@/lib/staff/floor-state";
+import { getVenueBilling } from "@/lib/staff/billing";
 import { LiveFloor } from "@/components/staff/LiveFloor";
+import { TrialLocked } from "@/components/staff/TrialLocked";
 import "./floor.css";
+import "../trial-locked.css";
 
 /**
  * The staff floor view.
@@ -19,6 +22,18 @@ export default async function StaffFloorPage() {
 
   if (!identity) {
     redirect("/staff/sign-in");
+  }
+
+  const billing = await getVenueBilling(identity.venueId);
+
+  if (billing.locked) {
+    return (
+      <TrialLocked
+        venueName={identity.venueName}
+        isOwner={identity.role === "owner"}
+        reason={billing.status === "trialing" ? "trial" : "canceled"}
+      />
+    );
   }
 
   const state = await loadFloorState(identity);

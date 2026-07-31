@@ -121,3 +121,41 @@
   opacity: 0.5;
   cursor: default;
 }
+
+/* Shared by sign-in and sign-up (both import this sheet). */
+
+.mtv-signin .mtv-signin-sub{
+  margin: -0.75rem 0 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+.mtv-signin .mtv-signin-notice{
+  margin: 0;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--mtv-brand-teal-deep, #0b5f56);
+  background: var(--mtv-brand-teal-wash, #e6f6f4);
+  border: 1px solid var(--mtv-brand-teal, #12a89a);
+  border-radius: 0.5rem;
+}
+
+.mtv-signin .mtv-signin-alt{
+  margin: 1.25rem 0 0;
+  font-size: 0.875rem;
+  text-align: center;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+.mtv-signin .mtv-signin-alt a{
+  font-weight: 650;
+  color: var(--mtv-brand-teal-dark, #0d8478);
+  text-decoration: none;
+}
+
+.mtv-signin .mtv-signin-alt a:hover{
+  text-decoration: underline;
+}

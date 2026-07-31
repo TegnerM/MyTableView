@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerClient } from "@/lib/supabase/server";
+import { resolveStaff } from "@/lib/staff/venue-context";
 import { SignInForm } from "@/components/staff/SignInForm";
 import { BrandMark } from "@/components/BrandMark";
 import "./sign-in.css";
@@ -22,7 +24,11 @@ export default async function SignInPage() {
   } = await supabase.auth.getUser();
 
   if (user) {
-    redirect("/staff/floor");
+    // Signed in AND staff somewhere → the floor. Signed in but staff
+    // nowhere (confirmed email, signup interrupted) → finish signup;
+    // bouncing them to the floor would loop straight back here.
+    const resolved = await resolveStaff();
+    redirect(resolved ? "/staff/floor" : "/staff/sign-up");
   }
 
   return (
@@ -33,6 +39,11 @@ export default async function SignInPage() {
         <h1 className="mtv-signin-title">Staff sign in</h1>
 
         <SignInForm />
+
+        <p className="mtv-signin-alt">
+          New here?{" "}
+          <Link href="/staff/sign-up">Start your 14-day free trial</Link>
+        </p>
       </div>
     </main>
   );

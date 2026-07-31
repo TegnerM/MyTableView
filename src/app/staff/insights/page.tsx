@@ -7,8 +7,11 @@ import {
   type WeeklyPoint,
 } from "@/components/staff/InsightsView";
 import { StaffShell } from "@/components/staff/StaffShell";
+import { getVenueBilling } from "@/lib/staff/billing";
+import { TrialLocked } from "@/components/staff/TrialLocked";
 import "../floor/floor.css";
 import "./insights.css";
+import "../trial-locked.css";
 
 /**
  * Guest satisfaction results. Managers and owners only — same gate as
@@ -37,6 +40,18 @@ export default async function StaffInsightsPage() {
 
   if (identity.role !== "owner" && identity.role !== "manager") {
     redirect("/staff/floor");
+  }
+
+  const billing = await getVenueBilling(identity.venueId);
+
+  if (billing.locked) {
+    return (
+      <TrialLocked
+        venueName={identity.venueName}
+        isOwner={identity.role === "owner"}
+        reason={billing.status === "trialing" ? "trial" : "canceled"}
+      />
+    );
   }
 
   const supabase = await getServerClient();
