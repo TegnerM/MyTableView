@@ -17,7 +17,12 @@ import "../sign-in/sign-in.css";
 
 export const dynamic = "force-dynamic";
 
-export default async function SignUpPage() {
+type PageProps = {
+  searchParams: Promise<{ invite?: string }>;
+};
+
+export default async function SignUpPage({ searchParams }: PageProps) {
+  const { invite } = await searchParams;
   const supabase = await getServerClient();
 
   const {
@@ -50,7 +55,10 @@ export default async function SignUpPage() {
           No credit card. Print QR codes for your tables and be live tonight.
         </p>
 
-        <SignUpForm alreadySignedIn={alreadySignedIn} />
+        <SignUpForm
+          alreadySignedIn={alreadySignedIn}
+          inviteToken={invite ?? null}
+        />
 
         <p className="mtv-signin-alt">
           Already have an account?{" "}

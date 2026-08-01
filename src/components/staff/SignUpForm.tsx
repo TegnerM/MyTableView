@@ -24,9 +24,15 @@ type Props = {
    * form only asks for what's still missing: the restaurant.
    */
   alreadySignedIn?: boolean;
+  /** Personal invite token from ?invite= — attributes the signup and
+   *  may carry a custom trial length. */
+  inviteToken?: string | null;
 };
 
-export function SignUpForm({ alreadySignedIn = false }: Props) {
+export function SignUpForm({
+  alreadySignedIn = false,
+  inviteToken = null,
+}: Props) {
   const [venueName, setVenueName] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
@@ -76,6 +82,7 @@ export function SignUpForm({ alreadySignedIn = false }: Props) {
           venueName: venueName.trim(),
           displayName: displayName.trim(),
           timezone,
+          ...(inviteToken ? { inviteToken } : {}),
         }),
       });
 

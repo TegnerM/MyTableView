@@ -24,6 +24,7 @@ type Body = {
   venueName?: unknown;
   displayName?: unknown;
   timezone?: unknown;
+  inviteToken?: unknown;
 };
 
 export async function POST(request: Request) {
@@ -75,7 +76,7 @@ export async function POST(request: Request) {
     );
   }
 
-  let service;
+  let service: ReturnType<typeof getServiceClient>;
   try {
     service = getServiceClient();
   } catch (configError) {
@@ -148,6 +149,98 @@ export async function POST(request: Request) {
     sameSite: "lax",
     maxAge: 60 * 60 * 24 * 365,
   });
+
+  // ---- acquisition attribution (best-effort; never blocks signup) --
+  try {
+    const KEY = /^[a-z0-9_-]{1,64}$/i;
+    const fromBody =
+      typeof body.inviteToken === "string" && KEY.test(body.inviteToken.trim())
+        ? body.inviteToken.trim()
+        : null;
+    const cookieVal = (name: string) => {
+      const value = store.get(name)?.value ?? null;
+      return value && KEY.test(value) ? value : null;
+    };
+
+    const inviteToken = fromBody ?? cookieVal("mtv-invite");
+    const ref = cookieVal("mtv-ref");
+    const rmc = cookieVal("mtv-rmc");
+    const utm = cookieVal("mtv-utm");
+
+    let kind: string | null = null;
+    let key: string | null = null;
+    if (inviteToken) {
+      kind = "invite";
+      key = inviteToken;
+    } else if (ref) {
+      kind = "ref";
+      key = ref;
+    } else if (rmc) {
+      kind = "rmc";
+      key = rmc;
+    } else if (utm) {
+      kind = "utm";
+      key = utm;
+    }
+
+    const { data: account } = await service
+      .from("accounts")
+      .select("id")
+      .eq("owner_user_id", user.id)
+      .maybeSingle<{ id: string }>();
+
+    if (account && kind) {
+      const update: Record<string, string> = {
+        acquired_source_kind: kind,
+        acquired_source_key: key ?? "",
+      };
+
+      if (inviteToken) {
+        const { data: invite } = await service
+          .from("invites")
+          .select("id, trial_days, accepted_at")
+          .eq("token", inviteToken)
+          .maybeSingle<{
+            id: string;
+            trial_days: number;
+            accepted_at: string | null;
+          }>();
+
+        if (invite && !invite.accepted_at) {
+          update.invite_id = invite.id;
+
+          await service
+            .from("invites")
+            .update({
+              accepted_at: new Date().toISOString(),
+              accepted_account_id: account.id,
+            })
+            .eq("id", invite.id);
+
+          // Invited restaurants can carry a custom trial length.
+          if (
+            Number.isInteger(invite.trial_days) &&
+            invite.trial_days > 0 &&
+            invite.trial_days !== 14 &&
+            invite.trial_days <= 365
+          ) {
+            await service
+              .from("venues")
+              .update({
+                trial_ends_at: new Date(
+                  Date.now() + invite.trial_days * 86_400_000
+                ).toISOString(),
+              })
+              .eq("id", venueId);
+          }
+        }
+      }
+
+      await service.from("accounts").update(update).eq("id", account.id);
+    }
+  } catch (attributionError) {
+    console.error("signup: attribution failed", attributionError);
+  }
 
   return NextResponse.json({ ok: true, venueId }, { status: 200 });
 }

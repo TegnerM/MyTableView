@@ -14,8 +14,10 @@ import { getBrowserClient } from "@/lib/supabase/browser";
 const NAV: { key: string; label: string; href: string }[] = [
   { key: "dashboard", label: "Dashboard", href: "/admin" },
   { key: "restaurants", label: "Restaurants", href: "/admin/restaurants" },
-  // Phase 2+: traffic, campaigns, groups, post-now, history,
-  // influencers, invites — added as they ship.
+  { key: "traffic", label: "Traffic", href: "/admin/traffic" },
+  { key: "influencers", label: "Influencers", href: "/admin/influencers" },
+  { key: "invites", label: "Invites", href: "/admin/invites" },
+  // Phase 3: campaigns, groups, post-now, history.
 ];
 
 type Props = {

@@ -319,6 +319,39 @@
   outline-offset: 1px;
 }
 
+/* Cards grid + inline forms (traffic, influencers, invites) */
+
+.mtv-admin .mtv-admin-card-title{
+  margin: 0 0 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.mtv-admin .mtv-traffic-charts{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mtv-admin .mtv-traffic-tables{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: 1rem;
+}
+
+.mtv-admin .mtv-admin-form{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.mtv-admin .mtv-admin-form .mtv-notes-input{
+  flex: 1;
+  min-width: 9rem;
+}
+
 /* ------------------------------------------- auth screens (no shell) */
 
 .mtv-adminauth{

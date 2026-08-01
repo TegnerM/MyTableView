@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import { randomBytes } from "node:crypto";
 import { requireAdmin, logAudit } from "@/lib/admin/auth";
 import { getServiceClient } from "@/lib/supabase/service";
+import { sendInviteEmail } from "@/lib/email/resend";
 
 /**
  * POST /api/admin/action — every admin mutation funnels through here.
@@ -21,6 +23,13 @@ type Body = {
   days?: unknown;
   note?: unknown;
   confirmName?: unknown;
+  name?: unknown;
+  code?: unknown;
+  influencerId?: unknown;
+  active?: unknown;
+  email?: unknown;
+  trialDays?: unknown;
+  inviteId?: unknown;
 };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -191,6 +200,180 @@ export async function POST(request: Request) {
         "purge_venue",
         { type: "venue", id: venueId },
         { name: venue.name },
+        ip
+      );
+      return NextResponse.json({ ok: true });
+    }
+
+    case "create_influencer": {
+      const name = typeof body.name === "string" ? body.name.trim().slice(0, 80) : "";
+      const code =
+        typeof body.code === "string" ? body.code.trim().toLowerCase() : "";
+
+      if (name.length < 1 || !/^[a-z0-9-]{2,32}$/.test(code)) {
+        return NextResponse.json(
+          {
+            ok: false,
+            detail: "name and code (2–32 chars, a–z 0–9 -) required",
+          },
+          { status: 400 }
+        );
+      }
+
+      const { error } = await service
+        .from("influencers")
+        .insert({ name, code, active: true });
+
+      if (error) {
+        return NextResponse.json(
+          { ok: false, detail: error.message },
+          { status: 500 }
+        );
+      }
+
+      await logAudit(gate.userId, "create_influencer", {}, { name, code }, ip);
+      return NextResponse.json({ ok: true });
+    }
+
+    case "toggle_influencer": {
+      const influencerId =
+        typeof body.influencerId === "string" && UUID.test(body.influencerId)
+          ? body.influencerId
+          : null;
+
+      if (!influencerId || typeof body.active !== "boolean") {
+        return NextResponse.json(
+          { ok: false, detail: "influencerId and active required" },
+          { status: 400 }
+        );
+      }
+
+      const { error } = await service
+        .from("influencers")
+        .update({ active: body.active })
+        .eq("id", influencerId);
+
+      if (error) {
+        return NextResponse.json(
+          { ok: false, detail: error.message },
+          { status: 500 }
+        );
+      }
+
+      await logAudit(
+        gate.userId,
+        "toggle_influencer",
+        { type: "influencer", id: influencerId },
+        { active: body.active },
+        ip
+      );
+      return NextResponse.json({ ok: true });
+    }
+
+    case "create_invite": {
+      const email =
+        typeof body.email === "string" ? body.email.trim().slice(0, 200) : "";
+      const note =
+        typeof body.note === "string" ? body.note.trim().slice(0, 500) : "";
+      const trialDays = Number(body.trialDays ?? 14);
+
+      if (!Number.isInteger(trialDays) || trialDays < 1 || trialDays > 365) {
+        return NextResponse.json(
+          { ok: false, detail: "trialDays must be 1–365" },
+          { status: 400 }
+        );
+      }
+
+      const token = randomBytes(12).toString("hex");
+
+      const { error } = await service.from("invites").insert({
+        token,
+        email: email || null,
+        note: note || null,
+        trial_days: trialDays,
+        created_by: gate.userId,
+      });
+
+      if (error) {
+        return NextResponse.json(
+          { ok: false, detail: error.message },
+          { status: 500 }
+        );
+      }
+
+      await logAudit(
+        gate.userId,
+        "create_invite",
+        {},
+        { email, trial_days: trialDays },
+        ip
+      );
+      return NextResponse.json({ ok: true, token });
+    }
+
+    case "email_invite": {
+      const inviteId =
+        typeof body.inviteId === "string" && UUID.test(body.inviteId)
+          ? body.inviteId
+          : null;
+
+      if (!inviteId) {
+        return NextResponse.json(
+          { ok: false, detail: "inviteId required" },
+          { status: 400 }
+        );
+      }
+
+      const { data: invite } = await service
+        .from("invites")
+        .select("token, email, note, trial_days")
+        .eq("id", inviteId)
+        .maybeSingle<{
+          token: string;
+          email: string | null;
+          note: string | null;
+          trial_days: number;
+        }>();
+
+      if (!invite?.email) {
+        return NextResponse.json(
+          { ok: false, detail: "invite has no email address" },
+          { status: 400 }
+        );
+      }
+
+      const site =
+        process.env.NEXT_PUBLIC_SITE_URL ?? "https://mytableview.com";
+      const result = await sendInviteEmail({
+        to: invite.email,
+        inviteLink: `${site}/staff/sign-up?invite=${invite.token}`,
+        note: invite.note,
+        trialDays: invite.trial_days,
+      });
+
+      if (!result.configured) {
+        return NextResponse.json(
+          {
+            ok: false,
+            detail:
+              "RESEND_API_KEY not set — copy the invite link and send it yourself",
+          },
+          { status: 400 }
+        );
+      }
+
+      if (!result.sent) {
+        return NextResponse.json(
+          { ok: false, detail: result.detail ?? "send failed" },
+          { status: 500 }
+        );
+      }
+
+      await logAudit(
+        gate.userId,
+        "email_invite",
+        { type: "invite", id: inviteId },
+        { to: invite.email },
         ip
       );
       return NextResponse.json({ ok: true });

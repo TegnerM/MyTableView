@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Fraunces } from "next/font/google";
 import { EmailLink } from "@/components/EmailLink";
+import { TrackBeacon } from "@/components/TrackBeacon";
 import {
   getLandingStrings,
   resolveLandingLocale,
@@ -107,6 +108,7 @@ export default async function HomePage({ searchParams }: PageProps) {
 
   return (
     <div className="lp" lang={locale}>
+      <TrackBeacon />
       <header className="lp-header">
         <Link href="/" className="lp-logo" aria-label="MyTableView home">
           <Monogram />
