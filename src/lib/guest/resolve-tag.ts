@@ -94,7 +94,7 @@ type TagRow = {
     service_mode: ServiceMode;
     branding: Record<string, unknown>;
     trial_ends_at: string | null;
-    billing_accounts: { billing_status: string | null } | null;
+    accounts: { billing_status: string | null } | null;
   } | null;
 };
 
@@ -147,7 +147,7 @@ export async function resolveTag(rawTagId: string): Promise<ResolveResult> {
           service_mode,
           branding,
           trial_ends_at,
-          billing_accounts:billing_account_id ( billing_status )
+          accounts:account_id ( billing_status )
         )
       `
     )
@@ -189,9 +189,7 @@ export async function resolveTag(rawTagId: string): Promise<ResolveResult> {
   // Same rule as the staff lock screen (lib/billing/status), same guest
   // copy as any other unavailable venue — the guest never learns the
   // restaurant's billing situation.
-  if (
-    isVenueLocked(venue.trial_ends_at, venue.billing_accounts?.billing_status)
-  ) {
+  if (isVenueLocked(venue.trial_ends_at, venue.accounts?.billing_status)) {
     return { ok: false, reason: "venue_unavailable" };
   }
 
