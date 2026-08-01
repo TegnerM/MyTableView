@@ -85,7 +85,7 @@ export default async function QrPrintPage() {
       id: tagId,
       venue_id: identity.venueId,
       table_id: table.id,
-      status: "assigned",
+      status: "active",
       printed_ref: table.label,
       batch: "qr-web",
     });

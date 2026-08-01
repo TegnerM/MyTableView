@@ -139,7 +139,9 @@ export async function POST(request: Request) {
       .update({
         venue_id: venueId,
         table_id: tableId,
-        status: "assigned",
+        // tag_status enum: a live, table-linked tag is 'active'
+        // (verified against the live schema).
+        status: "active",
         assigned_at: new Date().toISOString(),
       })
       .eq("id", tagId);
