@@ -25,10 +25,15 @@ export default async function SignInPage() {
 
   if (user) {
     // Signed in AND staff somewhere → the floor. Signed in but staff
-    // nowhere (confirmed email, signup interrupted) → finish signup;
-    // bouncing them to the floor would loop straight back here.
+    // nowhere (an admin account, or an interrupted signup) → show the
+    // FORM, so a different account can sign in. Redirecting these
+    // sessions to sign-up trapped admin users in a sign-in/sign-up
+    // loop; the "start your free trial" link below still leads anyone
+    // mid-signup to finish setup.
     const resolved = await resolveStaff();
-    redirect(resolved ? "/staff/floor" : "/staff/sign-up");
+    if (resolved) {
+      redirect("/staff/floor");
+    }
   }
 
   return (
