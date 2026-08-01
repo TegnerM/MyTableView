@@ -352,11 +352,16 @@ export async function POST(request: Request) {
       });
 
       if (!result.configured) {
+        // Diagnostic: which RESEND-ish env NAMES exist at runtime
+        // (names only — values are never exposed). Reveals wrong-name
+        // and wrong-project cases instantly.
+        const seen = Object.keys(process.env).filter((key) =>
+          key.toUpperCase().includes("RESEND")
+        );
         return NextResponse.json(
           {
             ok: false,
-            detail:
-              "RESEND_API_KEY not set — copy the invite link and send it yourself",
+            detail: `RESEND_API_KEY not readable at runtime. RESEND-like vars visible to the server: ${seen.length ? seen.join(", ") : "none"}`,
           },
           { status: 400 }
         );
