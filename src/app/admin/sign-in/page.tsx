@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getServerClient } from "@/lib/supabase/server";
+import { getServiceClient } from "@/lib/supabase/service";
 import { AdminSignInForm } from "@/components/admin/AdminSignInForm";
 import { BrandMark } from "@/components/BrandMark";
 import "../admin.css";
@@ -24,8 +25,20 @@ export default async function AdminSignInPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Only forward sessions that ARE admins. Any other session (e.g. a
+  // restaurant-owner login in the same browser) sees the form, so an
+  // admin can always switch accounts here instead of dead-ending on
+  // the non-admin 404.
   if (user) {
-    redirect("/admin");
+    const { data: adminRow } = await getServiceClient()
+      .from("platform_admins")
+      .select("user_id")
+      .eq("user_id", user.id)
+      .maybeSingle<{ user_id: string }>();
+
+    if (adminRow) {
+      redirect("/admin");
+    }
   }
 
   return (
