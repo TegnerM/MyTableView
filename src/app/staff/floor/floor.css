@@ -1382,3 +1382,158 @@
   color: var(--mtv-sidebar-text);
   background: var(--mtv-sidebar-2);
 }
+
+/* --------------------------------------------------------------- */
+/* Phones (≤ 640px): the 900px strip is still too crowded on a      */
+/* real phone. The top bar wraps into two clean rows — identity     */
+/* row, then a full-width icon nav with thumb-sized targets — and   */
+/* the content column tightens without losing anything.             */
+/* --------------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  .mtv-floor .mtv-sidebar{
+    flex-wrap: wrap;
+    gap: 0.5rem 0.6rem;
+    padding: 0.6rem 0.75rem;
+  }
+
+  /* Row 1: brand + live badge left, venue switcher right. */
+  .mtv-floor .mtv-sidebar-head{
+    flex: 1 1 auto;
+    order: 1;
+    padding: 0;
+  }
+
+  .mtv-floor .mtv-venue-switch{
+    order: 2;
+    min-width: 0;
+    max-width: 9.5rem;
+  }
+
+  /* Row 2: the nav spans the full width, icons evenly spread with
+     44px-class tap targets. */
+  .mtv-floor .mtv-sidebar-nav{
+    order: 3;
+    flex: 1 1 100%;
+    justify-content: space-around;
+    border-top: 1px solid var(--mtv-sidebar-line);
+    padding-top: 0.45rem;
+  }
+
+  .mtv-floor .mtv-nav-item{
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.7rem;
+  }
+
+  .mtv-floor .mtv-nav-icon{
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* Foot controls join the nav row instead of forming a third one. */
+  .mtv-floor .mtv-sidebar-foot{
+    order: 4;
+    flex: 0 0 auto;
+    margin-left: auto;
+    gap: 0.15rem;
+  }
+
+  .mtv-floor .mtv-user-card{
+    display: none; /* the avatar adds nothing on a phone */
+  }
+
+  .mtv-floor .mtv-signout,
+  .mtv-floor .mtv-theme-toggle{
+    padding: 0.6rem 0.7rem;
+  }
+
+  /* The add-restaurant link was styled for the vertical sidebar; on a
+     phone it becomes a compact pill on the identity row. */
+  .mtv-floor .mtv-add-venue{
+    order: 2;
+    margin: 0;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.6875rem;
+    border: 1px solid var(--mtv-sidebar-line);
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  /* ------------------------------------------------ content column */
+
+  .mtv-floor .mtv-main{
+    padding: 0.75rem 0.75rem 4rem;
+  }
+
+  .mtv-floor .mtv-greeting-row{
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .mtv-floor .mtv-greeting{
+    font-size: 1.05rem;
+  }
+
+  /* Stat cards: 2×2, tighter type so four fit without crowding. */
+  .mtv-floor .mtv-stat-row{
+    gap: 0.45rem;
+  }
+
+  .mtv-floor .mtv-stat{
+    padding: 0.45rem 0.55rem;
+    column-gap: 0.45rem;
+  }
+
+  .mtv-floor .mtv-stat-value{
+    font-size: 1.05rem;
+  }
+
+  .mtv-floor .mtv-stat-label{
+    font-size: 0.625rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Zone tabs scroll sideways instead of wrapping into a pile. */
+  .mtv-floor .mtv-zone-tabs{
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.25rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .mtv-floor .mtv-zone-tabs::-webkit-scrollbar{
+    display: none;
+  }
+
+  .mtv-floor .mtv-zone-tab{
+    flex: 0 0 auto;
+    padding: 0.45rem 0.95rem; /* thumb-sized */
+  }
+
+  /* Panels lose their side-by-side ambitions and breathe less. */
+  .mtv-floor .mtv-floor-plan-panel,
+  .mtv-floor .mtv-requests-panel,
+  .mtv-floor .mtv-detail-panel{
+    padding: 0.7rem 0.75rem;
+  }
+
+  .mtv-floor .mtv-floor-body{
+    gap: 0.6rem;
+  }
+
+  .mtv-floor .mtv-combine-controls{
+    flex-wrap: wrap;
+  }
+
+  /* Buttons across the floor get real tap height. */
+  .mtv-floor .mtv-btn{
+    padding: 0.55rem 0.9rem;
+  }
+
+  .mtv-floor .mtv-btn-small{
+    padding: 0.45rem 0.7rem;
+  }
+}
