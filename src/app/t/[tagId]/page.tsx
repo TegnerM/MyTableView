@@ -1,8 +1,11 @@
 import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { resolveTag, type ResolveFailure } from "@/lib/guest/resolve-tag";
+import { getStaffIdentity } from "@/lib/staff/floor-state";
+import { getServiceClient } from "@/lib/supabase/service";
 import { RequestPanel } from "@/components/guest/RequestPanel";
 import { SessionStatusBar } from "@/components/guest/SessionStatusBar";
+import { TagAssignPanel } from "@/components/staff/TagAssignPanel";
 import { BrandMark } from "@/components/BrandMark";
 import {
   getUiStrings,
@@ -10,6 +13,7 @@ import {
   resolveGuestLocale,
 } from "@/lib/i18n/guest";
 import "./guest.css";
+import "./tag-assign.css";
 
 /**
  * The guest page — Beach Club Luxury theme (external redesign,
@@ -37,6 +41,36 @@ export default async function GuestTagPage({ params }: PageProps) {
   const result = await resolveTag(tagId);
 
   if (!result.ok) {
+    // Tap-to-assign: an UNASSIGNED (but real) tag opened by a signed-in
+    // owner/manager becomes the assignment screen — stick the chip on a
+    // table, tap it, pick the table, live. Guests and everyone else see
+    // the normal error; the tag's existence is all they learn.
+    if (result.reason === "tag_not_assigned") {
+      const identity = await getStaffIdentity();
+
+      if (
+        identity &&
+        (identity.role === "owner" || identity.role === "manager")
+      ) {
+        const service = getServiceClient();
+        const { data: tables } = await service
+          .from("tables")
+          .select("id, label")
+          .eq("venue_id", identity.venueId)
+          .eq("active", true)
+          .order("label", { ascending: true })
+          .returns<{ id: string; label: string }[]>();
+
+        return (
+          <TagAssignPanel
+            tagId={tagId.trim().toLowerCase()}
+            venueName={identity.venueName}
+            tables={tables ?? []}
+          />
+        );
+      }
+    }
+
     return <GuestError reason={result.reason} />;
   }
 

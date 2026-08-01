@@ -137,6 +137,34 @@
   cursor: default;
 }
 
+/* Tags table */
+
+.mtv-settings .mtv-tags-table{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.mtv-settings .mtv-tags-table th{
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--mtv-text-muted);
+  border-bottom: 1px solid var(--mtv-line);
+}
+
+.mtv-settings .mtv-tags-table td{
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--mtv-line);
+}
+
+.mtv-settings .mtv-tags-table tr:last-child td{
+  border-bottom: 0;
+}
+
 /* Billing card */
 
 .mtv-settings .mtv-billing-actions{

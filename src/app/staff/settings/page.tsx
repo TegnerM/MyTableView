@@ -5,8 +5,10 @@ import { getServerClient } from "@/lib/supabase/server";
 import { EscalationSettingsForm } from "@/components/staff/EscalationSettingsForm";
 import { TurnSettingsForm } from "@/components/staff/TurnSettingsForm";
 import { BillingCard } from "@/components/staff/BillingCard";
+import { TagsCard, type TagRow } from "@/components/staff/TagsCard";
 import { TrialLocked } from "@/components/staff/TrialLocked";
 import { StaffShell } from "@/components/staff/StaffShell";
+import { getServiceClient } from "@/lib/supabase/service";
 import {
   DEFAULT_ESCALATION_SETTINGS,
   DEFAULT_TURN_SETTINGS,
@@ -83,6 +85,47 @@ export default async function StaffSettingsPage() {
       data?.turn_large_party_size ?? DEFAULT_TURN_SETTINGS.largePartySize,
   };
 
+  // Tag list (service client: tags aren't exposed to staff via RLS;
+  // the owner/manager gate above is the authorization).
+  const service = getServiceClient();
+  const [tagsResult, tablesResult] = await Promise.all([
+    service
+      .from("tags")
+      .select("id, printed_ref, batch, status, table_id")
+      .eq("venue_id", identity.venueId)
+      .not("status", "in", '("lost","retired")')
+      .returns<
+        {
+          id: string;
+          printed_ref: string | null;
+          batch: string | null;
+          status: string;
+          table_id: string | null;
+        }[]
+      >(),
+    service
+      .from("tables")
+      .select("id, label")
+      .eq("venue_id", identity.venueId)
+      .returns<{ id: string; label: string }[]>(),
+  ]);
+
+  const labelByTable = new Map(
+    (tablesResult.data ?? []).map((table) => [table.id, table.label])
+  );
+
+  const tagRows: TagRow[] = (tagsResult.data ?? [])
+    .map((tag) => ({
+      tagId: tag.id,
+      printedRef: tag.printed_ref,
+      batch: tag.batch,
+      status: tag.status,
+      tableLabel: tag.table_id
+        ? (labelByTable.get(tag.table_id) ?? null)
+        : null,
+    }))
+    .sort((a, b) => (a.tableLabel ?? "zz").localeCompare(b.tableLabel ?? "zz"));
+
   return (
     <StaffShell
       active="settings"
@@ -107,6 +150,8 @@ export default async function StaffSettingsPage() {
           maxVenues={billing.maxVenues}
           isOwner={identity.role === "owner"}
         />
+
+        <TagsCard rows={tagRows} />
 
         <EscalationSettingsForm current={current} />
         <TurnSettingsForm current={currentTurns} />
