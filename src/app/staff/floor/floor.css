@@ -1410,19 +1410,24 @@
     max-width: 9.5rem;
   }
 
-  /* Row 2: the nav spans the full width, icons evenly spread with
-     44px-class tap targets. */
+  /* Row 2: the nav spans the full width — icon ABOVE a small label,
+     because unlabeled icons explain nothing. Tap targets stay big. */
   .mtv-floor .mtv-sidebar-nav{
     order: 3;
     flex: 1 1 100%;
     justify-content: space-around;
     border-top: 1px solid var(--mtv-sidebar-line);
-    padding-top: 0.45rem;
+    padding-top: 0.4rem;
   }
 
   .mtv-floor .mtv-nav-item{
-    padding: 0.6rem 0.9rem;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem 0.8rem;
     border-radius: 0.7rem;
+    font-size: 0.625rem; /* labels return (the 900px rule hides them) */
+    font-weight: 600;
+    line-height: 1;
   }
 
   .mtv-floor .mtv-nav-icon{
@@ -1430,12 +1435,13 @@
     height: 1.25rem;
   }
 
-  /* Foot controls join the nav row instead of forming a third one. */
+  /* Theme + logout live on the identity row, icon-only, right-aligned —
+     not on a lonely third row. */
   .mtv-floor .mtv-sidebar-foot{
-    order: 4;
+    order: 2;
     flex: 0 0 auto;
-    margin-left: auto;
-    gap: 0.15rem;
+    margin-left: 0;
+    gap: 0.1rem;
   }
 
   .mtv-floor .mtv-user-card{
@@ -1444,7 +1450,7 @@
 
   .mtv-floor .mtv-signout,
   .mtv-floor .mtv-theme-toggle{
-    padding: 0.6rem 0.7rem;
+    padding: 0.55rem 0.55rem;
   }
 
   /* The add-restaurant link was styled for the vertical sidebar; on a
