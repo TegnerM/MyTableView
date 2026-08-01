@@ -352,6 +352,18 @@
   min-width: 9rem;
 }
 
+.mtv-admin .mtv-caption-cell{
+  max-width: 22rem;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--mtv-brand-navy-soft, #24405c);
+}
+
+.mtv-admin textarea.mtv-notes-input{
+  resize: vertical;
+  font-family: inherit;
+}
+
 /* ------------------------------------------- auth screens (no shell) */
 
 .mtv-adminauth{

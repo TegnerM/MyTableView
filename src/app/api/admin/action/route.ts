@@ -30,6 +30,17 @@ type Body = {
   email?: unknown;
   trialDays?: unknown;
   inviteId?: unknown;
+  campaignId?: unknown;
+  promoId?: unknown;
+  caption?: unknown;
+  link?: unknown;
+  dir?: unknown;
+  groupId?: unknown;
+  url?: unknown;
+  members?: unknown;
+  country?: unknown;
+  lang?: unknown;
+  freqDays?: unknown;
 };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -384,10 +395,307 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true });
     }
 
+    // ---------------------------------------------- campaigns/promos
+
+    case "create_campaign": {
+      const name = typeof body.name === "string" ? body.name.trim().slice(0, 80) : "";
+      if (name.length < 1) {
+        return NextResponse.json({ ok: false, detail: "name required" }, { status: 400 });
+      }
+      const { error } = await service.from("campaigns").insert({ name });
+      if (error) {
+        return NextResponse.json({ ok: false, detail: error.message }, { status: 500 });
+      }
+      await logAudit(gate.userId, "create_campaign", {}, { name }, ip);
+      return NextResponse.json({ ok: true });
+    }
+
+    case "delete_campaign": {
+      const campaignId =
+        typeof body.campaignId === "string" && UUID.test(body.campaignId)
+          ? body.campaignId
+          : null;
+      if (!campaignId) {
+        return NextResponse.json({ ok: false, detail: "campaignId required" }, { status: 400 });
+      }
+      // Promos cascade via FK; groups/posts keep history with null campaign.
+      const { error } = await service.from("campaigns").delete().eq("id", campaignId);
+      if (error) {
+        return NextResponse.json({ ok: false, detail: error.message }, { status: 500 });
+      }
+      await logAudit(gate.userId, "delete_campaign", { type: "campaign", id: campaignId }, {}, ip);
+      return NextResponse.json({ ok: true });
+    }
+
+    case "create_promo":
+    case "update_promo": {
+      const name = typeof body.name === "string" ? body.name.trim().slice(0, 120) : "";
+      const caption = typeof body.caption === "string" ? body.caption.slice(0, 4000) : "";
+      const link = typeof body.link === "string" ? body.link.trim().slice(0, 500) : "";
+
+      if (body.action === "create_promo") {
+        const campaignId =
+          typeof body.campaignId === "string" && UUID.test(body.campaignId)
+            ? body.campaignId
+            : null;
+        if (!campaignId || !name) {
+          return NextResponse.json(
+            { ok: false, detail: "campaignId and name required" },
+            { status: 400 }
+          );
+        }
+        const { data: last } = await service
+          .from("promos")
+          .select("position")
+          .eq("campaign_id", campaignId)
+          .order("position", { ascending: false })
+          .limit(1);
+        const position = ((last?.[0] as { position: number } | undefined)?.position ?? 0) + 1;
+        const { error } = await service
+          .from("promos")
+          .insert({ campaign_id: campaignId, position, name, caption, link });
+        if (error) {
+          return NextResponse.json({ ok: false, detail: error.message }, { status: 500 });
+        }
+        await logAudit(gate.userId, "create_promo", { type: "campaign", id: campaignId }, { name }, ip);
+        return NextResponse.json({ ok: true });
+      }
+
+      const promoId =
+        typeof body.promoId === "string" && UUID.test(body.promoId) ? body.promoId : null;
+      if (!promoId || !name) {
+        return NextResponse.json(
+          { ok: false, detail: "promoId and name required" },
+          { status: 400 }
+        );
+      }
+      const { error } = await service
+        .from("promos")
+        .update({ name, caption, link })
+        .eq("id", promoId);
+      if (error) {
+        return NextResponse.json({ ok: false, detail: error.message }, { status: 500 });
+      }
+      await logAudit(gate.userId, "update_promo", { type: "promo", id: promoId }, {}, ip);
+      return NextResponse.json({ ok: true });
+    }
+
+    case "delete_promo": {
+      const promoId =
+        typeof body.promoId === "string" && UUID.test(body.promoId) ? body.promoId : null;
+      if (!promoId) {
+        return NextResponse.json({ ok: false, detail: "promoId required" }, { status: 400 });
+      }
+      const { error } = await service.from("promos").delete().eq("id", promoId);
+      if (error) {
+        return NextResponse.json({ ok: false, detail: error.message }, { status: 500 });
+      }
+      await logAudit(gate.userId, "delete_promo", { type: "promo", id: promoId }, {}, ip);
+      return NextResponse.json({ ok: true });
+    }
+
+    case "move_promo": {
+      const promoId =
+        typeof body.promoId === "string" && UUID.test(body.promoId) ? body.promoId : null;
+      const dir = body.dir === "up" ? -1 : body.dir === "down" ? 1 : 0;
+      if (!promoId || dir === 0) {
+        return NextResponse.json(
+          { ok: false, detail: "promoId and dir (up/down) required" },
+          { status: 400 }
+        );
+      }
+      const { data: promo } = await service
+        .from("promos")
+        .select("id, campaign_id, position")
+        .eq("id", promoId)
+        .maybeSingle<{ id: string; campaign_id: string; position: number }>();
+      if (!promo) {
+        return NextResponse.json({ ok: false, detail: "promo not found" }, { status: 404 });
+      }
+      const { data: neighbours } = await service
+        .from("promos")
+        .select("id, position")
+        .eq("campaign_id", promo.campaign_id)
+        .order("position", { ascending: true })
+        .returns<{ id: string; position: number }[]>();
+      const list = neighbours ?? [];
+      const index = list.findIndex((p) => p.id === promo.id);
+      const swapWith = list[index + dir];
+      if (!swapWith) {
+        return NextResponse.json({ ok: true }); // already at the edge
+      }
+      await service.from("promos").update({ position: swapWith.position }).eq("id", promo.id);
+      await service.from("promos").update({ position: promo.position }).eq("id", swapWith.id);
+      return NextResponse.json({ ok: true });
+    }
+
+    // ------------------------------------------------------- groups
+
+    case "create_group":
+    case "update_group": {
+      const name = typeof body.name === "string" ? body.name.trim().slice(0, 160) : "";
+      const url = typeof body.url === "string" ? body.url.trim().slice(0, 500) : "";
+      const members = Number.isInteger(Number(body.members)) ? Number(body.members) : 0;
+      const country = typeof body.country === "string" ? body.country.trim().slice(0, 60) : "";
+      const lang = typeof body.lang === "string" ? body.lang.trim().slice(0, 40) : "";
+      const freqDays =
+        Number.isInteger(Number(body.freqDays)) && Number(body.freqDays) >= 1
+          ? Math.min(Number(body.freqDays), 90)
+          : 7;
+      const campaignId =
+        typeof body.campaignId === "string" && UUID.test(body.campaignId)
+          ? body.campaignId
+          : null;
+
+      if (!name) {
+        return NextResponse.json({ ok: false, detail: "name required" }, { status: 400 });
+      }
+
+      const fields = {
+        name,
+        url,
+        members,
+        country,
+        lang,
+        freq_days: freqDays,
+        campaign_id: campaignId,
+      };
+
+      if (body.action === "create_group") {
+        const { error } = await service.from("fb_groups").insert(fields);
+        if (error) {
+          return NextResponse.json({ ok: false, detail: error.message }, { status: 500 });
+        }
+        await logAudit(gate.userId, "create_group", {}, { name }, ip);
+        return NextResponse.json({ ok: true });
+      }
+
+      const groupId =
+        typeof body.groupId === "string" && UUID.test(body.groupId) ? body.groupId : null;
+      if (!groupId) {
+        return NextResponse.json({ ok: false, detail: "groupId required" }, { status: 400 });
+      }
+      const { error } = await service.from("fb_groups").update(fields).eq("id", groupId);
+      if (error) {
+        return NextResponse.json({ ok: false, detail: error.message }, { status: 500 });
+      }
+      await logAudit(gate.userId, "update_group", { type: "group", id: groupId }, {}, ip);
+      return NextResponse.json({ ok: true });
+    }
+
+    case "delete_group": {
+      const groupId =
+        typeof body.groupId === "string" && UUID.test(body.groupId) ? body.groupId : null;
+      if (!groupId) {
+        return NextResponse.json({ ok: false, detail: "groupId required" }, { status: 400 });
+      }
+      const { error } = await service.from("fb_groups").delete().eq("id", groupId);
+      if (error) {
+        return NextResponse.json({ ok: false, detail: error.message }, { status: 500 });
+      }
+      await logAudit(gate.userId, "delete_group", { type: "group", id: groupId }, {}, ip);
+      return NextResponse.json({ ok: true });
+    }
+
+    // -------------------------------------------------- mark posted
+
+    case "mark_posted": {
+      const groupId =
+        typeof body.groupId === "string" && UUID.test(body.groupId) ? body.groupId : null;
+      if (!groupId) {
+        return NextResponse.json({ ok: false, detail: "groupId required" }, { status: 400 });
+      }
+
+      const { data: group } = await service
+        .from("fb_groups")
+        .select("id, name, campaign_id, step")
+        .eq("id", groupId)
+        .maybeSingle<{
+          id: string;
+          name: string;
+          campaign_id: string | null;
+          step: number;
+        }>();
+
+      if (!group?.campaign_id) {
+        return NextResponse.json(
+          { ok: false, detail: "group has no campaign assigned" },
+          { status: 400 }
+        );
+      }
+
+      const { data: promos } = await service
+        .from("promos")
+        .select("id, name")
+        .eq("campaign_id", group.campaign_id)
+        .order("position", { ascending: true })
+        .returns<{ id: string; name: string }[]>();
+
+      if (!promos || promos.length === 0) {
+        return NextResponse.json(
+          { ok: false, detail: "campaign has no promos" },
+          { status: 400 }
+        );
+      }
+
+      const index = ((group.step ?? 1) - 1) % promos.length;
+      const promo = promos[index];
+
+      const today = new Date().toISOString().slice(0, 10);
+      const week = isoWeekLabel(new Date());
+
+      const { data: post, error } = await service
+        .from("posts")
+        .insert({
+          group_id: group.id,
+          promo_id: promo.id,
+          campaign_id: group.campaign_id,
+          posted_at: today,
+          week_label: week,
+        })
+        .select("id")
+        .single<{ id: number }>();
+
+      if (error || !post) {
+        return NextResponse.json(
+          { ok: false, detail: error?.message ?? "insert failed" },
+          { status: 500 }
+        );
+      }
+
+      const nextStep = (index + 1) % promos.length === 0 ? 1 : group.step + 1;
+      await service
+        .from("fb_groups")
+        .update({ last_posted_at: today, step: nextStep })
+        .eq("id", group.id);
+
+      const site = process.env.NEXT_PUBLIC_SITE_URL ?? "https://mytableview.com";
+      const trackLink = `${site}/?rmc=${post.id}`;
+
+      await logAudit(
+        gate.userId,
+        "mark_posted",
+        { type: "group", id: group.id },
+        { promo: promo.name, post_id: post.id },
+        ip
+      );
+      return NextResponse.json({ ok: true, postId: post.id, trackLink });
+    }
+
     default:
       return NextResponse.json(
         { ok: false, detail: "unknown action" },
         { status: 400 }
       );
   }
+}
+
+/** ISO week label like 2026-W31. */
+function isoWeekLabel(date: Date): string {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const day = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const week = Math.ceil(((d.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
+  return `${d.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
 }

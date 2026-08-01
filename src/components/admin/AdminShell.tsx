@@ -15,9 +15,12 @@ const NAV: { key: string; label: string; href: string }[] = [
   { key: "dashboard", label: "Dashboard", href: "/admin" },
   { key: "restaurants", label: "Restaurants", href: "/admin/restaurants" },
   { key: "traffic", label: "Traffic", href: "/admin/traffic" },
+  { key: "campaigns", label: "Campaigns", href: "/admin/campaigns" },
+  { key: "groups", label: "Groups", href: "/admin/groups" },
+  { key: "post", label: "Post Now", href: "/admin/post" },
+  { key: "history", label: "History", href: "/admin/history" },
   { key: "influencers", label: "Influencers", href: "/admin/influencers" },
   { key: "invites", label: "Invites", href: "/admin/invites" },
-  // Phase 3: campaigns, groups, post-now, history.
 ];
 
 type Props = {
