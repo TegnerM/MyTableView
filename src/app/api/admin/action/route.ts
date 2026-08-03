@@ -649,7 +649,7 @@ export async function POST(request: Request) {
         });
 
         const promo = await stripe.promotionCodes.create({
-          coupon: coupon.id,
+          promotion: { type: "coupon", coupon: coupon.id },
           ...(code ? { code } : {}),
           ...(maxRedemptions >= 1
             ? { max_redemptions: Math.min(maxRedemptions, 10000) }

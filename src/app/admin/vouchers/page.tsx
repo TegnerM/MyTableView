@@ -39,22 +39,27 @@ export default async function AdminVouchersPage() {
     const stripe = getStripe();
     const promoCodes = await stripe.promotionCodes.list({
       limit: 100,
-      expand: ["data.coupon"],
+      expand: ["data.promotion.coupon"],
     });
 
     rows = promoCodes.data.map((promo) => {
-      const coupon = promo.coupon;
+      const coupon =
+        typeof promo.promotion.coupon === "object"
+          ? promo.promotion.coupon
+          : null;
       const durationLabel =
-        coupon.duration === "forever"
-          ? "forever"
-          : coupon.duration === "once"
-            ? "first payment"
-            : `${coupon.duration_in_months} months`;
+        coupon === null
+          ? "—"
+          : coupon.duration === "forever"
+            ? "forever"
+            : coupon.duration === "once"
+              ? "first payment"
+              : `${coupon.duration_in_months} months`;
 
       return {
         id: promo.id,
         code: promo.code,
-        percentOff: coupon.percent_off ?? null,
+        percentOff: coupon?.percent_off ?? null,
         durationLabel,
         redeemed: promo.times_redeemed,
         maxRedemptions: promo.max_redemptions ?? null,
