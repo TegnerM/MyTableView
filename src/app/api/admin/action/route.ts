@@ -41,6 +41,10 @@ type Body = {
   country?: unknown;
   lang?: unknown;
   freqDays?: unknown;
+  percentOff?: unknown;
+  durationMonths?: unknown;
+  maxRedemptions?: unknown;
+  promoCodeId?: unknown;
 };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -595,6 +599,110 @@ export async function POST(request: Request) {
       }
       await logAudit(gate.userId, "delete_group", { type: "group", id: groupId }, {}, ip);
       return NextResponse.json({ ok: true });
+    }
+
+    // ------------------------------------------------------ vouchers
+
+    case "create_voucher": {
+      const percentOff = Number(body.percentOff);
+      const durationMonths = Number(body.durationMonths ?? 0);
+      const code =
+        typeof body.code === "string" && body.code.trim().length > 0
+          ? body.code.trim().toUpperCase()
+          : null;
+      const maxRedemptions = Number(body.maxRedemptions ?? 0);
+
+      if (!Number.isFinite(percentOff) || percentOff < 1 || percentOff > 100) {
+        return NextResponse.json(
+          { ok: false, detail: "percentOff must be 1–100" },
+          { status: 400 }
+        );
+      }
+      if (code && !/^[A-Z0-9-]{3,32}$/.test(code)) {
+        return NextResponse.json(
+          { ok: false, detail: "code: 3–32 chars, A–Z 0–9 -" },
+          { status: 400 }
+        );
+      }
+
+      try {
+        const { getStripe } = await import("@/lib/billing/stripe");
+        const stripe = getStripe();
+
+        const coupon = await stripe.coupons.create({
+          percent_off: percentOff,
+          ...(durationMonths === 0
+            ? { duration: "forever" as const }
+            : durationMonths === 1
+              ? { duration: "once" as const }
+              : {
+                  duration: "repeating" as const,
+                  duration_in_months: durationMonths,
+                }),
+          name: `MyTableView ${percentOff}% off${
+            durationMonths === 0
+              ? " forever"
+              : durationMonths === 1
+                ? " once"
+                : ` for ${durationMonths} months`
+          }`,
+        });
+
+        const promo = await stripe.promotionCodes.create({
+          coupon: coupon.id,
+          ...(code ? { code } : {}),
+          ...(maxRedemptions >= 1
+            ? { max_redemptions: Math.min(maxRedemptions, 10000) }
+            : {}),
+        });
+
+        await logAudit(
+          gate.userId,
+          "create_voucher",
+          {},
+          { code: promo.code, percent_off: percentOff, months: durationMonths },
+          ip
+        );
+        return NextResponse.json({ ok: true, code: promo.code });
+      } catch (stripeError) {
+        const detail =
+          stripeError instanceof Error ? stripeError.message : "stripe error";
+        return NextResponse.json({ ok: false, detail }, { status: 500 });
+      }
+    }
+
+    case "toggle_voucher": {
+      const promoCodeId =
+        typeof body.promoCodeId === "string" &&
+        /^promo_[A-Za-z0-9]+$/.test(body.promoCodeId)
+          ? body.promoCodeId
+          : null;
+
+      if (!promoCodeId || typeof body.active !== "boolean") {
+        return NextResponse.json(
+          { ok: false, detail: "promoCodeId and active required" },
+          { status: 400 }
+        );
+      }
+
+      try {
+        const { getStripe } = await import("@/lib/billing/stripe");
+        await getStripe().promotionCodes.update(promoCodeId, {
+          active: body.active,
+        });
+        await logAudit(
+          gate.userId,
+          "toggle_voucher",
+          { type: "promo_code" },
+          { id: promoCodeId, active: body.active },
+          ip
+        );
+        return NextResponse.json({ ok: true });
+      } catch (stripeError) {
+        const detail =
+          stripeError instanceof Error ? stripeError.message : "stripe error";
+        return NextResponse.json({ ok: false, detail }, { status: 500 });
+      }
     }
 
     // -------------------------------------------------- mark posted
