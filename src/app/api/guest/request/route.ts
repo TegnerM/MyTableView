@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createGuestRequest } from "@/lib/guest/create-request";
+import { allowHit, clientIpKey } from "@/lib/guest/rate-limit";
 
 /**
  * POST /api/guest/request
@@ -18,6 +19,16 @@ type Body = {
 };
 
 export async function POST(request: Request) {
+  // Per-IP shield before any parsing or DB work. Generous (a full
+  // house shares the venue wifi's public IP) but fatal to a script
+  // hammering in a loop.
+  if (!allowHit(clientIpKey(request), 90, 60_000)) {
+    return NextResponse.json(
+      { ok: false, reason: "rate_limited" },
+      { status: 429 }
+    );
+  }
+
   let body: Body;
 
   try {

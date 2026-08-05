@@ -39,6 +39,14 @@ export type CreateResult =
 const BURST_WINDOW_SECONDS = 60;
 const BURST_LIMIT = 8;
 
+/**
+ * Hourly ceiling per visit, counted over the tap log (every press is
+ * logged, including duplicate-suppressed ones — exactly what a vandal
+ * holding the button produces). The most impatient real table stays
+ * far below this; a script does not.
+ */
+const HOURLY_TAP_LIMIT = 60;
+
 type RecentRequestRow = {
   id: string;
   request_type_id: string;
@@ -159,6 +167,19 @@ export async function createGuestRequest(
   }
 
   if ((recent ?? []).length >= BURST_LIMIT) {
+    return { ok: false, reason: "rate_limited" };
+  }
+
+  const { count: hourTaps, error: tapCountError } = await supabase
+    .from("request_taps")
+    .select("id", { count: "exact", head: true })
+    .eq("session_id", sessionId)
+    .gte("created_at", new Date(Date.now() - 3_600_000).toISOString());
+
+  if (tapCountError) {
+    console.error("createGuestRequest: tap count failed", tapCountError);
+    // Fail open: a broken metric must never block a real guest.
+  } else if ((hourTaps ?? 0) >= HOURLY_TAP_LIMIT) {
     return { ok: false, reason: "rate_limited" };
   }
 

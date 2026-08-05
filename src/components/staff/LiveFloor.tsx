@@ -40,6 +40,9 @@ import { readStoredZone, storeZone } from "@/lib/staff/zone-memory";
  *     at all. A table crossing ten minutes has to turn red on its own.
  */
 
+/** Per-device Floor/List choice, like the theme key below it. */
+const VIEW_KEY = "mtv-floor-view";
+
 type Props = {
   initialState: FloorState;
   locale: string;
@@ -61,6 +64,15 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
   const [activeZoneId, setActiveZoneId] = useState<string | null>(
     () => initialState.areas[0]?.id ?? null
   );
+
+  // Floor ⇄ List. Remembered per device like the theme: a waiter's
+  // phone that picked List opens in List every shift; the wall tablet
+  // stays on the plan. SSR always says plan; hydration restores.
+  const [view, setView] = useState<"plan" | "list">("plan");
+  // List-only zone filter; null = all zones in one scroll — the thing
+  // the plan can't do.
+  const [listZoneId, setListZoneId] = useState<string | null>(null);
+  const [showFree, setShowFree] = useState(false);
   const [busy, setBusy] = useState(false);
 
   // Connection watchdog. A floor that has lost its connection looks
@@ -106,6 +118,25 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
     }
     // Mount only — after that the user's taps own the selection.
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem(VIEW_KEY) === "list") {
+        setView("list");
+      }
+    } catch {
+      // Private browsing: live with the plan.
+    }
+  }, []);
+
+  const switchView = useCallback((next: "plan" | "list") => {
+    setView(next);
+    try {
+      window.localStorage.setItem(VIEW_KEY, next);
+    } catch {
+      // Best effort only.
+    }
   }, []);
 
   // Coalesce bursts: a party of four tapping at once should cause one
@@ -357,6 +388,59 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
     );
   }, [state.tables, state.areas, activeZone]);
 
+  // Table-centric list: worst first. Within overdue/waiting the
+  // longest-waiting request wins; within good the longest-seated party
+  // sits on top (closest to needing something). Free tables collapse
+  // into one expandable row so service stays the focus.
+  const listTables = useMemo(() => {
+    const oldestRequestAt = (table: FloorTable): number => {
+      let oldest = Number.POSITIVE_INFINITY;
+      for (const request of table.requests) {
+        const t = new Date(request.createdAt).getTime();
+        if (t < oldest) oldest = t;
+      }
+      return oldest;
+    };
+
+    const inZone = (table: FloorTable) => {
+      if (listZoneId === null) return true;
+      const isFirst = state.areas[0]?.id === listZoneId;
+      return table.areaId === listZoneId || (isFirst && table.areaId === null);
+    };
+
+    const rank: Record<TableStatus, number> = {
+      overdue: 0,
+      waiting: 1,
+      good: 2,
+      clear: 3,
+    };
+
+    const rows = state.tables
+      .filter(inZone)
+      .map((table) => ({ table, status: statuses.get(table.id) ?? "clear" }));
+
+    const occupied = rows
+      .filter((row) => row.status !== "clear")
+      .sort((a, b) => {
+        const byRank = rank[a.status] - rank[b.status];
+        if (byRank !== 0) return byRank;
+        if (a.status === "good") {
+          return (a.table.sessionOpenedAt ?? "").localeCompare(
+            b.table.sessionOpenedAt ?? ""
+          );
+        }
+        return oldestRequestAt(a.table) - oldestRequestAt(b.table);
+      });
+
+    const free = rows
+      .filter((row) => row.status === "clear")
+      .sort((a, b) =>
+        a.table.label.localeCompare(b.table.label, undefined, { numeric: true })
+      );
+
+    return { occupied, free };
+  }, [state.tables, state.areas, statuses, listZoneId]);
+
   const selectedTable = selected
     ? (state.tables.find((t) => t.id === selected) ?? null)
     : null;
@@ -466,8 +550,28 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
         <div className="mtv-floor-body">
           <section className="mtv-floor-plan-panel">
             <div className="mtv-panel-head">
-              <h2>Floor plan</h2>
-              {combineMode ? (
+              <h2>{view === "plan" ? "Floor plan" : "Table list"}</h2>
+              <div className="mtv-view-toggle" role="tablist" aria-label="Floor view">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={view === "plan"}
+                  data-active={view === "plan" ? "true" : "false"}
+                  onClick={() => switchView("plan")}
+                >
+                  Floor
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={view === "list"}
+                  data-active={view === "list" ? "true" : "false"}
+                  onClick={() => switchView("list")}
+                >
+                  List
+                </button>
+              </div>
+              {view === "list" ? null : combineMode ? (
                 <div className="mtv-combine-controls">
                   <span>{combinePicks.length} selected</span>
                   <button
@@ -501,27 +605,68 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
             </div>
 
             {state.areas.length > 1 ? (
-              <div className="mtv-zone-tabs" role="tablist">
-                {state.areas.map((zone, index) => (
+              view === "plan" ? (
+                <div className="mtv-zone-tabs" role="tablist">
+                  {state.areas.map((zone, index) => (
+                    <button
+                      key={zone.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={activeZoneId === zone.id}
+                      className="mtv-zone-tab"
+                      data-active={activeZoneId === zone.id ? "true" : "false"}
+                      onClick={() => {
+                        setActiveZoneId(zone.id);
+                        storeZone(state.identity.venueId, zone.id);
+                      }}
+                    >
+                      {pickLocale(zone.name, locale) || `Zone ${index + 1}`}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="mtv-zone-tabs" role="tablist">
                   <button
-                    key={zone.id}
                     type="button"
                     role="tab"
-                    aria-selected={activeZoneId === zone.id}
+                    aria-selected={listZoneId === null}
                     className="mtv-zone-tab"
-                    data-active={activeZoneId === zone.id ? "true" : "false"}
-                    onClick={() => {
-                      setActiveZoneId(zone.id);
-                      storeZone(state.identity.venueId, zone.id);
-                    }}
+                    data-active={listZoneId === null ? "true" : "false"}
+                    onClick={() => setListZoneId(null)}
                   >
-                    {pickLocale(zone.name, locale) || `Zone ${index + 1}`}
+                    All zones
                   </button>
-                ))}
-              </div>
+                  {state.areas.map((zone, index) => (
+                    <button
+                      key={zone.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={listZoneId === zone.id}
+                      className="mtv-zone-tab"
+                      data-active={listZoneId === zone.id ? "true" : "false"}
+                      onClick={() => setListZoneId(zone.id)}
+                    >
+                      {pickLocale(zone.name, locale) || `Zone ${index + 1}`}
+                    </button>
+                  ))}
+                </div>
+              )
             ) : null}
 
-            {activeZone ? (
+            {view === "list" ? (
+              <TableList
+                rows={listTables.occupied}
+                freeRows={listTables.free}
+                showFree={showFree}
+                onToggleFree={() => setShowFree((value) => !value)}
+                locale={locale}
+                now={now}
+                selectedId={selected}
+                onSelect={(tableId) =>
+                  setSelected(tableId === selected ? null : tableId)
+                }
+              />
+            ) : activeZone ? (
               <FloorPlan
                 zone={{
                   id: activeZone.id,
@@ -572,6 +717,132 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
           </aside>
         </div>
     </StaffShell>
+  );
+}
+
+function TableList({
+  rows,
+  freeRows,
+  showFree,
+  onToggleFree,
+  locale,
+  now,
+  selectedId,
+  onSelect,
+}: {
+  rows: { table: FloorTable; status: TableStatus }[];
+  freeRows: { table: FloorTable; status: TableStatus }[];
+  showFree: boolean;
+  onToggleFree: () => void;
+  locale: string;
+  now: number;
+  selectedId: string | null;
+  onSelect: (tableId: string) => void;
+}) {
+  return (
+    <div className="mtv-table-list">
+      {rows.length === 0 ? (
+        <p className="mtv-empty">No tables seated right now.</p>
+      ) : null}
+
+      {rows.map(({ table, status }) => {
+        const oldest =
+          table.requests.length > 0
+            ? table.requests.reduce(
+                (min, request) =>
+                  request.createdAt < min ? request.createdAt : min,
+                table.requests[0].createdAt
+              )
+            : null;
+        const what =
+          table.requests.length > 0
+            ? table.requests
+                .map(
+                  (request) =>
+                    pickLocale(request.requestLabel, locale) ||
+                    request.requestCode
+                )
+                .join(" · ")
+            : "No open requests";
+        const askedAgain = table.requests.some(
+          (request) => request.tapCount >= 2
+        );
+
+        return (
+          <button
+            key={table.id}
+            type="button"
+            className="mtv-list-row"
+            data-status={status}
+            data-selected={table.id === selectedId ? "true" : "false"}
+            onClick={() => onSelect(table.id)}
+          >
+            <span className="mtv-list-no">{table.label}</span>
+            <span className="mtv-list-meta">
+              <span className="mtv-list-zone">
+                {pickLocale(table.areaName ?? {}, locale)}
+                {askedAgain ? (
+                  <span className="mtv-list-again">asked again</span>
+                ) : null}
+              </span>
+              <span className="mtv-list-what">{what}</span>
+            </span>
+            <span className="mtv-list-time">
+              {oldest ? (
+                <>
+                  <b>{formatElapsed(oldest, now)}</b>
+                  <span>waiting</span>
+                </>
+              ) : table.sessionOpenedAt ? (
+                <>
+                  <b>{formatElapsed(table.sessionOpenedAt, now)}</b>
+                  <span>at table</span>
+                </>
+              ) : null}
+            </span>
+          </button>
+        );
+      })}
+
+      <button
+        type="button"
+        className="mtv-list-free"
+        onClick={onToggleFree}
+        aria-expanded={showFree}
+      >
+        <span>Free tables · {freeRows.length}</span>
+        <span
+          className="mtv-list-free-chevron"
+          data-open={showFree ? "true" : "false"}
+          aria-hidden="true"
+        >
+          ▾
+        </span>
+      </button>
+
+      {showFree
+        ? freeRows.map(({ table }) => (
+            <button
+              key={table.id}
+              type="button"
+              className="mtv-list-row"
+              data-status="clear"
+              data-selected={table.id === selectedId ? "true" : "false"}
+              onClick={() => onSelect(table.id)}
+            >
+              <span className="mtv-list-no">{table.label}</span>
+              <span className="mtv-list-meta">
+                <span className="mtv-list-zone">
+                  {pickLocale(table.areaName ?? {}, locale)}
+                </span>
+                <span className="mtv-list-what">
+                  Free · seats {table.seats}
+                </span>
+              </span>
+            </button>
+          ))
+        : null}
+    </div>
   );
 }
 

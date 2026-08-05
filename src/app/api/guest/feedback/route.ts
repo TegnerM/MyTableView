@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { saveSessionRating } from "@/lib/guest/save-rating";
+import { allowHit, clientIpKey } from "@/lib/guest/rate-limit";
 
 /**
  * POST /api/guest/feedback
@@ -19,6 +20,13 @@ type Body = {
 };
 
 export async function POST(request: Request) {
+  if (!allowHit(clientIpKey(request), 30, 60_000)) {
+    return NextResponse.json(
+      { ok: false, reason: "rate_limited" },
+      { status: 429 }
+    );
+  }
+
   let body: Body;
 
   try {
