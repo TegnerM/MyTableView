@@ -47,7 +47,7 @@ export async function POST(request: Request) {
   const service = getServiceClient();
 
   const { data: account, error } = await service
-    .from("billing_accounts")
+    .from("accounts")
     .select("stripe_customer_id")
     .eq("owner_user_id", user.id)
     .maybeSingle<{ stripe_customer_id: string | null }>();

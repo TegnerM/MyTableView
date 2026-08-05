@@ -81,7 +81,7 @@ export async function POST(request: Request) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  const accountId = session.metadata?.billing_account_id;
+  const accountId = session.metadata?.account_id;
 
   if (!accountId) {
     console.error("webhook: checkout session without account id", session.id);
@@ -103,7 +103,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const service = getServiceClient();
 
   const { error } = await service
-    .from("billing_accounts")
+    .from("accounts")
     .update({
       billing_status: "active",
       plan: plan?.key ?? null,
@@ -121,7 +121,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   const service = getServiceClient();
 
-  const accountId = subscription.metadata?.billing_account_id ?? null;
+  const accountId = subscription.metadata?.account_id ?? null;
 
   const status = mapStatus(subscription.status);
 
@@ -146,7 +146,7 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
     update.max_venues = plan.maxVenues;
   }
 
-  const query = service.from("billing_accounts").update(update);
+  const query = service.from("accounts").update(update);
 
   const { error } = accountId
     ? await query.eq("id", accountId)

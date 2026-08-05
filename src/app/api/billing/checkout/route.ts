@@ -71,7 +71,7 @@ export async function POST(request: Request) {
   const service = getServiceClient();
 
   const { data: account, error: accountError } = await service
-    .from("billing_accounts")
+    .from("accounts")
     .select("id, stripe_customer_id")
     .eq("owner_user_id", user.id)
     .maybeSingle<{ id: string; stripe_customer_id: string | null }>();
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
   const { count: venueCount } = await service
     .from("venues")
     .select("id", { count: "exact", head: true })
-    .eq("billing_account_id", account.id);
+    .eq("account_id", account.id);
 
   const plan = getPlan(planKey);
 
@@ -104,12 +104,12 @@ export async function POST(request: Request) {
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: user.email ?? undefined,
-        metadata: { billing_account_id: account.id },
+        metadata: { account_id: account.id },
       });
       customerId = customer.id;
 
       const { error: saveError } = await service
-        .from("billing_accounts")
+        .from("accounts")
         .update({ stripe_customer_id: customerId })
         .eq("id", account.id);
 
@@ -125,9 +125,9 @@ export async function POST(request: Request) {
       customer: customerId,
       line_items: [{ price: getPriceId(planKey), quantity: 1 }],
       allow_promotion_codes: true,
-      metadata: { billing_account_id: account.id, plan: planKey },
+      metadata: { account_id: account.id, plan: planKey },
       subscription_data: {
-        metadata: { billing_account_id: account.id, plan: planKey },
+        metadata: { account_id: account.id, plan: planKey },
       },
       success_url: `${origin}/staff/settings?billing=success`,
       cancel_url: `${origin}/staff/settings?billing=cancelled`,

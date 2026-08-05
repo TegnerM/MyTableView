@@ -10,7 +10,7 @@ import { getPlan, type PlanKey } from "@/lib/billing/plans";
  * Venue + account billing state for staff surfaces.
  *
  * Read through RLS as the signed-in staff member: staff can select
- * their venue row, and the billing_accounts policy lets staff of any
+ * their venue row, and the accounts policy lets staff of any
  * venue in the account read the account.
  *
  * FAILS OPEN. If the query errors (migration not applied yet,
@@ -46,7 +46,7 @@ const OPEN_FALLBACK: VenueBilling = {
 
 type Row = {
   trial_ends_at: string | null;
-  billing_accounts: {
+  accounts: {
     billing_status: string | null;
     plan: string | null;
     max_venues: number | null;
@@ -60,7 +60,7 @@ export async function getVenueBilling(venueId: string): Promise<VenueBilling> {
   const { data, error } = await supabase
     .from("venues")
     .select(
-      "trial_ends_at, billing_accounts:billing_account_id ( billing_status, plan, max_venues, stripe_customer_id )"
+      "trial_ends_at, accounts:account_id ( billing_status, plan, max_venues, stripe_customer_id )"
     )
     .eq("id", venueId)
     .maybeSingle<Row>();
@@ -72,7 +72,7 @@ export async function getVenueBilling(venueId: string): Promise<VenueBilling> {
     return OPEN_FALLBACK;
   }
 
-  const account = data.billing_accounts;
+  const account = data.accounts;
   const accountStatus = (account?.billing_status ?? "none") as AccountBillingStatus;
 
   return {
