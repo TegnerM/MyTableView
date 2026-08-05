@@ -153,9 +153,12 @@ export default async function HomePage({ searchParams }: PageProps) {
             </div>
 
             <div className="lp-cta-row">
+              <Link href="/demo" className="lp-btn lp-btn-primary lp-btn-large">
+                {t.hero.ctaDemo}
+              </Link>
               <a
                 href="#how-it-works"
-                className="lp-btn lp-btn-primary lp-btn-large"
+                className="lp-btn lp-btn-ghost lp-btn-large"
               >
                 {t.hero.ctaHow}
               </a>
