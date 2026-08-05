@@ -38,6 +38,7 @@ const WINDOW_MS = 90 * 86_400_000;
 function monthlyEquivalentCents(planKey: string | null): number | null {
   if (!planKey || !isPlanKey(planKey)) return null;
   const plan = getPlan(planKey);
+  if (!plan) return null;
   const monthly =
     plan.interval === "yearly" ? plan.amount / 12 : plan.amount;
   return Math.round(monthly * 100);
