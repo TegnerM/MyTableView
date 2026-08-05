@@ -6,6 +6,12 @@ import { EscalationSettingsForm } from "@/components/staff/EscalationSettingsFor
 import { TurnSettingsForm } from "@/components/staff/TurnSettingsForm";
 import { BillingCard } from "@/components/staff/BillingCard";
 import { TagsCard, type TagRow } from "@/components/staff/TagsCard";
+import {
+  TeamCard,
+  type TeamMemberRow,
+  type TeamInviteRow,
+} from "@/components/staff/TeamCard";
+import { headers } from "next/headers";
 import { TrialLocked } from "@/components/staff/TrialLocked";
 import { StaffShell } from "@/components/staff/StaffShell";
 import { getServiceClient } from "@/lib/supabase/service";
@@ -88,7 +94,8 @@ export default async function StaffSettingsPage() {
   // Tag list (service client: tags aren't exposed to staff via RLS;
   // the owner/manager gate above is the authorization).
   const service = getServiceClient();
-  const [tagsResult, tablesResult] = await Promise.all([
+  const [tagsResult, tablesResult, teamResult, invitesResult] =
+    await Promise.all([
     service
       .from("tags")
       .select("id, printed_ref, batch, status, table_id")
@@ -108,6 +115,28 @@ export default async function StaffSettingsPage() {
       .select("id, label")
       .eq("venue_id", identity.venueId)
       .returns<{ id: string; label: string }[]>(),
+    service
+      .from("staff")
+      .select("id, display_name, role")
+      .eq("venue_id", identity.venueId)
+      .eq("active", true)
+      .returns<{ id: string; display_name: string; role: string }[]>(),
+    service
+      .from("staff_invites")
+      .select("id, email, role, token, expires_at")
+      .eq("venue_id", identity.venueId)
+      .is("accepted_at", null)
+      .is("revoked_at", null)
+      .gt("expires_at", new Date().toISOString())
+      .returns<
+        {
+          id: string;
+          email: string;
+          role: "waiter" | "manager";
+          token: string;
+          expires_at: string;
+        }[]
+      >(),
   ]);
 
   const labelByTable = new Map(
@@ -125,6 +154,38 @@ export default async function StaffSettingsPage() {
         : null,
     }))
     .sort((a, b) => (a.tableLabel ?? "zz").localeCompare(b.tableLabel ?? "zz"));
+
+  const roleRank = { owner: 0, manager: 1, waiter: 2 } as const;
+  const teamMembers: TeamMemberRow[] = (teamResult.data ?? [])
+    .map((row) => ({
+      staffId: row.id,
+      displayName: row.display_name,
+      role: (row.role === "owner" || row.role === "manager"
+        ? row.role
+        : "waiter") as TeamMemberRow["role"],
+      isSelf: row.id === identity.staffId,
+    }))
+    .sort(
+      (a, b) =>
+        roleRank[a.role] - roleRank[b.role] ||
+        a.displayName.localeCompare(b.displayName)
+    );
+
+  // Invite links carry the site origin the OWNER is browsing on, so
+  // preview deployments hand out preview links and production hands
+  // out production links.
+  const headerStore = await headers();
+  const proto = headerStore.get("x-forwarded-proto") ?? "https";
+  const host = headerStore.get("x-forwarded-host") ?? headerStore.get("host") ?? "www.mytableview.com";
+  const teamInvites: TeamInviteRow[] = (invitesResult.data ?? []).map(
+    (row) => ({
+      id: row.id,
+      email: row.email,
+      role: row.role,
+      expiresAt: row.expires_at,
+      link: `${proto}://${host}/staff/join?token=${row.token}`,
+    })
+  );
 
   return (
     <StaffShell
@@ -149,6 +210,12 @@ export default async function StaffSettingsPage() {
           venueCount={identity.venues?.length ?? 1}
           maxVenues={billing.maxVenues}
           isOwner={identity.role === "owner"}
+        />
+
+        <TeamCard
+          members={teamMembers}
+          invites={teamInvites}
+          viewerRole={identity.role === "owner" ? "owner" : "manager"}
         />
 
         <TagsCard rows={tagRows} />
