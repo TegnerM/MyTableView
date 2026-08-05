@@ -46,6 +46,10 @@ export default async function SignInPage() {
         <SignInForm />
 
         <p className="mtv-signin-alt">
+          <Link href="/staff/forgot-password">Forgot your password?</Link>
+        </p>
+
+        <p className="mtv-signin-alt">
           New here?{" "}
           <Link href="/staff/sign-up">Start your 14-day free trial</Link>
         </p>
