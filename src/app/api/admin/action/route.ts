@@ -45,6 +45,7 @@ type Body = {
   durationMonths?: unknown;
   maxRedemptions?: unknown;
   promoCodeId?: unknown;
+  amountEur?: unknown;
 };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -598,6 +599,55 @@ export async function POST(request: Request) {
         return NextResponse.json({ ok: false, detail: error.message }, { status: 500 });
       }
       await logAudit(gate.userId, "delete_group", { type: "group", id: groupId }, {}, ip);
+      return NextResponse.json({ ok: true });
+    }
+
+    // ---------------------------------------------------- payouts
+
+    case "record_payout": {
+      const influencerId =
+        typeof body.influencerId === "string" && UUID.test(body.influencerId)
+          ? body.influencerId
+          : null;
+      const amountEur = Number(body.amountEur);
+      const note =
+        typeof body.note === "string" && body.note.trim()
+          ? body.note.trim().slice(0, 120)
+          : null;
+
+      if (!influencerId) {
+        return NextResponse.json(
+          { ok: false, reason: "invalid_input" },
+          { status: 400 }
+        );
+      }
+      if (!Number.isFinite(amountEur) || amountEur <= 0 || amountEur > 100000) {
+        return NextResponse.json(
+          { ok: false, detail: "amount must be 0.01-100000 EUR" },
+          { status: 400 }
+        );
+      }
+
+      const { error } = await service.from("influencer_payouts").insert({
+        influencer_id: influencerId,
+        amount_cents: Math.round(amountEur * 100),
+        note,
+      });
+
+      if (error) {
+        return NextResponse.json(
+          { ok: false, detail: error.message },
+          { status: 500 }
+        );
+      }
+
+      await logAudit(
+        gate.userId,
+        "record_payout",
+        { type: "influencer", id: influencerId },
+        { amount_cents: Math.round(amountEur * 100), note },
+        ip
+      );
       return NextResponse.json({ ok: true });
     }
 
