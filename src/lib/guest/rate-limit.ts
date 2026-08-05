@@ -29,6 +29,11 @@ export function clientIpKey(request: Request): string {
   return createHash("sha256").update(ip).digest("hex").slice(0, 16);
 }
 
+/**
+ * Key convention: callers prefix a route namespace ("req:", "fb:") so
+ * each endpoint budgets independently — a busy minute of service
+ * requests must never eat the ratings budget.
+ */
 export function allowHit(
   key: string,
   limit: number,

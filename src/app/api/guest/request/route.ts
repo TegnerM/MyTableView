@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   // Per-IP shield before any parsing or DB work. Generous (a full
   // house shares the venue wifi's public IP) but fatal to a script
   // hammering in a loop.
-  if (!allowHit(clientIpKey(request), 90, 60_000)) {
+  if (!allowHit(`req:${clientIpKey(request)}`, 90, 60_000)) {
     return NextResponse.json(
       { ok: false, reason: "rate_limited" },
       { status: 429 }

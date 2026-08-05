@@ -20,7 +20,7 @@ type Body = {
 };
 
 export async function POST(request: Request) {
-  if (!allowHit(clientIpKey(request), 30, 60_000)) {
+  if (!allowHit(`fb:${clientIpKey(request)}`, 30, 60_000)) {
     return NextResponse.json(
       { ok: false, reason: "rate_limited" },
       { status: 429 }
