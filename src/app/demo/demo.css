@@ -342,9 +342,22 @@
 }
 @keyframes dm-slide-in { from { transform: translateY(-100%); opacity: 0; } to { transform: none; opacity: 1; } }
 
+/* The plan is a fixed 536×340 canvas scaled to its container, so the
+   absolutely-positioned tables keep their exact layout at every width
+   instead of clipping on narrow screens. */
+.dm-plan-wrap {
+  width: 100%;
+  aspect-ratio: 536 / 340;
+  overflow: hidden;
+  background: #fbf9f4;
+}
+
 .dm-plan {
   position: relative;
+  width: 536px;
   height: 340px;
+  transform-origin: top left;
+  transform: scale(var(--dm-plan-scale, 1));
   background: #fbf9f4;
   background-image:
     linear-gradient(rgba(22, 41, 61, 0.05) 1px, transparent 1px),
@@ -562,8 +575,21 @@
 
 /* ---------------- responsive ---------------- */
 
+/* Stacked layouts (anything below the full three-across): frames size
+   to their content instead of a fixed desktop height, so phones and
+   iPads see three tidy screens, not three tall frames of dead space. */
+@media (max-width: 1359px) {
+  .dm-frames { gap: 1.75rem; }
+  .dm-slot-guest,
+  .dm-slot-waiter { flex: 0 1 auto; }
+  .dm-phone { width: min(330px, 92vw); }
+  .dm-phone > div { height: auto; min-height: 0; }
+  .dm-guest-body { flex: initial; overflow: visible; }
+  .dm-list { flex: initial; overflow: visible; }
+  .dm-tablet { width: min(560px, 94vw); }
+}
+
 @media (max-width: 760px) {
   .dm-frames { gap: 1.5rem; }
-  .dm-phone { width: min(330px, 92vw); }
-  .dm-steps li { font-size: 0.78rem; }
+  .dm-step { font-size: 0.78rem; }
 }

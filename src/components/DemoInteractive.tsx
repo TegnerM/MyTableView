@@ -184,6 +184,23 @@ export function DemoInteractive() {
   const [openSheet, setOpenSheet] = useState<string | null>(null);
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const timers = useRef<number[]>([]);
+  const tabletRef = useRef<HTMLDivElement | null>(null);
+  const scrolledOnce = useRef(false);
+  const planWrapRef = useRef<HTMLDivElement | null>(null);
+
+  // The plan is a fixed 536×340 canvas scaled to its container, so the
+  // absolutely-positioned tables keep their layout at every width.
+  // (CSS can't divide lengths into a scale() number, so JS owns it.)
+  useEffect(() => {
+    const el = planWrapRef.current;
+    if (!el) return;
+    const apply = () =>
+      el.style.setProperty("--dm-plan-scale", String(el.clientWidth / 536));
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const id = window.setInterval(() => setTick((t) => t + 1), 1000);
@@ -217,6 +234,18 @@ export function DemoInteractive() {
       setGuestSent((prev) => ({ ...prev, [code]: true }));
       setFlash(`New request · Table 7 · ${REQUEST_LABEL[code]}`);
       setStep(3);
+      // On stacked layouts (phone/tablet) the staff screens are below
+      // the fold — the reaction would be invisible. First tap only:
+      // bring the wall tablet into view so the magic actually shows.
+      if (!scrolledOnce.current && window.innerWidth < 1360) {
+        scrolledOnce.current = true;
+        later(450, () =>
+          tabletRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          })
+        );
+      }
       later(10_000, () =>
         setGuestSent((prev) => ({ ...prev, [code]: false }))
       );
@@ -394,7 +423,7 @@ export function DemoInteractive() {
           <div className="dm-step" data-active={step === 2}>
             <b>2</b> Watch it land on both staff screens, instantly
           </div>
-          <div className="dm-tablet">
+          <div className="dm-tablet" ref={tabletRef}>
             <div className="dm-staff-top">
               <span className="dm-staff-brand">mytable<em>view</em></span>
               <span className="dm-staff-venue">Bella Vista · Live floor</span>
@@ -408,6 +437,7 @@ export function DemoInteractive() {
 
             {flash ? <div className="dm-ticker">{flash}</div> : null}
 
+            <div className="dm-plan-wrap" ref={planWrapRef}>
             <div className="dm-plan">
               <span className="dm-zone-tag" style={{ left: "4%", top: "4%" }}>Terrace</span>
               <span className="dm-zone-tag" style={{ left: "56%", top: "4%" }}>Inside</span>
@@ -454,6 +484,7 @@ export function DemoInteractive() {
               ))}
             </div>
 
+            </div>
             <p className="dm-plan-note">
               Amber = waiting · red = over 10 minutes. Your request turns red
               after {YOU_OVERDUE_AFTER}s here — a time-lapse of the real 10-minute rule.
