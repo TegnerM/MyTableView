@@ -25,6 +25,7 @@ type Body = {
   displayName?: unknown;
   timezone?: unknown;
   inviteToken?: unknown;
+  referralCode?: unknown;
 };
 
 export async function POST(request: Request) {
@@ -167,11 +168,33 @@ export async function POST(request: Request) {
     const rmc = cookieVal("mtv-rmc");
     const utm = cookieVal("mtv-utm");
 
+    // Typed referral code — for verbal pitches ("use my code maria").
+    // It outranks the cookie: the person's own statement of who sent
+    // them beats a stale first-touch. Only real influencer codes count;
+    // anything else is silently ignored so a typo never blocks signup.
+    let typedRef: string | null = null;
+    const rawTyped =
+      typeof body.referralCode === "string"
+        ? body.referralCode.trim().toLowerCase()
+        : "";
+    if (/^[a-z0-9-]{2,32}$/.test(rawTyped)) {
+      const { data: influencer } = await service
+        .from("influencers")
+        .select("code")
+        .eq("code", rawTyped)
+        .eq("active", true)
+        .maybeSingle<{ code: string }>();
+      typedRef = influencer?.code ?? null;
+    }
+
     let kind: string | null = null;
     let key: string | null = null;
     if (inviteToken) {
       kind = "invite";
       key = inviteToken;
+    } else if (typedRef) {
+      kind = "ref";
+      key = typedRef;
     } else if (ref) {
       kind = "ref";
       key = ref;

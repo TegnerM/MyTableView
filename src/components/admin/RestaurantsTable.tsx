@@ -21,6 +21,10 @@ export type AdminVenueRow = {
   lastActivity: string;
   notes: string;
   stripeCustomerId: string | null;
+  /** Influencer code when acquired via ref; null otherwise. */
+  referrerCode: string | null;
+  /** Raw acquisition kind (ref / invite / rmc / utm / null). */
+  acquiredVia: string | null;
 };
 
 export function RestaurantsTable({ rows }: { rows: AdminVenueRow[] }) {
@@ -28,6 +32,11 @@ export function RestaurantsTable({ rows }: { rows: AdminVenueRow[] }) {
   const [error, setError] = useState<string | null>(null);
   const [notes, setNotes] = useState<Record<string, string>>(
     Object.fromEntries(rows.map((row) => [row.accountId, row.notes]))
+  );
+  const [referrers, setReferrers] = useState<Record<string, string>>(
+    Object.fromEntries(
+      rows.map((row) => [row.accountId, row.referrerCode ?? ""])
+    )
   );
 
   const act = async (body: object, key: string, reloadAfter = true) => {
@@ -103,6 +112,7 @@ export function RestaurantsTable({ rows }: { rows: AdminVenueRow[] }) {
             <th>Signed up</th>
             <th>Status</th>
             <th>Last activity</th>
+            <th>Referrer</th>
             <th>Notes</th>
             <th>Actions</th>
           </tr>
@@ -122,6 +132,40 @@ export function RestaurantsTable({ rows }: { rows: AdminVenueRow[] }) {
                 </span>
               </td>
               <td>{row.lastActivity}</td>
+              <td>
+                {/* Influencer code, editable: settles "that one was
+                    mine" claims after a verbal pitch. Blank = clear.
+                    Non-ref acquisitions (invite/campaign) show their
+                    kind and stay read-only here. */}
+                {row.acquiredVia && row.acquiredVia !== "ref" ? (
+                  <span className="mtv-cell-sub">{row.acquiredVia}</span>
+                ) : (
+                  <input
+                    className="mtv-notes-input"
+                    style={{ maxWidth: "7rem" }}
+                    value={referrers[row.accountId] ?? ""}
+                    onChange={(e) =>
+                      setReferrers((prev) => ({
+                        ...prev,
+                        [row.accountId]: e.target.value.toLowerCase(),
+                      }))
+                    }
+                    onBlur={() => {
+                      const next = (referrers[row.accountId] ?? "").trim();
+                      if (next === (row.referrerCode ?? "")) return;
+                      void act(
+                        {
+                          action: "set_attribution",
+                          accountId: row.accountId,
+                          code: next,
+                        },
+                        `ref-${row.accountId}`
+                      );
+                    }}
+                    placeholder="code…"
+                  />
+                )}
+              </td>
               <td>
                 <input
                   className="mtv-notes-input"

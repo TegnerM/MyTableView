@@ -37,6 +37,7 @@ export function SignUpForm({
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [referralCode, setReferralCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -83,6 +84,9 @@ export function SignUpForm({
           displayName: displayName.trim(),
           timezone,
           ...(inviteToken ? { inviteToken } : {}),
+          ...(referralCode.trim()
+            ? { referralCode: referralCode.trim().toLowerCase() }
+            : {}),
         }),
       });
 
@@ -165,6 +169,17 @@ export function SignUpForm({
           </label>
         </>
       )}
+
+      <label className="mtv-field">
+        <span>Referral code (optional)</span>
+        <input
+          type="text"
+          value={referralCode}
+          onChange={(e) => setReferralCode(e.target.value.toLowerCase())}
+          placeholder="Did someone recommend us?"
+          maxLength={32}
+        />
+      </label>
 
       {error ? <p className="mtv-signin-error">{error}</p> : null}
       {notice ? <p className="mtv-signin-notice">{notice}</p> : null}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import QRCode from "qrcode";
 
 /**
  * Influencer links — create, toggle, copy, and read results. First
@@ -29,6 +30,7 @@ export function InfluencersPanel({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [qr, setQr] = useState<{ code: string; dataUrl: string } | null>(null);
 
   const act = async (body: object, reload = true) => {
     setBusy(true);
@@ -51,6 +53,25 @@ export function InfluencersPanel({
       setError("Action failed.");
     } finally {
       setBusy(false);
+    }
+  };
+
+  // QR of the influencer's link, for in-person pitches: the influencer
+  // shows the code, the restaurant scans, the ?ref cookie does the rest.
+  const showQr = async (code: string, link: string) => {
+    if (qr?.code === code) {
+      setQr(null);
+      return;
+    }
+    try {
+      const dataUrl = await QRCode.toDataURL(link, {
+        width: 480,
+        margin: 2,
+        color: { dark: "#16293d", light: "#ffffff" },
+      });
+      setQr({ code, dataUrl });
+    } catch {
+      setError("Could not generate the QR code.");
     }
   };
 
@@ -141,6 +162,13 @@ export function InfluencersPanel({
                       <button
                         type="button"
                         className="mtv-admin-btn"
+                        onClick={() => void showQr(row.code, link)}
+                      >
+                        {qr?.code === row.code ? "Hide QR" : "QR"}
+                      </button>
+                      <button
+                        type="button"
+                        className="mtv-admin-btn"
                         disabled={busy}
                         onClick={() =>
                           void act({
@@ -160,6 +188,47 @@ export function InfluencersPanel({
           )}
         </tbody>
       </table>
+
+      {qr ? (
+        <div
+          style={{
+            marginTop: "1rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "1.25rem",
+            flexWrap: "wrap",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={qr.dataUrl}
+            alt={`QR link for ${qr.code}`}
+            width={200}
+            height={200}
+            style={{
+              border: "1px solid #e0dace",
+              borderRadius: "0.6rem",
+              background: "#fff",
+            }}
+          />
+          <div>
+            <p style={{ margin: "0 0 0.5rem", fontWeight: 650 }}>
+              {qr.code}&apos;s pitch QR
+            </p>
+            <p style={{ margin: "0 0 0.75rem", fontSize: "0.85rem" }}>
+              Send this to the influencer — a restaurant that scans it
+              lands on the site with their credit attached for 30 days.
+            </p>
+            <a
+              className="mtv-admin-btn"
+              href={qr.dataUrl}
+              download={`mytableview-${qr.code}-qr.png`}
+            >
+              Download PNG
+            </a>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }

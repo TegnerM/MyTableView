@@ -602,6 +602,85 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true });
     }
 
+    // ---------------------------------------------- attribution
+
+    case "set_attribution": {
+      // The dispute-settler: an influencer pitched in person, the
+      // restaurant signed up without link or code, the influencer
+      // claims it, Michael verifies and stamps it. Audited.
+      const code =
+        typeof body.code === "string" ? body.code.trim().toLowerCase() : "";
+
+      if (!accountId) {
+        return NextResponse.json(
+          { ok: false, detail: "accountId required" },
+          { status: 400 }
+        );
+      }
+
+      if (code === "") {
+        const { error } = await service
+          .from("accounts")
+          .update({ acquired_source_kind: null, acquired_source_key: null })
+          .eq("id", accountId);
+        if (error) {
+          return NextResponse.json(
+            { ok: false, detail: error.message },
+            { status: 500 }
+          );
+        }
+        await logAudit(
+          gate.userId,
+          "set_attribution",
+          { type: "account", id: accountId },
+          { cleared: true },
+          ip
+        );
+        return NextResponse.json({ ok: true });
+      }
+
+      if (!/^[a-z0-9-]{2,32}$/.test(code)) {
+        return NextResponse.json(
+          { ok: false, detail: "code: 2-32 chars, a-z 0-9 -" },
+          { status: 400 }
+        );
+      }
+
+      const { data: influencer } = await service
+        .from("influencers")
+        .select("id")
+        .eq("code", code)
+        .maybeSingle<{ id: string }>();
+
+      if (!influencer) {
+        return NextResponse.json(
+          { ok: false, detail: `no influencer with code "${code}"` },
+          { status: 404 }
+        );
+      }
+
+      const { error } = await service
+        .from("accounts")
+        .update({ acquired_source_kind: "ref", acquired_source_key: code })
+        .eq("id", accountId);
+
+      if (error) {
+        return NextResponse.json(
+          { ok: false, detail: error.message },
+          { status: 500 }
+        );
+      }
+
+      await logAudit(
+        gate.userId,
+        "set_attribution",
+        { type: "account", id: accountId },
+        { code },
+        ip
+      );
+      return NextResponse.json({ ok: true });
+    }
+
     // ---------------------------------------------------- payouts
 
     case "record_payout": {

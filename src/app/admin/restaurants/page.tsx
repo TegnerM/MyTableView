@@ -42,6 +42,8 @@ type AccountRow = {
   stripe_customer_id: string | null;
   admin_notes: string | null;
   owner_user_id: string | null;
+  acquired_source_kind: string | null;
+  acquired_source_key: string | null;
 };
 
 type RequestRow = { venue_id: string; created_at: string };
@@ -68,7 +70,7 @@ export default async function AdminRestaurantsPage() {
       service
         .from("accounts")
         .select(
-          "id, name, billing_status, plan, max_venues, stripe_customer_id, admin_notes, owner_user_id"
+          "id, name, billing_status, plan, max_venues, stripe_customer_id, admin_notes, owner_user_id, acquired_source_kind, acquired_source_key"
         )
         .returns<AccountRow[]>(),
       // Latest guest requests; first row per venue = last activity.
@@ -142,6 +144,11 @@ export default async function AdminRestaurantsPage() {
       lastActivity: lastActivity.get(venue.id)?.slice(0, 10) ?? "never",
       notes: account?.admin_notes ?? "",
       stripeCustomerId: account?.stripe_customer_id ?? null,
+      referrerCode:
+        account?.acquired_source_kind === "ref"
+          ? (account?.acquired_source_key ?? null)
+          : null,
+      acquiredVia: account?.acquired_source_kind ?? null,
     };
   });
 
