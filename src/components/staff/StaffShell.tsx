@@ -4,6 +4,12 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { getBrowserClient } from "@/lib/supabase/browser";
 import { BrandMark } from "@/components/BrandMark";
+import {
+  getStaffStrings,
+  readStaffLocale,
+  storeStaffLocale,
+  STAFF_LOCALES,
+} from "@/lib/i18n/staff";
 
 /**
  * The one staff chrome: dark sidebar, navigation, user card, day/night
@@ -34,39 +40,14 @@ type Props = {
 
 const NAV: {
   key: StaffShellSection;
-  label: string;
   href: string;
   managerOnly: boolean;
   icon: () => ReactNode;
 }[] = [
-  {
-    key: "overview",
-    label: "Overview",
-    href: "/staff/floor",
-    managerOnly: false,
-    icon: OverviewIcon,
-  },
-  {
-    key: "layout",
-    label: "Layout",
-    href: "/staff/layout",
-    managerOnly: true,
-    icon: LayoutIcon,
-  },
-  {
-    key: "insights",
-    label: "Insights",
-    href: "/staff/insights",
-    managerOnly: true,
-    icon: ChartIcon,
-  },
-  {
-    key: "settings",
-    label: "Settings",
-    href: "/staff/settings",
-    managerOnly: true,
-    icon: GearIcon,
-  },
+  { key: "overview", href: "/staff/floor", managerOnly: false, icon: OverviewIcon },
+  { key: "layout", href: "/staff/layout", managerOnly: true, icon: LayoutIcon },
+  { key: "insights", href: "/staff/insights", managerOnly: true, icon: ChartIcon },
+  { key: "settings", href: "/staff/settings", managerOnly: true, icon: GearIcon },
 ];
 
 export function StaffShell({
@@ -79,6 +60,19 @@ export function StaffShell({
   children,
 }: Props) {
   const [theme, setTheme] = useState<"day" | "night">("day");
+
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as the theme.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
+  const changeLocale = useCallback((next: string) => {
+    storeStaffLocale(next);
+    // Full reload so server-rendered pages re-resolve too.
+    window.location.reload();
+  }, []);
 
   // Restore the per-device theme after hydration; SSR always says day.
   useEffect(() => {
@@ -146,7 +140,7 @@ export function StaffShell({
 
         {venues && venues.length > 1 ? (
           <label className="mtv-venue-switch">
-            <span>Venue</span>
+            <span>{t.shell.venue}</span>
             <select
               value={venueId}
               onChange={(event) => void switchVenue(event.target.value)}
@@ -166,7 +160,7 @@ export function StaffShell({
             prefetch={false}
             className="mtv-add-venue"
           >
-            + Add restaurant
+            {t.shell.addRestaurant}
           </Link>
         ) : null}
 
@@ -175,7 +169,7 @@ export function StaffShell({
             item.key === active ? (
               <span key={item.key} className="mtv-nav-item" data-active="true">
                 {item.icon()}
-                {item.label}
+                {t.shell[item.key]}
               </span>
             ) : (
               <Link
@@ -185,7 +179,7 @@ export function StaffShell({
                 className="mtv-nav-item"
               >
                 {item.icon()}
-                {item.label}
+                {t.shell[item.key]}
               </Link>
             )
           )}
@@ -198,7 +192,13 @@ export function StaffShell({
             </span>
             <span>
               <span className="mtv-user-name">{displayName}</span>
-              <span className="mtv-user-role">{role}</span>
+              <span className="mtv-user-role">
+                {role === "owner"
+                  ? t.shell.roleOwner
+                  : role === "manager"
+                    ? t.shell.roleManager
+                    : t.shell.roleWaiter}
+              </span>
             </span>
           </div>
           <button
@@ -208,15 +208,29 @@ export function StaffShell({
             aria-pressed={theme === "night"}
           >
             {theme === "night" ? <SunIcon /> : <MoonIcon />}
-            {theme === "night" ? "Day mode" : "Night mode"}
+            {theme === "night" ? t.shell.dayMode : t.shell.nightMode}
           </button>
+          <label className="mtv-lang-pick">
+            <span className="sr-only">{t.shell.language}</span>
+            <select
+              value={locale}
+              onChange={(event) => changeLocale(event.target.value)}
+              aria-label={t.shell.language}
+            >
+              {STAFF_LOCALES.map((option) => (
+                <option key={option.code} value={option.code}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
           <button
             type="button"
             className="mtv-signout"
             onClick={() => void signOut()}
           >
             <LogoutIcon />
-            Log out
+            {t.shell.logOut}
           </button>
         </div>
       </aside>

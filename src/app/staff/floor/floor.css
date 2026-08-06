@@ -1735,3 +1735,27 @@
     min-height: 3.4rem;
   }
 }
+
+/* --------------------------------------------------------------- */
+/* Language picker (sidebar foot)                                   */
+/* --------------------------------------------------------------- */
+
+.mtv-floor .mtv-lang-pick select{
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--mtv-sidebar-text, #e8f0f2);
+  background: var(--mtv-sidebar-2, #123039);
+  border: 1px solid var(--mtv-sidebar-line, #1d4049);
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.mtv-floor .sr-only{
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
