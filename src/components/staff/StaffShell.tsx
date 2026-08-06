@@ -10,6 +10,7 @@ import {
   storeStaffLocale,
   STAFF_LOCALES,
 } from "@/lib/i18n/staff";
+import { getShopStrings } from "@/lib/i18n/shop";
 
 /**
  * The one staff chrome: dark sidebar, navigation, user card, day/night
@@ -23,7 +24,12 @@ import {
 
 const THEME_KEY = "mtv-floor-theme";
 
-export type StaffShellSection = "overview" | "layout" | "insights" | "settings";
+export type StaffShellSection =
+  | "overview"
+  | "layout"
+  | "insights"
+  | "settings"
+  | "shop";
 
 type Props = {
   active: StaffShellSection;
@@ -48,6 +54,7 @@ const NAV: {
   { key: "layout", href: "/staff/layout", managerOnly: true, icon: LayoutIcon },
   { key: "insights", href: "/staff/insights", managerOnly: true, icon: ChartIcon },
   { key: "settings", href: "/staff/settings", managerOnly: true, icon: GearIcon },
+  { key: "shop", href: "/staff/shop", managerOnly: true, icon: ShopIcon },
 ];
 
 export function StaffShell({
@@ -169,7 +176,7 @@ export function StaffShell({
             item.key === active ? (
               <span key={item.key} className="mtv-nav-item" data-active="true">
                 {item.icon()}
-                {t.shell[item.key]}
+                {(item.key === "shop" ? getShopStrings(locale).nav : t.shell[item.key])}
               </span>
             ) : (
               <Link
@@ -179,7 +186,7 @@ export function StaffShell({
                 className="mtv-nav-item"
               >
                 {item.icon()}
-                {t.shell[item.key]}
+                {(item.key === "shop" ? getShopStrings(locale).nav : t.shell[item.key])}
               </Link>
             )
           )}
@@ -275,6 +282,15 @@ function GearIcon() {
     <svg viewBox="0 0 20 20" className="mtv-nav-icon" aria-hidden="true">
       <circle cx="10" cy="10" r="2.6" />
       <path d="M10 3v2.2M10 14.8V17M3 10h2.2M14.8 10H17M5.05 5.05l1.56 1.56M13.4 13.4l1.55 1.55M14.95 5.05l-1.56 1.56M6.6 13.4l-1.55 1.55" />
+    </svg>
+  );
+}
+
+function ShopIcon() {
+  return (
+    <svg viewBox="0 0 20 20" className="mtv-nav-icon" aria-hidden="true">
+      <path d="M4 7h12l-1 9.5H5Z" />
+      <path d="M7.5 9V5.5a2.5 2.5 0 0 1 5 0V9" />
     </svg>
   );
 }

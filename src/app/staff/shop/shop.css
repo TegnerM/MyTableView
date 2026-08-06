@@ -1,0 +1,124 @@
+/* Shop — floor tokens, so day/night theming is inherited. */
+
+.mtv-shop{
+  padding: 1.25rem 1.5rem 3rem;
+  color: var(--mtv-text, #16293d);
+}
+
+.mtv-shop .mtv-shop-head h1{
+  margin: 0 0 0.25rem;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+
+.mtv-shop .mtv-shop-head p{
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+  color: var(--mtv-text-muted, #6b7a89);
+  max-width: 40rem;
+}
+
+.mtv-shop .mtv-shop-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 1rem;
+}
+
+.mtv-shop .mtv-shop-card{
+  display: flex;
+  flex-direction: column;
+  background: var(--mtv-card, #ffffff);
+  border: 1px solid var(--mtv-line, #e5e0d5);
+  border-radius: 0.9rem;
+  overflow: hidden;
+  box-shadow: 0 6px 16px var(--mtv-shadow, rgba(22, 41, 61, 0.08));
+}
+
+.mtv-shop .mtv-shop-img{
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--mtv-bg, #f6f4ef);
+}
+
+.mtv-shop .mtv-shop-img-empty{
+  display: block;
+}
+
+.mtv-shop .mtv-shop-body{
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.85rem 0.95rem 1rem;
+  flex: 1;
+}
+
+.mtv-shop .mtv-shop-body h2{
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.3;
+}
+
+.mtv-shop .mtv-shop-body p{
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--mtv-text-muted, #6b7a89);
+}
+
+.mtv-shop .mtv-shop-buyrow{
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding-top: 0.5rem;
+}
+
+.mtv-shop .mtv-shop-price{
+  font-size: 1.05rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.mtv-shop .mtv-shop-notice{
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.9rem;
+  color: var(--mtv-teal-deep, #0b5f56);
+  background: var(--mtv-teal-wash, #e6f6f4);
+  border: 1px solid var(--mtv-teal, #12a89a);
+  border-radius: 0.6rem;
+}
+
+.mtv-shop .mtv-shop-notice[data-tone="muted"]{
+  color: var(--mtv-text-muted, #6b7a89);
+  background: var(--mtv-card, #ffffff);
+  border-color: var(--mtv-line, #e5e0d5);
+}
+
+.mtv-shop .mtv-shop-error{
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.9rem;
+  color: var(--mtv-overdue-deep, #c03338);
+  background: var(--mtv-danger-wash, #fdeeee);
+  border: 1px solid var(--mtv-overdue, #e5484d);
+  border-radius: 0.6rem;
+}
+
+.mtv-shop .mtv-shop-empty,
+.mtv-shop .mtv-shop-foot{
+  font-size: 0.85rem;
+  color: var(--mtv-text-muted, #6b7a89);
+}
+
+.mtv-shop .mtv-shop-foot{
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 640px){
+  .mtv-shop{
+    padding: 1rem 0.9rem 2.5rem;
+  }
+}
