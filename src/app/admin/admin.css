@@ -490,3 +490,99 @@
   border: 1px dashed var(--mtv-brand-line, #e0dace);
   border-radius: 0.5rem;
 }
+
+/* --------------------------------------------------------------- */
+/* Mobile admin — run the empire from a phone.                      */
+/* The sidebar collapses into a compact top bar with wrapping nav   */
+/* pills; wide tables scroll inside their cards instead of blowing  */
+/* the page open sideways.                                          */
+/* --------------------------------------------------------------- */
+
+@media (max-width: 860px){
+  .mtv-admin{
+    display: block;
+  }
+
+  .mtv-admin .mtv-admin-sidebar{
+    position: static;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    padding: 0.75rem 0.9rem;
+  }
+
+  .mtv-admin .mtv-admin-brand{
+    margin: 0;
+    flex: 1 1 auto;
+  }
+
+  /* Nav becomes wrapping pills, full row under the brand. */
+  .mtv-admin .mtv-admin-nav{
+    order: 3;
+    flex: 1 1 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.3rem;
+    margin: 0;
+  }
+
+  .mtv-admin .mtv-admin-nav a{
+    padding: 0.4rem 0.7rem;
+    font-size: 0.78rem;
+    border-radius: 2rem;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  /* Foot joins the brand row: email hidden (it's you), logout stays. */
+  .mtv-admin .mtv-admin-foot{
+    order: 2;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    flex: 0 0 auto;
+  }
+
+  .mtv-admin .mtv-admin-foot > span{
+    display: none;
+  }
+
+  .mtv-admin .mtv-admin-main{
+    padding: 1rem 0.9rem 2.5rem;
+  }
+
+  /* Wide tables scroll within their card, not the whole page. */
+  .mtv-admin .mtv-admin-card{
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mtv-admin .mtv-admin-table{
+    min-width: 560px;
+  }
+
+  .mtv-admin .mtv-kpis{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mtv-admin .mtv-admin-form{
+    flex-wrap: wrap;
+  }
+
+  .mtv-admin .mtv-admin-form input,
+  .mtv-admin .mtv-admin-form select{
+    flex: 1 1 10rem;
+    max-width: none !important;
+  }
+
+  /* Tap-sized buttons. */
+  .mtv-admin .mtv-admin-btn{
+    padding: 0.5rem 0.8rem;
+  }
+}
