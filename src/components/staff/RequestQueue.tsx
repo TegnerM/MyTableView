@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   formatElapsed,
   isRequestEscalated,
@@ -9,6 +9,7 @@ import {
   type FloorTable,
 } from "@/lib/staff/floor-types";
 import { pickLocale } from "@/lib/i18n/guest";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * The request queue, grouped by table.
@@ -55,6 +56,14 @@ export function RequestQueue({
   onAct,
 }: Props) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [staffLocale, setStaffLocale] = useState("en");
+  useEffect(() => {
+    setStaffLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(staffLocale);
 
   const groups = useMemo<TableGroup[]>(() => {
     const result: TableGroup[] = [];
@@ -111,8 +120,8 @@ export function RequestQueue({
   if (groups.length === 0) {
     return (
       <section className="mtv-requests-panel">
-        <h2>Active requests</h2>
-        <p className="mtv-empty">Nothing outstanding.</p>
+        <h2>{t.floor.activeRequests}</h2>
+        <p className="mtv-empty">{t.floor.nothingOutstanding}</p>
       </section>
     );
   }
@@ -120,8 +129,9 @@ export function RequestQueue({
   return (
     <section className="mtv-requests-panel">
       <h2>
-        Active requests ({groups.length}{" "}
-        {groups.length === 1 ? "table" : "tables"}, {totalRequests})
+        {t.floor.activeRequests} ({groups.length}{" "}
+        {groups.length === 1 ? t.floor.tableSingular : t.floor.tablePlural},{" "}
+        {totalRequests})
       </h2>
 
       <ul className="mtv-queue">
@@ -161,7 +171,7 @@ export function RequestQueue({
                 aria-expanded={isOpen}
               >
                 <span className="mtv-queue-table">
-                  Table {group.tableLabel}
+                  {t.floor.tableN.replace("{label}", group.tableLabel)}
                   {group.requests.length > 1 ? (
                     <span className="mtv-queue-count">
                       {group.requests.length}
@@ -172,7 +182,10 @@ export function RequestQueue({
                 <span className="mtv-queue-summary">
                   {repeated ? (
                     <span className="mtv-queue-repeat">
-                      asked {group.worstTapCount}×
+                      {t.floor.askedTimes.replace(
+                        "{count}",
+                        String(group.worstTapCount)
+                      )}
                     </span>
                   ) : null}
                   {summary}
@@ -203,7 +216,7 @@ export function RequestQueue({
                     })
                   }
                 >
-                  Done all
+                  {t.floor.doneAll}
                 </button>
               </div>
 
@@ -235,7 +248,7 @@ export function RequestQueue({
                               })
                             }
                           >
-                            Seen
+                            {t.floor.seen}
                           </button>
                         ) : null}
                         <button
@@ -249,7 +262,7 @@ export function RequestQueue({
                             })
                           }
                         >
-                          Done
+                          {t.floor.done}
                         </button>
                       </span>
                     </li>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
 import { getStaffIdentity } from "@/lib/staff/floor-state";
@@ -8,6 +8,11 @@ import { getServiceClient } from "@/lib/supabase/service";
 import { generateTagId } from "@/lib/tags/generate-ids";
 import { BrandMark } from "@/components/BrandMark";
 import { PrintButton } from "@/components/staff/PrintButton";
+import {
+  getStaffStrings,
+  resolveStaffLocale,
+  STAFF_LANG_COOKIE,
+} from "@/lib/i18n/staff";
 import "./qr.css";
 
 /**
@@ -30,6 +35,15 @@ type TableRow = { id: string; label: string };
 type TagRow = { id: string; table_id: string | null; status: string };
 
 export default async function QrPrintPage() {
+  const store = await cookies();
+  const localeHeaders = await headers();
+  const t = getStaffStrings(
+    resolveStaffLocale(
+      store.get(STAFF_LANG_COOKIE)?.value,
+      localeHeaders.get("accept-language")
+    )
+  );
+
   const identity = await getStaffIdentity();
 
   if (!identity) {
@@ -122,25 +136,22 @@ export default async function QrPrintPage() {
       <header className="mtv-qr-bar">
         <BrandMark className="mtv-qr-brand" />
         <div className="mtv-qr-bar-text">
-          <h1>Table QR codes</h1>
-          <p>
-            {identity.venueName} — cut along the cards, one per table. Guests
-            scan with their camera; no app needed.
-          </p>
+          <h1>{t.qr.title}</h1>
+          <p>{t.qr.sub.replace("{venue}", identity.venueName)}</p>
         </div>
         <div className="mtv-qr-bar-actions">
           <PrintButton />
           <Link href="/staff/floor" className="mtv-qr-back">
-            Back to floor
+            {t.qr.backToFloor}
           </Link>
         </div>
       </header>
 
       {cards.length === 0 ? (
         <p className="mtv-qr-empty">
-          No tables yet — draw your floor in the{" "}
-          <Link href="/staff/layout">layout editor</Link> first, then come back
-          to print.
+          {t.qr.emptyBefore}{" "}
+          <Link href="/staff/layout">{t.qr.layoutEditorLink}</Link>{" "}
+          {t.qr.emptyAfter}
         </p>
       ) : (
         <section className="mtv-qr-grid">
@@ -152,8 +163,10 @@ export default async function QrPrintPage() {
                 // URL — no user-controlled markup.
                 dangerouslySetInnerHTML={{ __html: svg }}
               />
-              <p className="mtv-qr-label">Table {table.label}</p>
-              <p className="mtv-qr-hint">Scan to call your waiter</p>
+              <p className="mtv-qr-label">
+                {t.floor.tableN.replace("{label}", table.label)}
+              </p>
+              <p className="mtv-qr-hint">{t.qr.scanHint}</p>
             </article>
           ))}
         </section>

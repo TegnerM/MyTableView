@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatMinutes, type TurnSettings } from "@/lib/staff/floor-types";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * Table-time allowances, editable by the venue.
@@ -30,6 +31,14 @@ export function TurnSettingsForm({ current }: Props) {
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "failed">(
     "idle"
   );
+
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
 
   const save = async () => {
     setStatus("saving");
@@ -65,15 +74,11 @@ export function TurnSettingsForm({ current }: Props) {
 
   return (
     <section className="mtv-settings-card">
-      <h2>Table time</h2>
-      <p className="mtv-settings-intro">
-        How long a table belongs to one party. The floor flags tables that
-        run over, so whoever plans the next seating sees it coming — it
-        never rushes a guest on its own.
-      </p>
+      <h2>{t.settings.turnTitle}</h2>
+      <p className="mtv-settings-intro">{t.settings.turnIntro}</p>
 
       <label className="mtv-settings-field">
-        <span className="mtv-settings-label">A table is allocated</span>
+        <span className="mtv-settings-label">{t.settings.tableAllocated}</span>
         <select
           value={standardMinutes}
           onChange={(event) => setStandardMinutes(Number(event.target.value))}
@@ -84,14 +89,11 @@ export function TurnSettingsForm({ current }: Props) {
             </option>
           ))}
         </select>
-        <span className="mtv-settings-help">
-          The normal allowance for a party, from the moment they are
-          seated.
-        </span>
+        <span className="mtv-settings-help">{t.settings.standardHelp}</span>
       </label>
 
       <label className="mtv-settings-field">
-        <span className="mtv-settings-label">A large party is allocated</span>
+        <span className="mtv-settings-label">{t.settings.largeAllocated}</span>
         <select
           value={largeMinutes}
           onChange={(event) => setLargeMinutes(Number(event.target.value))}
@@ -102,28 +104,22 @@ export function TurnSettingsForm({ current }: Props) {
             </option>
           ))}
         </select>
-        <span className="mtv-settings-help">
-          Big groups order in rounds and stay longer — usually three to
-          four hours.
-        </span>
+        <span className="mtv-settings-help">{t.settings.largeHelp}</span>
       </label>
 
       <label className="mtv-settings-field">
-        <span className="mtv-settings-label">A party counts as large from</span>
+        <span className="mtv-settings-label">{t.settings.largeFrom}</span>
         <select
           value={largePartySize}
           onChange={(event) => setLargePartySize(Number(event.target.value))}
         >
           {SIZE_OPTIONS.map((size) => (
             <option key={size} value={size}>
-              {size} guests
+              {t.settings.guestsN.replace("{count}", String(size))}
             </option>
           ))}
         </select>
-        <span className="mtv-settings-help">
-          Uses the guest count the waiter enters on the table — without a
-          count, the normal allowance applies.
-        </span>
+        <span className="mtv-settings-help">{t.settings.sizeHelp}</span>
       </label>
 
       <div className="mtv-settings-actions">
@@ -133,15 +129,15 @@ export function TurnSettingsForm({ current }: Props) {
           onClick={() => void save()}
           disabled={!dirty || status === "saving"}
         >
-          {status === "saving" ? "Saving…" : "Save"}
+          {status === "saving" ? t.settings.saving : t.settings.save}
         </button>
 
         {status === "saved" ? (
-          <span className="mtv-settings-status">Saved</span>
+          <span className="mtv-settings-status">{t.settings.saved}</span>
         ) : null}
         {status === "failed" ? (
           <span className="mtv-settings-status mtv-settings-status-error">
-            Could not save
+            {t.settings.couldNotSave}
           </span>
         ) : null}
       </div>

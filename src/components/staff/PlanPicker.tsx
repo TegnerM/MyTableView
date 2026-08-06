@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { plansForVenueCount, type Plan, type PlanKey } from "@/lib/billing/plans";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * The tier picker — shared by the lock screen and the Settings billing
@@ -18,6 +19,14 @@ export function PlanPicker({ venueCount }: Props) {
   const [interval, setInterval] = useState<"monthly" | "yearly">("monthly");
   const [busy, setBusy] = useState<PlanKey | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
 
   const plans = plansForVenueCount(venueCount).filter(
     (plan) => plan.interval === interval
@@ -37,13 +46,13 @@ export function PlanPicker({ venueCount }: Props) {
       const payload = (await response.json()) as { url?: string };
 
       if (!response.ok || !payload.url) {
-        setError("Could not start checkout. Please try again.");
+        setError(t.billing.checkoutFailed);
         return;
       }
 
       window.location.href = payload.url;
     } catch {
-      setError("Could not start checkout. Please try again.");
+      setError(t.billing.checkoutFailed);
     } finally {
       setBusy(null);
     }
@@ -51,7 +60,7 @@ export function PlanPicker({ venueCount }: Props) {
 
   return (
     <div className="mtv-plans">
-      <div className="mtv-plans-toggle" role="tablist" aria-label="Billing interval">
+      <div className="mtv-plans-toggle" role="tablist" aria-label={t.billing.intervalAria}>
         <button
           type="button"
           role="tab"
@@ -59,7 +68,7 @@ export function PlanPicker({ venueCount }: Props) {
           data-active={interval === "monthly"}
           onClick={() => setInterval("monthly")}
         >
-          Monthly
+          {t.billing.monthly}
         </button>
         <button
           type="button"
@@ -68,7 +77,7 @@ export function PlanPicker({ venueCount }: Props) {
           data-active={interval === "yearly"}
           onClick={() => setInterval("yearly")}
         >
-          Yearly — 2 months free
+          {t.billing.yearly}
         </button>
       </div>
 
@@ -83,7 +92,7 @@ export function PlanPicker({ venueCount }: Props) {
           >
             <span className="mtv-plans-label">{plan.label}</span>
             <span className="mtv-plans-price">
-              {busy === plan.key ? "Opening checkout…" : plan.priceLabel}
+              {busy === plan.key ? t.billing.openingCheckout : plan.priceLabel}
             </span>
           </button>
         ))}

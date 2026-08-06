@@ -1,6 +1,12 @@
 import Link from "next/link";
+import { cookies, headers } from "next/headers";
 import { ForgotPasswordForm } from "@/components/staff/ForgotPasswordForm";
 import { BrandMark } from "@/components/BrandMark";
+import {
+  getStaffStrings,
+  resolveStaffLocale,
+  STAFF_LANG_COOKIE,
+} from "@/lib/i18n/staff";
 import "../sign-in/sign-in.css";
 
 /**
@@ -17,30 +23,35 @@ export default async function ForgotPasswordPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const { error } = await searchParams;
+  const store = await cookies();
+  const headerList = await headers();
+  const t = getStaffStrings(
+    resolveStaffLocale(
+      store.get(STAFF_LANG_COOKIE)?.value,
+      headerList.get("accept-language")
+    )
+  );
 
   return (
     <main className="mtv-signin">
       <div className="mtv-signin-card">
         <BrandMark className="mtv-signin-brand" />
 
-        <h1 className="mtv-signin-title">Reset your password</h1>
+        <h1 className="mtv-signin-title">{t.auth.forgotTitle}</h1>
 
-        <p className="mtv-signin-sub">
-          Enter the email you sign in with and we&apos;ll send you a link
-          to choose a new password.
-        </p>
+        <p className="mtv-signin-sub">{t.auth.forgotSub}</p>
 
         {error === "expired" ? (
           <p className="mtv-signin-error" style={{ marginBottom: "1rem" }}>
-            That reset link has expired or was already used. Request a
-            fresh one below.
+            {t.auth.linkExpired}
           </p>
         ) : null}
 
         <ForgotPasswordForm />
 
         <p className="mtv-signin-alt">
-          Remembered it? <Link href="/staff/sign-in">Back to sign in</Link>
+          {t.auth.rememberedIt}{" "}
+          <Link href="/staff/sign-in">{t.auth.backToSignIn}</Link>
         </p>
       </div>
     </main>

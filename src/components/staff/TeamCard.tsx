@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * Team — the owner/manager crew panel on Settings.
@@ -41,6 +42,21 @@ export function TeamCard({ members, invites, viewerRole }: Props) {
   const [notice, setNotice] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
 
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
+
+  const roleLabel = (value: "owner" | "manager" | "waiter") =>
+    value === "owner"
+      ? t.shell.roleOwner
+      : value === "manager"
+        ? t.shell.roleManager
+        : t.shell.roleWaiter;
+
   const call = async (body: object, key: string) => {
     setBusy(key);
     setError(null);
@@ -59,12 +75,12 @@ export function TeamCard({ members, invites, viewerRole }: Props) {
       } | null;
 
       if (!response.ok || !payload?.ok) {
-        setError(payload?.detail ?? "That didn't work. Please try again.");
+        setError(payload?.detail ?? t.team.genericError);
         return null;
       }
       return payload;
     } catch {
-      setError("That didn't work. Please try again.");
+      setError(t.team.genericError);
       return null;
     } finally {
       setBusy(null);
@@ -81,18 +97,16 @@ export function TeamCard({ members, invites, viewerRole }: Props) {
     if (!payload) return;
 
     if (payload.emailSent) {
-      setNotice(`Invite emailed to ${email.trim()}.`);
+      setNotice(t.team.inviteEmailed.replace("{email}", email.trim()));
       window.location.reload();
     } else if (payload.link) {
       // Email not configured or failed — surface the link for manual
       // sending rather than losing the invite.
       try {
         await navigator.clipboard.writeText(payload.link);
-        setNotice(
-          `Invite created and link copied — the email couldn't be sent automatically, so paste it to ${email.trim()} yourself.`
-        );
+        setNotice(t.team.inviteCopied.replace("{email}", email.trim()));
       } catch {
-        setNotice(`Invite created. Send this link yourself: ${payload.link}`);
+        setNotice(t.team.inviteManual.replace("{link}", payload.link));
       }
     }
     setEmail("");
@@ -105,7 +119,7 @@ export function TeamCard({ members, invites, viewerRole }: Props) {
       setCopied(id);
       setTimeout(() => setCopied(null), 1500);
     } catch {
-      setError("Could not copy — open the invite link manually.");
+      setError(t.team.copyFailed);
     }
   };
 
@@ -116,24 +130,23 @@ export function TeamCard({ members, invites, viewerRole }: Props) {
 
   return (
     <section className="mtv-settings-card">
-      <h2>Team</h2>
+      <h2>{t.team.title}</h2>
       <p className="mtv-settings-intro">
-        Waiters see the live floor only. Managers also get Layout,
-        Insights and Settings.
-        {viewerRole === "owner" ? "" : " Only the owner can invite managers."}
+        {t.team.intro}
+        {viewerRole === "owner" ? "" : ` ${t.team.onlyOwnerInvites}`}
       </p>
 
       <form className="mtv-team-form" onSubmit={(e) => void invite(e)}>
         <input
           type="text"
-          placeholder="Name (optional)"
+          placeholder={t.team.namePlaceholder}
           value={name}
           onChange={(e) => setName(e.target.value)}
           maxLength={60}
         />
         <input
           type="email"
-          placeholder="email@example.com"
+          placeholder={t.team.emailPlaceholder}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -142,13 +155,13 @@ export function TeamCard({ members, invites, viewerRole }: Props) {
           value={role}
           onChange={(e) => setRole(e.target.value === "manager" ? "manager" : "waiter")}
         >
-          <option value="waiter">Waiter</option>
+          <option value="waiter">{t.team.waiter}</option>
           {viewerRole === "owner" ? (
-            <option value="manager">Manager</option>
+            <option value="manager">{t.team.manager}</option>
           ) : null}
         </select>
         <button type="submit" className="mtv-btn mtv-btn-primary" disabled={busy !== null}>
-          {busy === "invite" ? "Inviting…" : "Invite"}
+          {busy === "invite" ? t.team.inviting : t.team.invite}
         </button>
       </form>
 
@@ -158,8 +171,8 @@ export function TeamCard({ members, invites, viewerRole }: Props) {
       <table className="mtv-tags-table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Role</th>
+            <th>{t.team.colName}</th>
+            <th>{t.team.colRole}</th>
             <th></th>
           </tr>
         </thead>
@@ -168,9 +181,9 @@ export function TeamCard({ members, invites, viewerRole }: Props) {
             <tr key={member.staffId}>
               <td>
                 {member.displayName}
-                {member.isSelf ? " (you)" : ""}
+                {member.isSelf ? ` ${t.team.you}` : ""}
               </td>
-              <td>{member.role}</td>
+              <td>{roleLabel(member.role)}</td>
               <td>
                 {member.role !== "owner" &&
                 !member.isSelf &&
@@ -186,7 +199,7 @@ export function TeamCard({ members, invites, viewerRole }: Props) {
                       )
                     }
                   >
-                    {busy === `remove-${member.staffId}` ? "Removing…" : "Remove"}
+                    {busy === `remove-${member.staffId}` ? t.team.removing : t.team.remove}
                   </button>
                 ) : null}
               </td>
@@ -197,13 +210,13 @@ export function TeamCard({ members, invites, viewerRole }: Props) {
 
       {invites.length > 0 ? (
         <>
-          <h3 className="mtv-team-subhead">Pending invites</h3>
+          <h3 className="mtv-team-subhead">{t.team.pendingInvites}</h3>
           <table className="mtv-tags-table">
             <thead>
               <tr>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Expires</th>
+                <th>{t.team.colEmail}</th>
+                <th>{t.team.colRole}</th>
+                <th>{t.team.colExpires}</th>
                 <th></th>
               </tr>
             </thead>
@@ -211,7 +224,7 @@ export function TeamCard({ members, invites, viewerRole }: Props) {
               {invites.map((inviteRow) => (
                 <tr key={inviteRow.id}>
                   <td>{inviteRow.email}</td>
-                  <td>{inviteRow.role}</td>
+                  <td>{roleLabel(inviteRow.role)}</td>
                   <td>{inviteRow.expiresAt.slice(0, 10)}</td>
                   <td>
                     <div className="mtv-team-actions">
@@ -220,7 +233,7 @@ export function TeamCard({ members, invites, viewerRole }: Props) {
                         className="mtv-btn"
                         onClick={() => void copy(inviteRow.link, inviteRow.id)}
                       >
-                        {copied === inviteRow.id ? "Copied ✓" : "Copy link"}
+                        {copied === inviteRow.id ? t.team.copied : t.team.copyLink}
                       </button>
                       <button
                         type="button"
@@ -233,7 +246,7 @@ export function TeamCard({ members, invites, viewerRole }: Props) {
                           )
                         }
                       >
-                        {busy === `revoke-${inviteRow.id}` ? "…" : "Revoke"}
+                        {busy === `revoke-${inviteRow.id}` ? "…" : t.team.revoke}
                       </button>
                     </div>
                   </td>

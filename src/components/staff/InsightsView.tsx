@@ -1,10 +1,13 @@
+import { getStaffStrings } from "@/lib/i18n/staff";
+
 /**
  * Guest satisfaction results — the first Insights module. Reads like a
  * scoreboard, not a spreadsheet: two averages an owner can quote, and
  * a weekly trend that shows drift before it becomes a review.
  *
- * Presentational only; the page assembles the numbers so this can be
- * previewed and screenshotted with mock data.
+ * Presentational only; the page assembles the numbers (and resolves the
+ * staff locale) so this can be previewed and screenshotted with mock
+ * data.
  */
 
 const FACES = ["😖", "🙁", "😐", "🙂", "😍"];
@@ -24,34 +27,42 @@ export type InsightsData = {
   weeks: WeeklyPoint[];
 };
 
-export function InsightsView({ data }: { data: InsightsData }) {
+export function InsightsView({
+  data,
+  locale = "en",
+}: {
+  data: InsightsData;
+  locale?: string;
+}) {
+  const t = getStaffStrings(locale);
+
   return (
     <main className="mtv-insights">
       <header className="mtv-insights-header">
         <div>
-          <h1>Insights</h1>
+          <h1>{t.shell.insights}</h1>
           <p>{data.venueName}</p>
         </div>
       </header>
 
       <section className="mtv-insights-cards">
-        <ScoreCard title="Food" value={data.avgFood} />
-        <ScoreCard title="Service" value={data.avgService} />
+        <ScoreCard title={t.insights.food} value={data.avgFood} />
+        <ScoreCard title={t.insights.service} value={data.avgService} />
         <div className="mtv-score-card" data-kind="count">
           <span className="mtv-score-value">{data.responses}</span>
           <span className="mtv-score-title">
-            {data.responses === 1 ? "response" : "responses"} · last 90 days
+            {data.responses === 1
+              ? t.insights.responseSingular
+              : t.insights.responsePlural}{" "}
+            · {t.insights.last90Days}
           </span>
         </div>
       </section>
 
       <section className="mtv-insights-trend">
-        <h2>Recent weeks</h2>
+        <h2>{t.insights.recentWeeks}</h2>
         {data.weeks.every((week) => week.count === 0) ? (
-          <p className="mtv-insights-empty">
-            No ratings yet. Guests are asked two quick questions when
-            they request the bill — results collect here.
-          </p>
+          <p className="mtv-insights-empty">{t.insights.noRatings}</p>
         ) : (
           <div className="mtv-trend-grid">
             {data.weeks.map((week) => (
@@ -61,7 +72,14 @@ export function InsightsView({ data }: { data: InsightsData }) {
                     className="mtv-trend-bar"
                     data-series="food"
                     style={{ height: `${((week.food ?? 0) / 5) * 100}%` }}
-                    title={week.food !== null ? `Food ${week.food}` : undefined}
+                    title={
+                      week.food !== null
+                        ? t.insights.foodScore.replace(
+                            "{score}",
+                            String(week.food)
+                          )
+                        : undefined
+                    }
                   />
                   <span
                     className="mtv-trend-bar"
@@ -69,7 +87,10 @@ export function InsightsView({ data }: { data: InsightsData }) {
                     style={{ height: `${((week.service ?? 0) / 5) * 100}%` }}
                     title={
                       week.service !== null
-                        ? `Service ${week.service}`
+                        ? t.insights.serviceScore.replace(
+                            "{score}",
+                            String(week.service)
+                          )
                         : undefined
                     }
                   />
@@ -83,8 +104,8 @@ export function InsightsView({ data }: { data: InsightsData }) {
           </div>
         )}
         <div className="mtv-trend-legend">
-          <span data-series="food">Food</span>
-          <span data-series="service">Service</span>
+          <span data-series="food">{t.insights.food}</span>
+          <span data-series="service">{t.insights.service}</span>
         </div>
       </section>
     </main>

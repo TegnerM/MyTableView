@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getBrowserClient } from "@/lib/supabase/browser";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * Forgot password — request the reset email.
@@ -21,6 +22,14 @@ export function ForgotPasswordForm() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
+
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
@@ -33,16 +42,14 @@ export function ForgotPasswordForm() {
       );
 
       if (resetError && /rate limit/i.test(resetError.message)) {
-        setError(
-          "Too many requests — please wait a minute before trying again."
-        );
+        setError(t.auth.tooManyRequests);
         return;
       }
 
       // Success AND "no such user" both land here, deliberately.
       setSent(true);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t.auth.somethingWrong);
     } finally {
       setBusy(false);
     }
@@ -51,9 +58,8 @@ export function ForgotPasswordForm() {
   if (sent) {
     return (
       <p className="mtv-signin-notice">
-        If an account exists for <strong>{email.trim()}</strong>, a reset
-        link is on its way. Check your inbox (and spam folder) — the link
-        is valid for a limited time.
+        {t.auth.resetSentBefore} <strong>{email.trim()}</strong>
+        {t.auth.resetSentAfter}
       </p>
     );
   }
@@ -61,7 +67,7 @@ export function ForgotPasswordForm() {
   return (
     <form className="mtv-signin-form" onSubmit={(e) => void submit(e)}>
       <label className="mtv-field">
-        <span>Email</span>
+        <span>{t.auth.email}</span>
         <input
           type="email"
           value={email}
@@ -74,7 +80,7 @@ export function ForgotPasswordForm() {
       {error ? <p className="mtv-signin-error">{error}</p> : null}
 
       <button type="submit" className="mtv-signin-button" disabled={busy}>
-        {busy ? "Sending…" : "Send reset link"}
+        {busy ? t.auth.sending : t.auth.sendResetLink}
       </button>
     </form>
   );

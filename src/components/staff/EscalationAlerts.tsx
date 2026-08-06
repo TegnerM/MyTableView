@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   isEscalated,
   formatElapsed,
   type EscalationSettings,
   type FloorTable,
 } from "@/lib/staff/floor-types";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * Escalation alerts.
@@ -48,6 +49,14 @@ export function EscalationAlerts({
   settings,
   onSelectTable,
 }: Props) {
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [staffLocale, setStaffLocale] = useState("en");
+  useEffect(() => {
+    setStaffLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(staffLocale);
+
   // Recomputed on the tick, because a table crosses the grace period on
   // the clock rather than on any event.
   const escalated = useMemo(
@@ -107,8 +116,11 @@ export function EscalationAlerts({
         </span>
         <span>
           {escalated.length === 1
-            ? "1 table has asked twice"
-            : `${escalated.length} tables have asked twice`}
+            ? t.floor.oneTableAskedTwice
+            : t.floor.tablesAskedTwice.replace(
+                "{count}",
+                String(escalated.length)
+              )}
         </span>
       </div>
 
@@ -132,10 +144,10 @@ export function EscalationAlerts({
                 className="mtv-escalation-item"
               >
                 <span className="mtv-escalation-table">
-                  Table {table.label}
+                  {t.floor.tableN.replace("{label}", table.label)}
                 </span>
                 <span className="mtv-escalation-detail">
-                  asked {worst}×
+                  {t.floor.askedTimes.replace("{count}", String(worst))}
                 </span>
                 <span className="mtv-escalation-age">
                   {oldest ? formatElapsed(oldest, now) : ""}

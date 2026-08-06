@@ -19,6 +19,11 @@ import { EscalationAlerts } from "@/components/staff/EscalationAlerts";
 import { FloorPlan } from "@/components/staff/FloorPlan";
 import { StaffShell } from "@/components/staff/StaffShell";
 import { pickLocale } from "@/lib/i18n/guest";
+import {
+  getStaffStrings,
+  readStaffLocale,
+  type StaffStrings,
+} from "@/lib/i18n/staff";
 import { readStoredZone, storeZone } from "@/lib/staff/zone-memory";
 
 /**
@@ -52,6 +57,14 @@ type Props = {
 
 export function LiveFloor({ initialState, locale, initialNow }: Props) {
   const router = useRouter();
+
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [staffLocale, setStaffLocale] = useState("en");
+  useEffect(() => {
+    setStaffLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(staffLocale);
 
   // The floor renders straight from props — a state snapshot here would
   // freeze the mount-time data and discard every refresh.
@@ -478,7 +491,7 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
       venues={state.identity.venues}
       badge={
         <span className="mtv-live-badge" data-state={connection}>
-          {connection === "online" ? "Live" : "Offline"}
+          {connection === "online" ? t.floor.live : t.floor.offline}
         </span>
       }
     >
@@ -488,27 +501,26 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
 
         {connection === "offline" ? (
           <div className="mtv-offline-banner" role="alert">
-            <strong>Connection lost.</strong> This floor is frozen at{" "}
-            {new Date(lastSyncAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
-            — new guest requests are not showing. Reconnecting…
+            <strong>{t.floor.offlineTitle}</strong>{" "}
+            {t.floor.offlineBody.replace(
+              "{time}",
+              new Date(lastSyncAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            )}
           </div>
         ) : null}
 
         {actError ? (
           <div className="mtv-act-error" role="alert">
-            <span>
-              Couldn&apos;t reach the server — that action was not saved.
-              Please try again.
-            </span>
+            <span>{t.floor.actError}</span>
             <button
               type="button"
               className="mtv-btn mtv-btn-small"
               onClick={() => setActError(false)}
             >
-              Dismiss
+              {t.floor.dismiss}
             </button>
           </div>
         ) : null}
@@ -524,24 +536,24 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
         <div className="mtv-stat-row">
           <Stat
             icon={<TablesIcon />}
-            label="Tables occupied"
+            label={t.floor.statOccupied}
             value={`${counts.occupied}/${counts.total}`}
           />
           <Stat
             icon={<CheckIcon />}
-            label="All good"
+            label={t.floor.statGood}
             value={counts.good}
             tone="good"
           />
           <Stat
             icon={<WaitIcon />}
-            label="Waiting 5–10 min"
+            label={t.floor.statWaiting}
             value={counts.waiting}
             tone="waiting"
           />
           <Stat
             icon={<AlertIcon />}
-            label="Over 10 min"
+            label={t.floor.statOverdue}
             value={counts.overdue}
             tone="overdue"
           />
@@ -550,8 +562,8 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
         <div className="mtv-floor-body">
           <section className="mtv-floor-plan-panel">
             <div className="mtv-panel-head">
-              <h2>{view === "plan" ? "Floor plan" : "Table list"}</h2>
-              <div className="mtv-view-toggle" role="tablist" aria-label="Floor view">
+              <h2>{view === "plan" ? t.floor.floorPlan : t.floor.tableListTitle}</h2>
+              <div className="mtv-view-toggle" role="tablist" aria-label={t.floor.floorViewAria}>
                 <button
                   type="button"
                   role="tab"
@@ -559,7 +571,7 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
                   data-active={view === "plan" ? "true" : "false"}
                   onClick={() => switchView("plan")}
                 >
-                  Floor
+                  {t.floor.floorTab}
                 </button>
                 <button
                   type="button"
@@ -568,19 +580,24 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
                   data-active={view === "list" ? "true" : "false"}
                   onClick={() => switchView("list")}
                 >
-                  List
+                  {t.floor.listTab}
                 </button>
               </div>
               {view === "list" ? null : combineMode ? (
                 <div className="mtv-combine-controls">
-                  <span>{combinePicks.length} selected</span>
+                  <span>
+                    {t.floor.selectedCount.replace(
+                      "{count}",
+                      String(combinePicks.length)
+                    )}
+                  </span>
                   <button
                     type="button"
                     onClick={() => void confirmCombine()}
                     disabled={combinePicks.length < 2 || busy}
                     className="mtv-btn mtv-btn-primary"
                   >
-                    Combine
+                    {t.floor.combine}
                   </button>
                   <button
                     type="button"
@@ -590,7 +607,7 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
                     }}
                     className="mtv-btn"
                   >
-                    Cancel
+                    {t.floor.cancel}
                   </button>
                 </div>
               ) : (
@@ -599,7 +616,7 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
                   onClick={() => setCombineMode(true)}
                   className="mtv-btn"
                 >
-                  Combine tables
+                  {t.floor.combineTables}
                 </button>
               )}
             </div>
@@ -620,7 +637,8 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
                         storeZone(state.identity.venueId, zone.id);
                       }}
                     >
-                      {pickLocale(zone.name, locale) || `Zone ${index + 1}`}
+                      {pickLocale(zone.name, locale) ||
+                        t.floor.zoneFallback.replace("{n}", String(index + 1))}
                     </button>
                   ))}
                 </div>
@@ -634,7 +652,7 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
                     data-active={listZoneId === null ? "true" : "false"}
                     onClick={() => setListZoneId(null)}
                   >
-                    All zones
+                    {t.floor.allZones}
                   </button>
                   {state.areas.map((zone, index) => (
                     <button
@@ -646,7 +664,8 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
                       data-active={listZoneId === zone.id ? "true" : "false"}
                       onClick={() => setListZoneId(zone.id)}
                     >
-                      {pickLocale(zone.name, locale) || `Zone ${index + 1}`}
+                      {pickLocale(zone.name, locale) ||
+                        t.floor.zoneFallback.replace("{n}", String(index + 1))}
                     </button>
                   ))}
                 </div>
@@ -660,6 +679,7 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
                 showFree={showFree}
                 onToggleFree={() => setShowFree((value) => !value)}
                 locale={locale}
+                t={t}
                 now={now}
                 selectedId={selected}
                 onSelect={(tableId) =>
@@ -687,10 +707,10 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
                 }
               />
             ) : (
-              <p className="mtv-empty">No zones set up yet.</p>
+              <p className="mtv-empty">{t.floor.noZones}</p>
             )}
 
-            <Legend />
+            <Legend t={t} />
           </section>
 
           <aside className="mtv-side-panel">
@@ -709,6 +729,7 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
                 table={selectedTable}
                 now={now}
                 busy={busy}
+                t={t}
                 turns={state.turns}
                 onAct={act}
                 onClose={() => setSelected(null)}
@@ -726,6 +747,7 @@ function TableList({
   showFree,
   onToggleFree,
   locale,
+  t,
   now,
   selectedId,
   onSelect,
@@ -735,6 +757,7 @@ function TableList({
   showFree: boolean;
   onToggleFree: () => void;
   locale: string;
+  t: StaffStrings;
   now: number;
   selectedId: string | null;
   onSelect: (tableId: string) => void;
@@ -742,7 +765,7 @@ function TableList({
   return (
     <div className="mtv-table-list">
       {rows.length === 0 ? (
-        <p className="mtv-empty">No tables seated right now.</p>
+        <p className="mtv-empty">{t.floor.noTablesSeated}</p>
       ) : null}
 
       {rows.map(({ table, status }) => {
@@ -763,7 +786,7 @@ function TableList({
                     request.requestCode
                 )
                 .join(" · ")
-            : "No open requests";
+            : t.floor.noOpenRequests;
         const askedAgain = table.requests.some(
           (request) => request.tapCount >= 2
         );
@@ -782,7 +805,7 @@ function TableList({
               <span className="mtv-list-zone">
                 {pickLocale(table.areaName ?? {}, locale)}
                 {askedAgain ? (
-                  <span className="mtv-list-again">asked again</span>
+                  <span className="mtv-list-again">{t.floor.askedAgain}</span>
                 ) : null}
               </span>
               <span className="mtv-list-what">{what}</span>
@@ -791,12 +814,12 @@ function TableList({
               {oldest ? (
                 <>
                   <b>{formatElapsed(oldest, now)}</b>
-                  <span>waiting</span>
+                  <span>{t.floor.waiting}</span>
                 </>
               ) : table.sessionOpenedAt ? (
                 <>
                   <b>{formatElapsed(table.sessionOpenedAt, now)}</b>
-                  <span>at table</span>
+                  <span>{t.floor.atTable}</span>
                 </>
               ) : null}
             </span>
@@ -810,7 +833,9 @@ function TableList({
         onClick={onToggleFree}
         aria-expanded={showFree}
       >
-        <span>Free tables · {freeRows.length}</span>
+        <span>
+          {t.floor.freeTables.replace("{count}", String(freeRows.length))}
+        </span>
         <span
           className="mtv-list-free-chevron"
           data-open={showFree ? "true" : "false"}
@@ -836,7 +861,7 @@ function TableList({
                   {pickLocale(table.areaName ?? {}, locale)}
                 </span>
                 <span className="mtv-list-what">
-                  Free · seats {table.seats}
+                  {t.floor.freeSeats.replace("{seats}", String(table.seats))}
                 </span>
               </span>
             </button>
@@ -868,13 +893,13 @@ function Stat({
   );
 }
 
-function Legend() {
+function Legend({ t }: { t: StaffStrings }) {
   return (
     <ul className="mtv-legend">
-      <li data-status="good">All good</li>
-      <li data-status="waiting">Waiting 5–10 min</li>
-      <li data-status="overdue">Waiting over 10 min</li>
-      <li data-status="clear">Free</li>
+      <li data-status="good">{t.floor.legendGood}</li>
+      <li data-status="waiting">{t.floor.legendWaiting}</li>
+      <li data-status="overdue">{t.floor.legendOverdue}</li>
+      <li data-status="clear">{t.floor.legendFree}</li>
     </ul>
   );
 }
@@ -883,6 +908,7 @@ function TableDetail({
   table,
   now,
   busy,
+  t,
   turns,
   onAct,
   onClose,
@@ -890,6 +916,7 @@ function TableDetail({
   table: FloorTable;
   now: number;
   busy: boolean;
+  t: StaffStrings;
   turns: TurnSettings;
   onAct: (payload: Record<string, unknown>) => Promise<void>;
   onClose: () => void;
@@ -909,42 +936,47 @@ function TableDetail({
   return (
     <section className="mtv-detail-panel">
       <div className="mtv-panel-head">
-        <h2>Table {table.label}</h2>
+        <h2>{t.floor.tableN.replace("{label}", table.label)}</h2>
         <button type="button" className="mtv-btn mtv-btn-small" onClick={onClose}>
-          Close
+          {t.floor.close}
         </button>
       </div>
 
       <dl className="mtv-detail-list">
         <div>
-          <dt>Seats</dt>
+          <dt>{t.floor.seats}</dt>
           <dd>{table.seats}</dd>
         </div>
         {table.sessionOpenedAt ? (
           <>
             <div>
-              <dt>Time at table</dt>
+              <dt>{t.floor.timeAtTable}</dt>
               <dd>{formatElapsed(table.sessionOpenedAt, now)}</dd>
             </div>
             <div>
-              <dt>Table time</dt>
+              <dt>{t.floor.tableTime}</dt>
               <dd data-over={overBy > 0 ? "true" : "false"}>
                 {formatMinutes(allowance)}
                 {overBy > 0
-                  ? ` · ${formatMinutes(overBy)} over`
-                  : ` · ${formatMinutes(Math.max(1, allowance - elapsedMinutes))} left`}
+                  ? ` · ${t.floor.minutesOver.replace("{time}", formatMinutes(overBy))}`
+                  : ` · ${t.floor.minutesLeft.replace("{time}", formatMinutes(Math.max(1, allowance - elapsedMinutes)))}`}
               </dd>
             </div>
           </>
         ) : null}
         {table.combinedWith.length > 0 ? (
           <div>
-            <dt>Combined</dt>
-            <dd>with {table.combinedWith.length} more</dd>
+            <dt>{t.floor.combinedLabel}</dt>
+            <dd>
+              {t.floor.combinedWithMore.replace(
+                "{count}",
+                String(table.combinedWith.length)
+              )}
+            </dd>
           </div>
         ) : null}
         <div>
-          <dt>Open requests</dt>
+          <dt>{t.floor.openRequests}</dt>
           <dd>{table.requests.length}</dd>
         </div>
       </dl>
@@ -952,7 +984,7 @@ function TableDetail({
       {table.sessionId ? (
         <div className="mtv-detail-actions">
           <label className="mtv-guest-count">
-            <span>Guests</span>
+            <span>{t.floor.guests}</span>
             <input
               type="number"
               min={0}
@@ -982,7 +1014,7 @@ function TableDetail({
                 })
               }
             >
-              Uncombine
+              {t.floor.uncombine}
             </button>
           ) : null}
 
@@ -997,12 +1029,12 @@ function TableDetail({
               })
             }
           >
-            Clear table
+            {t.floor.clearTable}
           </button>
         </div>
       ) : (
         <div className="mtv-detail-actions">
-          <p className="mtv-empty">Table is free.</p>
+          <p className="mtv-empty">{t.floor.tableFree}</p>
           {/* Walk-ins who sit down without tapping: the waiter opens the
               visit by hand. Same session machinery as a guest tap. */}
           <button
@@ -1013,7 +1045,7 @@ function TableDetail({
               void onAct({ action: "seat_table", tableId: table.id })
             }
           >
-            Seat guests
+            {t.floor.seatGuests}
           </button>
         </div>
       )}

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * Tap-to-assign: shown when an owner/manager opens an UNASSIGNED tag's
@@ -22,6 +23,14 @@ export function TagAssignPanel({ tagId, venueName, tables }: Props) {
   const [done, setDone] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
+
   const assign = async (table: TableOption) => {
     setBusy(table.id);
     setError(null);
@@ -34,7 +43,7 @@ export function TagAssignPanel({ tagId, venueName, tables }: Props) {
       });
 
       if (!response.ok) {
-        setError("Could not assign the tag. Try again.");
+        setError(t.tags.assignFailed);
         return;
       }
 
@@ -42,7 +51,7 @@ export function TagAssignPanel({ tagId, venueName, tables }: Props) {
       // Reload into the live guest page for this table — the proof.
       setTimeout(() => window.location.reload(), 1200);
     } catch {
-      setError("Could not assign the tag. Try again.");
+      setError(t.tags.assignFailed);
     } finally {
       setBusy(null);
     }
@@ -57,17 +66,15 @@ export function TagAssignPanel({ tagId, venueName, tables }: Props) {
 
         {done ? (
           <>
-            <h1>Tag assigned to Table {done} ✓</h1>
-            <p className="mtv-tagassign-sub">
-              Loading the guest page for this table…
-            </p>
+            <h1>{t.tags.assignedTitle.replace("{label}", done)}</h1>
+            <p className="mtv-tagassign-sub">{t.tags.loadingGuestPage}</p>
           </>
         ) : (
           <>
-            <h1>New tag — assign it</h1>
+            <h1>{t.tags.newTagTitle}</h1>
             <p className="mtv-tagassign-sub">
-              This tag isn&apos;t linked yet. Stick it on a table at{" "}
-              <strong>{venueName}</strong>, then choose which one it is:
+              {t.tags.newTagBefore} <strong>{venueName}</strong>
+              {t.tags.newTagAfter}
             </p>
 
             <div className="mtv-tagassign-grid">
@@ -85,17 +92,12 @@ export function TagAssignPanel({ tagId, venueName, tables }: Props) {
             </div>
 
             {tables.length === 0 ? (
-              <p className="mtv-tagassign-sub">
-                No tables yet — draw your floor in the layout editor first.
-              </p>
+              <p className="mtv-tagassign-sub">{t.tags.noTablesYet}</p>
             ) : null}
 
             {error ? <p className="mtv-tagassign-error">{error}</p> : null}
 
-            <p className="mtv-tagassign-note">
-              Wrong restaurant? Switch venue in the staff app first, then
-              tap the tag again.
-            </p>
+            <p className="mtv-tagassign-note">{t.tags.wrongRestaurant}</p>
           </>
         )}
       </div>

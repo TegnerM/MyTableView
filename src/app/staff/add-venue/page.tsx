@@ -1,8 +1,14 @@
 import Link from "next/link";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getStaffIdentity } from "@/lib/staff/floor-state";
 import { AddVenueForm } from "@/components/staff/AddVenueForm";
 import { BrandMark } from "@/components/BrandMark";
+import {
+  getStaffStrings,
+  resolveStaffLocale,
+  STAFF_LANG_COOKIE,
+} from "@/lib/i18n/staff";
 import "../sign-in/sign-in.css";
 
 /**
@@ -15,6 +21,15 @@ import "../sign-in/sign-in.css";
 export const dynamic = "force-dynamic";
 
 export default async function AddVenuePage() {
+  const store = await cookies();
+  const headerList = await headers();
+  const t = getStaffStrings(
+    resolveStaffLocale(
+      store.get(STAFF_LANG_COOKIE)?.value,
+      headerList.get("accept-language")
+    )
+  );
+
   const identity = await getStaffIdentity();
 
   if (!identity) {
@@ -32,17 +47,19 @@ export default async function AddVenuePage() {
       <div className="mtv-signin-card">
         <BrandMark className="mtv-signin-brand" />
 
-        <h1 className="mtv-signin-title">Add a restaurant</h1>
+        <h1 className="mtv-signin-title">{t.venue.addTitle}</h1>
         <p className="mtv-signin-sub">
-          It gets its own floor, its own QR codes and its own 14-day free
-          trial. You currently run {venueCount}{" "}
-          {venueCount === 1 ? "restaurant" : "restaurants"}.
+          {t.venue.addSub}{" "}
+          {(venueCount === 1 ? t.venue.youRunOne : t.venue.youRunMany).replace(
+            "{count}",
+            String(venueCount)
+          )}
         </p>
 
         <AddVenueForm />
 
         <p className="mtv-signin-alt">
-          <Link href="/staff/floor">Back to the floor</Link>
+          <Link href="/staff/floor">{t.venue.backToFloor}</Link>
         </p>
       </div>
     </main>

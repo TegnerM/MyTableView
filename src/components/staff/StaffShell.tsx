@@ -164,7 +164,7 @@ export function StaffShell({
           </Link>
         ) : null}
 
-        <nav className="mtv-sidebar-nav" aria-label="Staff">
+        <nav className="mtv-sidebar-nav" aria-label={t.shell.staffNav}>
           {NAV.filter((item) => isManager || !item.managerOnly).map((item) =>
             item.key === active ? (
               <span key={item.key} className="mtv-nav-item" data-active="true">

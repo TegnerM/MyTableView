@@ -1,9 +1,15 @@
 import Link from "next/link";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getServerClient } from "@/lib/supabase/server";
 import { resolveStaff } from "@/lib/staff/venue-context";
 import { SignUpForm } from "@/components/staff/SignUpForm";
 import { BrandMark } from "@/components/BrandMark";
+import {
+  getStaffStrings,
+  resolveStaffLocale,
+  STAFF_LANG_COOKIE,
+} from "@/lib/i18n/staff";
 import "../sign-in/sign-in.css";
 
 /**
@@ -23,6 +29,15 @@ type PageProps = {
 
 export default async function SignUpPage({ searchParams }: PageProps) {
   const { invite } = await searchParams;
+  const store = await cookies();
+  const headerList = await headers();
+  const t = getStaffStrings(
+    resolveStaffLocale(
+      store.get(STAFF_LANG_COOKIE)?.value,
+      headerList.get("accept-language")
+    )
+  );
+
   const supabase = await getServerClient();
 
   const {
@@ -47,13 +62,9 @@ export default async function SignUpPage({ searchParams }: PageProps) {
         <BrandMark className="mtv-signin-brand" />
 
         <h1 className="mtv-signin-title">
-          {alreadySignedIn
-            ? "Almost there — name your restaurant"
-            : "Start your 14-day free trial"}
+          {alreadySignedIn ? t.auth.almostThere : t.auth.startTrial}
         </h1>
-        <p className="mtv-signin-sub">
-          No credit card. Print QR codes for your tables and be live tonight.
-        </p>
+        <p className="mtv-signin-sub">{t.auth.signUpSub}</p>
 
         <SignUpForm
           alreadySignedIn={alreadySignedIn}
@@ -61,8 +72,8 @@ export default async function SignUpPage({ searchParams }: PageProps) {
         />
 
         <p className="mtv-signin-alt">
-          Already have an account?{" "}
-          <Link href="/staff/sign-in">Sign in</Link>
+          {t.auth.alreadyHaveAccount}{" "}
+          <Link href="/staff/sign-in">{t.auth.signIn}</Link>
         </p>
       </div>
     </main>

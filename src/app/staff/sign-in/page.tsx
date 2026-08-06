@@ -1,9 +1,15 @@
 import Link from "next/link";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getServerClient } from "@/lib/supabase/server";
 import { resolveStaff } from "@/lib/staff/venue-context";
 import { SignInForm } from "@/components/staff/SignInForm";
 import { BrandMark } from "@/components/BrandMark";
+import {
+  getStaffStrings,
+  resolveStaffLocale,
+  STAFF_LANG_COOKIE,
+} from "@/lib/i18n/staff";
 import "./sign-in.css";
 
 /**
@@ -17,6 +23,15 @@ import "./sign-in.css";
 export const dynamic = "force-dynamic";
 
 export default async function SignInPage() {
+  const store = await cookies();
+  const headerList = await headers();
+  const t = getStaffStrings(
+    resolveStaffLocale(
+      store.get(STAFF_LANG_COOKIE)?.value,
+      headerList.get("accept-language")
+    )
+  );
+
   const supabase = await getServerClient();
 
   const {
@@ -41,17 +56,17 @@ export default async function SignInPage() {
       <div className="mtv-signin-card">
         <BrandMark className="mtv-signin-brand" />
 
-        <h1 className="mtv-signin-title">Staff sign in</h1>
+        <h1 className="mtv-signin-title">{t.auth.staffSignInTitle}</h1>
 
         <SignInForm />
 
         <p className="mtv-signin-alt">
-          <Link href="/staff/forgot-password">Forgot your password?</Link>
+          <Link href="/staff/forgot-password">{t.auth.forgotPassword}</Link>
         </p>
 
         <p className="mtv-signin-alt">
-          New here?{" "}
-          <Link href="/staff/sign-up">Start your 14-day free trial</Link>
+          {t.auth.newHere}{" "}
+          <Link href="/staff/sign-up">{t.auth.startTrial}</Link>
         </p>
       </div>
     </main>

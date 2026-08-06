@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getBrowserClient } from "@/lib/supabase/browser";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * Accept a staff invite.
@@ -34,6 +35,14 @@ export function JoinForm({
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
+
   const acceptViaSession = async () => {
     setBusy(true);
     setError(null);
@@ -50,15 +59,15 @@ export function JoinForm({
         } | null;
         setError(
           payload?.reason === "invite_invalid"
-            ? "This invite has expired or was already used."
-            : (payload?.detail ?? "Could not join. Please try again.")
+            ? t.join.inviteInvalid
+            : (payload?.detail ?? t.join.joinFailed)
         );
         return;
       }
       router.replace("/staff/floor");
       router.refresh();
     } catch {
-      setError("Could not join. Please try again.");
+      setError(t.join.joinFailed);
     } finally {
       setBusy(false);
     }
@@ -89,8 +98,8 @@ export function JoinForm({
         }
         setError(
           payload?.reason === "invite_invalid"
-            ? "This invite has expired or was already used."
-            : (payload?.detail ?? "Could not join. Please try again.")
+            ? t.join.inviteInvalid
+            : (payload?.detail ?? t.join.joinFailed)
         );
         return;
       }
@@ -112,7 +121,7 @@ export function JoinForm({
       router.replace("/staff/floor");
       router.refresh();
     } catch {
-      setError("Could not join. Please try again.");
+      setError(t.join.joinFailed);
     } finally {
       setBusy(false);
     }
@@ -136,7 +145,7 @@ export function JoinForm({
       // Session proven — accept the invite with it.
       await acceptViaSession();
     } catch {
-      setError("Could not sign in. Please try again.");
+      setError(t.auth.signInFailed);
     } finally {
       setBusy(false);
     }
@@ -152,7 +161,7 @@ export function JoinForm({
           disabled={busy}
           onClick={() => void acceptViaSession()}
         >
-          {busy ? "Joining…" : "Join the team"}
+          {busy ? t.join.joining : t.join.joinTeam}
         </button>
       </div>
     );
@@ -162,11 +171,11 @@ export function JoinForm({
     return (
       <form className="mtv-signin-form" onSubmit={(e) => void submitSignIn(e)}>
         <p className="mtv-signin-notice">
-          <strong>{email}</strong> already has a MyTableView account. Sign
-        in with its password to accept the invite.
+          <strong>{email}</strong>
+          {t.join.accountExistsAfter}
         </p>
         <label className="mtv-field">
-          <span>Password</span>
+          <span>{t.auth.password}</span>
           <input
             type="password"
             value={password}
@@ -177,7 +186,7 @@ export function JoinForm({
         </label>
         {error ? <p className="mtv-signin-error">{error}</p> : null}
         <button type="submit" className="mtv-signin-button" disabled={busy}>
-          {busy ? "Signing in…" : "Sign in and join"}
+          {busy ? t.auth.signingIn : t.join.signInAndJoin}
         </button>
       </form>
     );
@@ -186,7 +195,7 @@ export function JoinForm({
   return (
     <form className="mtv-signin-form" onSubmit={(e) => void submitJoin(e)}>
       <label className="mtv-field">
-        <span>Your name (shown to the team)</span>
+        <span>{t.join.yourNameTeam}</span>
         <input
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
@@ -197,7 +206,7 @@ export function JoinForm({
       </label>
 
       <label className="mtv-field">
-        <span>Choose a password</span>
+        <span>{t.join.choosePassword}</span>
         <input
           type="password"
           value={password}
@@ -211,7 +220,7 @@ export function JoinForm({
       {error ? <p className="mtv-signin-error">{error}</p> : null}
 
       <button type="submit" className="mtv-signin-button" disabled={busy}>
-        {busy ? "Joining…" : "Join the team"}
+        {busy ? t.join.joining : t.join.joinTeam}
       </button>
     </form>
   );

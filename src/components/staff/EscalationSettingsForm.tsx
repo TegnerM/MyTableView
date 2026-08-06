@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { EscalationSettings } from "@/lib/staff/floor-types";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * Escalation thresholds, editable by the venue.
@@ -40,6 +41,14 @@ export function EscalationSettingsForm({ current }: Props) {
     "idle"
   );
 
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
+
   const save = async () => {
     setStatus("saving");
 
@@ -72,48 +81,40 @@ export function EscalationSettingsForm({ current }: Props) {
 
   return (
     <section className="mtv-settings-card">
-      <h2>When to raise a table</h2>
-      <p className="mtv-settings-intro">
-        A guest pressing the same button again is telling you nobody came.
-        These settings decide when that becomes your problem rather than
-        theirs — staff should not be flagged for a guest who is simply
-        impatient.
-      </p>
+      <h2>{t.settings.escalationTitle}</h2>
+      <p className="mtv-settings-intro">{t.settings.escalationIntro}</p>
 
       <label className="mtv-settings-field">
-        <span className="mtv-settings-label">Give staff at least</span>
+        <span className="mtv-settings-label">{t.settings.giveStaffAtLeast}</span>
         <select
           value={graceSeconds}
           onChange={(event) => setGraceSeconds(Number(event.target.value))}
         >
           {GRACE_OPTIONS.map((option) => (
             <option key={option.seconds} value={option.seconds}>
-              {option.label}
+              {t.settings.minutesN.replace(
+                "{count}",
+                String(Math.round(option.seconds / 60))
+              )}
             </option>
           ))}
         </select>
-        <span className="mtv-settings-help">
-          Repeat presses before this are recorded, but nothing turns red
-          and nobody is alerted.
-        </span>
+        <span className="mtv-settings-help">{t.settings.graceHelp}</span>
       </label>
 
       <label className="mtv-settings-field">
-        <span className="mtv-settings-label">Raise after</span>
+        <span className="mtv-settings-label">{t.settings.raiseAfter}</span>
         <select
           value={repeatThreshold}
           onChange={(event) => setRepeatThreshold(Number(event.target.value))}
         >
           {REPEAT_OPTIONS.map((count) => (
             <option key={count} value={count}>
-              {count} presses
+              {t.settings.pressesN.replace("{count}", String(count))}
             </option>
           ))}
         </select>
-        <span className="mtv-settings-help">
-          How many times a guest asks for the same thing before the table
-          is raised to a manager.
-        </span>
+        <span className="mtv-settings-help">{t.settings.raiseHelp}</span>
       </label>
 
       <div className="mtv-settings-actions">
@@ -123,15 +124,15 @@ export function EscalationSettingsForm({ current }: Props) {
           onClick={() => void save()}
           disabled={!dirty || status === "saving"}
         >
-          {status === "saving" ? "Saving…" : "Save"}
+          {status === "saving" ? t.settings.saving : t.settings.save}
         </button>
 
         {status === "saved" ? (
-          <span className="mtv-settings-status">Saved</span>
+          <span className="mtv-settings-status">{t.settings.saved}</span>
         ) : null}
         {status === "failed" ? (
           <span className="mtv-settings-status mtv-settings-status-error">
-            Could not save
+            {t.settings.couldNotSave}
           </span>
         ) : null}
       </div>

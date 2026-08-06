@@ -1,3 +1,4 @@
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getStaffIdentity } from "@/lib/staff/floor-state";
 import { getServerClient } from "@/lib/supabase/server";
@@ -7,11 +8,9 @@ import {
   type WeeklyPoint,
 } from "@/components/staff/InsightsView";
 import { StaffShell } from "@/components/staff/StaffShell";
-import { getVenueBilling } from "@/lib/staff/billing";
-import { TrialLocked } from "@/components/staff/TrialLocked";
+import { resolveStaffLocale, STAFF_LANG_COOKIE } from "@/lib/i18n/staff";
 import "../floor/floor.css";
 import "./insights.css";
-import "../trial-locked.css";
 
 /**
  * Guest satisfaction results. Managers and owners only — same gate as
@@ -32,6 +31,13 @@ type RatingRow = {
 };
 
 export default async function StaffInsightsPage() {
+  const store = await cookies();
+  const headerList = await headers();
+  const locale = resolveStaffLocale(
+    store.get(STAFF_LANG_COOKIE)?.value,
+    headerList.get("accept-language")
+  );
+
   const identity = await getStaffIdentity();
 
   if (!identity) {
@@ -40,19 +46,6 @@ export default async function StaffInsightsPage() {
 
   if (identity.role !== "owner" && identity.role !== "manager") {
     redirect("/staff/floor");
-  }
-
-  const billing = await getVenueBilling(identity.venueId);
-
-  if (billing.locked) {
-    return (
-      <TrialLocked
-        venueName={identity.venueName}
-        isOwner={identity.role === "owner"}
-        reason={billing.lockReason}
-        venueCount={identity.venues?.length ?? 1}
-      />
-    );
   }
 
   const supabase = await getServerClient();
@@ -89,7 +82,7 @@ export default async function StaffInsightsPage() {
       venueId={identity.venueId}
       venues={identity.venues}
     >
-      <InsightsView data={data} />
+      <InsightsView data={data} locale={locale} />
     </StaffShell>
   );
 }

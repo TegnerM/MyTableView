@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { BrandMark } from "@/components/BrandMark";
 import { PlanPicker } from "@/components/staff/PlanPicker";
 import { getBrowserClient } from "@/lib/supabase/browser";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * The trial-ended / subscription-cancelled wall.
@@ -24,6 +26,14 @@ type Props = {
 };
 
 export function TrialLocked({ venueName, isOwner, reason, venueCount }: Props) {
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
+
   const signOut = async () => {
     const supabase = getBrowserClient();
     await supabase.auth.signOut();
@@ -37,23 +47,20 @@ export function TrialLocked({ venueName, isOwner, reason, venueCount }: Props) {
 
         <h1>
           {reason === "trial"
-            ? "Your free trial has ended"
-            : "Your subscription has ended"}
+            ? t.trial.trialEndedTitle
+            : t.trial.subscriptionEndedTitle}
         </h1>
 
         <p className="mtv-locked-body">
           {isOwner
-            ? `Everything ${venueName} set up — tables, layout, history and insights — is saved and waiting. Subscribe and the floor is live again in seconds.`
-            : `${venueName}'s subscription needs attention. Ask the owner to reactivate it — nothing has been lost.`}
+            ? t.trial.ownerBody.replace("{venue}", venueName)
+            : t.trial.staffBody.replace("{venue}", venueName)}
         </p>
 
         {isOwner ? (
           <>
             <PlanPicker venueCount={venueCount} />
-            <p className="mtv-locked-note">
-              One subscription covers all restaurants in its tier. Cancel
-              anytime. Guest taps resume the moment payment completes.
-            </p>
+            <p className="mtv-locked-note">{t.trial.note}</p>
           </>
         ) : null}
 
@@ -62,7 +69,7 @@ export function TrialLocked({ venueName, isOwner, reason, venueCount }: Props) {
           className="mtv-locked-signout"
           onClick={() => void signOut()}
         >
-          Log out
+          {t.shell.logOut}
         </button>
       </div>
     </main>

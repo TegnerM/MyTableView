@@ -1,8 +1,10 @@
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getStaffIdentity, loadFloorState } from "@/lib/staff/floor-state";
 import { getVenueBilling } from "@/lib/staff/billing";
 import { LayoutEditor } from "@/components/staff/LayoutEditor";
 import { TrialLocked } from "@/components/staff/TrialLocked";
+import { resolveStaffLocale, STAFF_LANG_COOKIE } from "@/lib/i18n/staff";
 import "./layout-editor.css";
 import "../trial-locked.css";
 
@@ -42,5 +44,12 @@ export default async function StaffLayoutPage() {
 
   const state = await loadFloorState(identity);
 
-  return <LayoutEditor initialState={state} locale="en" />;
+  const store = await cookies();
+  const headerList = await headers();
+  const locale = resolveStaffLocale(
+    store.get(STAFF_LANG_COOKIE)?.value,
+    headerList.get("accept-language")
+  );
+
+  return <LayoutEditor initialState={state} locale={locale} />;
 }

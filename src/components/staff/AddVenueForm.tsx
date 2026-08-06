@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * Add restaurant #2..N to the owner's account. On success the new
@@ -12,6 +13,14 @@ export function AddVenueForm() {
   const [venueName, setVenueName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -35,8 +44,8 @@ export function AddVenueForm() {
 
         setError(
           payload?.reason === "venue_limit_reached"
-            ? "You've reached your limit — 3 restaurants on trial, or your tier's size. Subscribe or upgrade in Settings → Billing to add more."
-            : "Could not add the restaurant. Please try again."
+            ? t.venue.limitReached
+            : t.venue.addFailed
         );
         return;
       }
@@ -45,7 +54,7 @@ export function AddVenueForm() {
       // fresh venue cookie.
       window.location.href = "/staff/layout";
     } catch {
-      setError("Could not add the restaurant. Please try again.");
+      setError(t.venue.addFailed);
     } finally {
       setBusy(false);
     }
@@ -54,7 +63,7 @@ export function AddVenueForm() {
   return (
     <form className="mtv-signin-form" onSubmit={(e) => void submit(e)}>
       <label className="mtv-field">
-        <span>Restaurant name</span>
+        <span>{t.auth.restaurantName}</span>
         <input
           type="text"
           value={venueName}
@@ -69,7 +78,7 @@ export function AddVenueForm() {
       {error ? <p className="mtv-signin-error">{error}</p> : null}
 
       <button type="submit" className="mtv-signin-button" disabled={busy}>
-        {busy ? "Creating…" : "Add restaurant"}
+        {busy ? t.venue.creating : t.venue.addRestaurant}
       </button>
     </form>
   );

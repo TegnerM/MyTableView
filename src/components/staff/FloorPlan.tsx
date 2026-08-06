@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 import {
   deriveTableStatus,
   formatElapsed,
@@ -106,6 +107,14 @@ export function FloorPlan({
 }: Props) {
   const stageRef = useRef<HTMLDivElement | null>(null);
   const [drag, setDrag] = useState<DragState | null>(null);
+
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [staffLocale, setStaffLocale] = useState("en");
+  useEffect(() => {
+    setStaffLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(staffLocale);
 
   // Whether a pointer actually moved. A tap that never moves is a
   // selection; anything else is a drag, and must not also select.
@@ -510,7 +519,7 @@ export function FloorPlan({
                 onPointerDown={(event) => handlePointerDown(event, table)}
                 role="button"
                 tabIndex={0}
-                aria-label={`Table ${table.label}`}
+                aria-label={t.floor.tableN.replace("{label}", table.label)}
               >
                 <span className="mtv-plan-number">{table.label}</span>
 
@@ -580,7 +589,7 @@ export function FloorPlan({
               onPointerDown={(event) => handlePointerDown(event, table)}
               role="button"
               tabIndex={0}
-              aria-label={`Table ${table.label}`}
+              aria-label={t.floor.tableN.replace("{label}", table.label)}
             >
               <span className="mtv-plan-number" style={counterRotate}>
                 {table.label}
@@ -588,7 +597,7 @@ export function FloorPlan({
 
               {!showStatus && drawW * scale > 56 ? (
                 <span className="mtv-plan-seats" style={counterRotate}>
-                  {table.seats}p
+                  {t.floor.seatsShort.replace("{seats}", String(table.seats))}
                 </span>
               ) : null}
 

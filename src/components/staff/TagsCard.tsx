@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * Settings card: the venue's tags — which chip/QR is on which table —
@@ -20,8 +21,16 @@ export function TagsCard({ rows }: { rows: TagRow[] }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
+
   const unassign = async (tagId: string) => {
-    if (!window.confirm("Return this tag to stock? Guests can no longer use it until it's assigned again.")) {
+    if (!window.confirm(t.tags.confirmUnassign)) {
       return;
     }
     setBusy(tagId);
@@ -35,13 +44,13 @@ export function TagsCard({ rows }: { rows: TagRow[] }) {
       });
 
       if (!response.ok) {
-        setError("Could not unassign the tag.");
+        setError(t.tags.unassignFailed);
         return;
       }
 
       window.location.reload();
     } catch {
-      setError("Could not unassign the tag.");
+      setError(t.tags.unassignFailed);
     } finally {
       setBusy(null);
     }
@@ -49,13 +58,11 @@ export function TagsCard({ rows }: { rows: TagRow[] }) {
 
   return (
     <section className="mtv-settings-card">
-      <h2>Table tags</h2>
+      <h2>{t.tags.title}</h2>
       <p className="mtv-settings-intro">
-        NFC chips and QR codes linked to your tables. To add a new chip:
-        stick it on the table, tap it with your phone while signed in, and
-        pick the table. Paper codes:{" "}
+        {t.tags.intro}{" "}
         <Link href="/staff/qr" className="mtv-billing-link">
-          print QR codes
+          {t.tags.printQrLink}
         </Link>
         .
       </p>
@@ -67,16 +74,16 @@ export function TagsCard({ rows }: { rows: TagRow[] }) {
       <table className="mtv-tags-table">
         <thead>
           <tr>
-            <th>Table</th>
-            <th>Tag</th>
-            <th>Type</th>
+            <th>{t.tags.colTable}</th>
+            <th>{t.tags.colTag}</th>
+            <th>{t.tags.colType}</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={4}>No tags yet.</td>
+              <td colSpan={4}>{t.tags.noTags}</td>
             </tr>
           ) : (
             rows.map((row) => (
@@ -93,7 +100,7 @@ export function TagsCard({ rows }: { rows: TagRow[] }) {
                     disabled={busy !== null}
                     onClick={() => void unassign(row.tagId)}
                   >
-                    {busy === row.tagId ? "…" : "Unassign"}
+                    {busy === row.tagId ? "…" : t.tags.unassign}
                   </button>
                 </td>
               </tr>

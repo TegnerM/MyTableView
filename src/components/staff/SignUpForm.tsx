@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getBrowserClient } from "@/lib/supabase/browser";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * Self-serve signup: restaurant + owner account in one form.
@@ -42,6 +43,14 @@ export function SignUpForm({
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
+
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
@@ -66,9 +75,7 @@ export function SignUpForm({
           // Email confirmation is enabled in Supabase Auth settings.
           // The confirmation email links to /auth/confirm, which signs
           // them in and sends them back here to finish this form.
-          setNotice(
-            "Check your inbox to confirm your email — the link brings you straight back here to finish setting up your restaurant."
-          );
+          setNotice(t.auth.confirmInbox);
           return;
         }
       }
@@ -98,10 +105,10 @@ export function SignUpForm({
 
         setError(
           payload?.reason === "already_staff"
-            ? "This account already belongs to a restaurant — just sign in."
+            ? t.auth.alreadyStaff
             : payload?.detail
-              ? `Could not create your restaurant: ${payload.detail}`
-              : "Could not create your restaurant. Please try again."
+              ? t.auth.createVenueFailedDetail.replace("{detail}", payload.detail)
+              : t.auth.createVenueFailed
         );
         return;
       }
@@ -110,7 +117,7 @@ export function SignUpForm({
       // re-renders with the fresh session AND the fresh venue cookie.
       window.location.href = "/staff/layout";
     } catch {
-      setError("Could not create your account. Please try again.");
+      setError(t.auth.createAccountFailed);
     } finally {
       setBusy(false);
     }
@@ -119,7 +126,7 @@ export function SignUpForm({
   return (
     <form className="mtv-signin-form" onSubmit={(e) => void submit(e)}>
       <label className="mtv-field">
-        <span>Restaurant name</span>
+        <span>{t.auth.restaurantName}</span>
         <input
           type="text"
           value={venueName}
@@ -132,7 +139,7 @@ export function SignUpForm({
       </label>
 
       <label className="mtv-field">
-        <span>Your name</span>
+        <span>{t.auth.yourName}</span>
         <input
           type="text"
           value={displayName}
@@ -146,7 +153,7 @@ export function SignUpForm({
       {alreadySignedIn ? null : (
         <>
           <label className="mtv-field">
-            <span>Email</span>
+            <span>{t.auth.email}</span>
             <input
               type="email"
               value={email}
@@ -157,7 +164,7 @@ export function SignUpForm({
           </label>
 
           <label className="mtv-field">
-            <span>Password</span>
+            <span>{t.auth.password}</span>
             <input
               type="password"
               value={password}
@@ -171,12 +178,12 @@ export function SignUpForm({
       )}
 
       <label className="mtv-field">
-        <span>Referral code (optional)</span>
+        <span>{t.auth.referralCode}</span>
         <input
           type="text"
           value={referralCode}
           onChange={(e) => setReferralCode(e.target.value.toLowerCase())}
-          placeholder="Did someone recommend us?"
+          placeholder={t.auth.referralPlaceholder}
           maxLength={32}
         />
       </label>
@@ -186,10 +193,10 @@ export function SignUpForm({
 
       <button type="submit" className="mtv-signin-button" disabled={busy}>
         {busy
-          ? "Setting up…"
+          ? t.auth.settingUp
           : alreadySignedIn
-            ? "Create your restaurant"
-            : "Start your 14-day free trial"}
+            ? t.auth.createRestaurant
+            : t.auth.startTrial}
       </button>
     </form>
   );

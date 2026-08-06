@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getBrowserClient } from "@/lib/supabase/browser";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * Reset password — the final step. The user arrives here with a session
@@ -17,12 +18,20 @@ export function ResetPasswordForm() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
+
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
 
     if (password !== confirm) {
-      setError("Passwords do not match.");
+      setError(t.auth.passwordsNoMatch);
       return;
     }
 
@@ -47,7 +56,7 @@ export function ResetPasswordForm() {
       router.replace("/staff/floor");
       router.refresh();
     } catch {
-      setError("Could not update the password. Please try again.");
+      setError(t.auth.updatePasswordFailed);
     } finally {
       setBusy(false);
     }
@@ -56,7 +65,7 @@ export function ResetPasswordForm() {
   return (
     <form className="mtv-signin-form" onSubmit={(e) => void submit(e)}>
       <label className="mtv-field">
-        <span>New password</span>
+        <span>{t.auth.newPassword}</span>
         <input
           type="password"
           value={password}
@@ -68,7 +77,7 @@ export function ResetPasswordForm() {
       </label>
 
       <label className="mtv-field">
-        <span>Repeat new password</span>
+        <span>{t.auth.repeatNewPassword}</span>
         <input
           type="password"
           value={confirm}
@@ -82,7 +91,7 @@ export function ResetPasswordForm() {
       {error ? <p className="mtv-signin-error">{error}</p> : null}
 
       <button type="submit" className="mtv-signin-button" disabled={busy}>
-        {busy ? "Saving…" : "Save new password"}
+        {busy ? t.auth.saving : t.auth.saveNewPassword}
       </button>
     </form>
   );

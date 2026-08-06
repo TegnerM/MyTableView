@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getBrowserClient } from "@/lib/supabase/browser";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
  * Sign-in form.
@@ -19,6 +20,14 @@ export function SignInForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [locale, setLocale] = useState("en");
+  useEffect(() => {
+    setLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(locale);
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -40,7 +49,7 @@ export function SignInForm() {
       router.replace("/staff/floor");
       router.refresh();
     } catch {
-      setError("Could not sign in. Please try again.");
+      setError(t.auth.signInFailed);
     } finally {
       setBusy(false);
     }
@@ -49,7 +58,7 @@ export function SignInForm() {
   return (
     <form className="mtv-signin-form" onSubmit={(e) => void submit(e)}>
       <label className="mtv-field">
-        <span>Email</span>
+        <span>{t.auth.email}</span>
         <input
           type="email"
           value={email}
@@ -60,7 +69,7 @@ export function SignInForm() {
       </label>
 
       <label className="mtv-field">
-        <span>Password</span>
+        <span>{t.auth.password}</span>
         <input
           type="password"
           value={password}
@@ -73,7 +82,7 @@ export function SignInForm() {
       {error ? <p className="mtv-signin-error">{error}</p> : null}
 
       <button type="submit" className="mtv-signin-button" disabled={busy}>
-        {busy ? "Signing in…" : "Sign in"}
+        {busy ? t.auth.signingIn : t.auth.signIn}
       </button>
     </form>
   );

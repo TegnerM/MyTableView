@@ -1,8 +1,14 @@
 import Link from "next/link";
+import { cookies, headers } from "next/headers";
 import { getServerClient } from "@/lib/supabase/server";
 import { getServiceClient } from "@/lib/supabase/service";
 import { JoinForm } from "@/components/staff/JoinForm";
 import { BrandMark } from "@/components/BrandMark";
+import {
+  getStaffStrings,
+  resolveStaffLocale,
+  STAFF_LANG_COOKIE,
+} from "@/lib/i18n/staff";
 import "../sign-in/sign-in.css";
 
 /**
@@ -34,6 +40,14 @@ export default async function StaffJoinPage({
   searchParams: Promise<{ token?: string }>;
 }) {
   const { token: rawToken } = await searchParams;
+  const store = await cookies();
+  const headerList = await headers();
+  const t = getStaffStrings(
+    resolveStaffLocale(
+      store.get(STAFF_LANG_COOKIE)?.value,
+      headerList.get("accept-language")
+    )
+  );
   const token = rawToken && TOKEN.test(rawToken) ? rawToken : null;
 
   let invite: InviteRow | null = null;
@@ -61,13 +75,11 @@ export default async function StaffJoinPage({
       <main className="mtv-signin">
         <div className="mtv-signin-card">
           <BrandMark className="mtv-signin-brand" />
-          <h1 className="mtv-signin-title">This invite isn&apos;t valid</h1>
-          <p className="mtv-signin-sub">
-            The link has expired, was already used, or was cancelled. Ask
-            the person who invited you to send a fresh one.
-          </p>
+          <h1 className="mtv-signin-title">{t.join.invalidTitle}</h1>
+          <p className="mtv-signin-sub">{t.join.invalidSub}</p>
           <p className="mtv-signin-alt">
-            Already on a team? <Link href="/staff/sign-in">Sign in</Link>
+            {t.join.alreadyOnTeam}{" "}
+            <Link href="/staff/sign-in">{t.auth.signIn}</Link>
           </p>
         </div>
       </main>
@@ -83,7 +95,7 @@ export default async function StaffJoinPage({
     user?.email?.toLowerCase() === invite.email.toLowerCase();
 
   const roleLabel = invite.role === "manager" ? "manager" : "waiter";
-  const venueName = invite.venues?.name ?? "the restaurant";
+  const venueName = invite.venues?.name ?? t.join.venueFallback;
 
   return (
     <main className="mtv-signin">
@@ -91,14 +103,15 @@ export default async function StaffJoinPage({
         <BrandMark className="mtv-signin-brand" />
 
         <h1 className="mtv-signin-title">
-          Join {venueName} as {roleLabel === "manager" ? "a manager" : "a waiter"}
+          {(roleLabel === "manager"
+            ? t.join.titleManager
+            : t.join.titleWaiter
+          ).replace("{venue}", venueName)}
         </h1>
 
         <p className="mtv-signin-sub">
-          This invite is for <strong>{invite.email}</strong>.
-          {alreadySignedInMatch
-            ? " You're signed in — one tap and you're on the floor."
-            : " Set up your login and you're on the floor in seconds."}
+          {t.join.inviteForBefore} <strong>{invite.email}</strong>.{" "}
+          {alreadySignedInMatch ? t.join.signedInHint : t.join.setupHint}
         </p>
 
         <JoinForm

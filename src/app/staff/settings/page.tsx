@@ -11,9 +11,14 @@ import {
   type TeamMemberRow,
   type TeamInviteRow,
 } from "@/components/staff/TeamCard";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { TrialLocked } from "@/components/staff/TrialLocked";
 import { StaffShell } from "@/components/staff/StaffShell";
+import {
+  getStaffStrings,
+  resolveStaffLocale,
+  STAFF_LANG_COOKIE,
+} from "@/lib/i18n/staff";
 import { getServiceClient } from "@/lib/supabase/service";
 import {
   DEFAULT_ESCALATION_SETTINGS,
@@ -34,6 +39,15 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export default async function StaffSettingsPage() {
+  const store = await cookies();
+  const localeHeaders = await headers();
+  const t = getStaffStrings(
+    resolveStaffLocale(
+      store.get(STAFF_LANG_COOKIE)?.value,
+      localeHeaders.get("accept-language")
+    )
+  );
+
   const identity = await getStaffIdentity();
 
   if (!identity) {
@@ -198,7 +212,7 @@ export default async function StaffSettingsPage() {
       <main className="mtv-settings">
         <header className="mtv-settings-header">
           <div>
-            <h1>Settings</h1>
+            <h1>{t.shell.settings}</h1>
             <p>{identity.venueName}</p>
           </div>
         </header>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { FloorPlan } from "@/components/staff/FloorPlan";
 import { BrandMark } from "@/components/BrandMark";
 import { pickLocale } from "@/lib/i18n/guest";
+import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 import { readStoredZone, storeZone } from "@/lib/staff/zone-memory";
 import {
   DEFAULT_ESCALATION_SETTINGS,
@@ -69,6 +70,14 @@ const BULK_TEMPLATES = [
 
 export function LayoutEditor({ initialState, locale }: Props) {
   const router = useRouter();
+
+  // SSR renders English; the cookie (or browser language) takes over
+  // after hydration — same pattern as StaffShell.
+  const [staffLocale, setStaffLocale] = useState("en");
+  useEffect(() => {
+    setStaffLocale(readStaffLocale());
+  }, []);
+  const t = getStaffStrings(staffLocale);
 
   const [activeZoneId, setActiveZoneId] = useState<string | null>(
     () => initialState.areas[0]?.id ?? null
@@ -527,7 +536,7 @@ export function LayoutEditor({ initialState, locale }: Props) {
       <header className="mtv-bar">
         <div className="mtv-bar-title">
           <BrandMark className="mtv-bar-brand" />
-          <h1>Floor layout</h1>
+          <h1>{t.layout.title}</h1>
           <span>{initialState.identity.venueName}</span>
         </div>
 
@@ -542,23 +551,24 @@ export function LayoutEditor({ initialState, locale }: Props) {
               data-active={activeZone?.id === zone.id ? "true" : "false"}
               onClick={() => selectZone(zone.id)}
             >
-              {pickLocale(zone.name, locale) || `Zone ${index + 1}`}
+              {pickLocale(zone.name, locale) ||
+                t.floor.zoneFallback.replace("{n}", String(index + 1))}
             </button>
           ))}
           <button
             type="button"
             className="mtv-zone-add"
-            title="Add a zone"
+            title={t.layout.addZoneTitle}
             onClick={addZone}
           >
-            + Zone
+            {t.layout.addZone}
           </button>
         </div>
 
         {activeZone ? (
           <div className="mtv-bar-size">
             <label>
-              <span>W</span>
+              <span>{t.layout.widthShort}</span>
               <input
                 type="number"
                 min={1}
@@ -570,7 +580,7 @@ export function LayoutEditor({ initialState, locale }: Props) {
               />
             </label>
             <label>
-              <span>D</span>
+              <span>{t.layout.depthShort}</span>
               <input
                 type="number"
                 min={1}
@@ -588,17 +598,17 @@ export function LayoutEditor({ initialState, locale }: Props) {
         <div className="mtv-bar-end">
           <span className="mtv-status" data-state={status}>
             {status === "saving"
-              ? "Saving…"
+              ? t.layout.saving
               : status === "saved"
-                ? "Saved"
+                ? t.layout.saved
                 : status === "failed"
-                  ? "Not saved"
+                  ? t.layout.notSaved
                   : ""}
           </span>
           {/* prefetch off: the prefetched floor payload predates the
               tables added in this editor and renders stale. */}
           <Link href="/staff/floor" prefetch={false} className="mtv-btn">
-            Back to floor
+            {t.layout.backToFloor}
           </Link>
         </div>
       </header>
@@ -606,7 +616,7 @@ export function LayoutEditor({ initialState, locale }: Props) {
       {activeZone ? (
         <div className="mtv-grid">
           <aside className="mtv-col mtv-col-palette">
-            <h2>Add a table</h2>
+            <h2>{t.layout.addTable}</h2>
             <div className="mtv-palette-grid">
               {PALETTE.map((item) => (
                 <div
@@ -614,7 +624,14 @@ export function LayoutEditor({ initialState, locale }: Props) {
                   className="mtv-chip"
                   data-shape={item.shape}
                   draggable
-                  title={`${item.seats} seats, ${item.shape}`}
+                  title={t.layout.chipTitle
+                    .replace("{seats}", String(item.seats))
+                    .replace(
+                      "{shape}",
+                      item.shape === "round"
+                        ? t.layout.shapeRound
+                        : t.layout.shapeSquare
+                    )}
                   onDragStart={(event) => {
                     event.dataTransfer.effectAllowed = "copy";
                     event.dataTransfer.setData(
@@ -627,11 +644,9 @@ export function LayoutEditor({ initialState, locale }: Props) {
                 </div>
               ))}
             </div>
-            <p className="mtv-note">
-              Drag onto the floor. Numbers are assigned automatically.
-            </p>
+            <p className="mtv-note">{t.layout.dragNote}</p>
 
-            <h2>Add many at once</h2>
+            <h2>{t.layout.addMany}</h2>
             <div className="mtv-bulk">
               {BULK_TEMPLATES.map((template) => (
                 <label key={template.key} className="mtv-bulk-row">
@@ -640,7 +655,14 @@ export function LayoutEditor({ initialState, locale }: Props) {
                     data-shape={template.shape}
                     aria-hidden="true"
                   />
-                  <span className="mtv-bulk-label">{template.label}</span>
+                  <span className="mtv-bulk-label">
+                    {(template.shape === "round"
+                      ? t.layout.bulkRound
+                      : template.seats >= 6
+                        ? t.layout.bulkRect
+                        : t.layout.bulkSquare
+                    ).replace("{seats}", String(template.seats))}
+                  </span>
                   <input
                     type="number"
                     min={0}
@@ -665,23 +687,25 @@ export function LayoutEditor({ initialState, locale }: Props) {
                 onClick={addBulk}
               >
                 {bulkBusy
-                  ? "Adding…"
+                  ? t.layout.adding
                   : bulkTotal > 0
-                    ? `Add ${bulkTotal} table${bulkTotal === 1 ? "" : "s"}`
-                    : "Add tables"}
+                    ? bulkTotal === 1
+                      ? t.layout.addOneTable
+                      : t.layout.addNTables.replace(
+                          "{count}",
+                          String(bulkTotal)
+                        )
+                    : t.layout.addTablesBtn}
               </button>
-              <p className="mtv-note">
-                They land in a numbered grid in this zone — drag each one
-                to its real spot.
-              </p>
+              <p className="mtv-note">{t.layout.bulkNote}</p>
             </div>
 
             {activeZone ? (
               <>
-                <h2>This zone</h2>
+                <h2>{t.layout.thisZone}</h2>
                 <div className="mtv-zone-box">
                   <label className="mtv-zone-name">
-                    <span>Name</span>
+                    <span>{t.layout.zoneName}</span>
                     <input
                       type="text"
                       maxLength={40}
@@ -709,12 +733,10 @@ export function LayoutEditor({ initialState, locale }: Props) {
                       onClick={() => removeZone(activeZone.id)}
                       disabled={zones.length <= 1}
                     >
-                      Remove zone
+                      {t.layout.removeZone}
                     </button>
                   ) : (
-                    <p className="mtv-note">
-                      A zone can be removed once it has no tables.
-                    </p>
+                    <p className="mtv-note">{t.layout.zoneRemovableNote}</p>
                   )}
                 </div>
               </>
@@ -745,22 +767,22 @@ export function LayoutEditor({ initialState, locale }: Props) {
           <aside className="mtv-col mtv-col-props">
             {selectedTable ? (
               <>
-                <h2>Table {selectedTable.label}</h2>
+                <h2>{t.floor.tableN.replace("{label}", selectedTable.label)}</h2>
 
                 <dl className="mtv-props">
                   <div>
-                    <dt>Seats</dt>
+                    <dt>{t.floor.seats}</dt>
                     <dd>{selectedTable.seats}</dd>
                   </div>
                   <div>
-                    <dt>Size</dt>
+                    <dt>{t.layout.size}</dt>
                     <dd>
                       {trimNumber(selectedTable.widthM)} ×{" "}
                       {trimNumber(selectedTable.depthM)} m
                     </dd>
                   </div>
                   <div>
-                    <dt>Position</dt>
+                    <dt>{t.layout.position}</dt>
                     <dd>
                       {selectedTable.posX.toFixed(2)},{" "}
                       {selectedTable.posY.toFixed(2)}
@@ -773,7 +795,7 @@ export function LayoutEditor({ initialState, locale }: Props) {
                 {selectedTable.shape !== "round" ? (
                   <div className="mtv-rotate">
                     <div className="mtv-rotate-head">
-                      <span>Angle</span>
+                      <span>{t.layout.angle}</span>
                       <output>{selectedTable.rotation}°</output>
                     </div>
 
@@ -814,21 +836,19 @@ export function LayoutEditor({ initialState, locale }: Props) {
                   className="mtv-btn mtv-btn-danger mtv-btn-block"
                   onClick={() => removeTable(selectedTable.id)}
                 >
-                  Remove table
+                  {t.layout.removeTable}
                 </button>
               </>
             ) : (
               <>
-                <h2>Nothing selected</h2>
-                <p className="mtv-note">
-                  Tap a table to move, turn or remove it.
-                </p>
+                <h2>{t.layout.nothingSelected}</h2>
+                <p className="mtv-note">{t.layout.tapToEdit}</p>
               </>
             )}
           </aside>
         </div>
       ) : (
-        <p className="mtv-note">No zones set up yet.</p>
+        <p className="mtv-note">{t.floor.noZones}</p>
       )}
     </main>
   );
