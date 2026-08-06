@@ -418,6 +418,9 @@ export const UI_STRINGS: Record<string, UiStrings> = {
   },
 };
 
+/** Every language the UI chrome ships in. */
+export const UI_LOCALES = Object.keys(UI_STRINGS);
+
 export function getUiStrings(locale: Locale): UiStrings {
   if (UI_STRINGS[locale]) {
     return UI_STRINGS[locale];

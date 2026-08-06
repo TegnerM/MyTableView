@@ -11,6 +11,7 @@ import {
   getUiStrings,
   pickLocale,
   resolveGuestLocale,
+  UI_LOCALES,
 } from "@/lib/i18n/guest";
 import "./guest.css";
 import "./tag-assign.css";
@@ -71,7 +72,15 @@ export default async function GuestTagPage({ params }: PageProps) {
       }
     }
 
-    return <GuestError reason={result.reason} />;
+    // No venue context on error screens — resolve the language from
+    // the phone alone, against every language the UI ships in.
+    const errorHeaders = await headers();
+    const errorLocale = resolveGuestLocale(
+      errorHeaders.get("accept-language"),
+      UI_LOCALES,
+      "en"
+    );
+    return <GuestError reason={result.reason} locale={errorLocale} />;
   }
 
   const { context } = result;
@@ -158,8 +167,14 @@ export default async function GuestTagPage({ params }: PageProps) {
   );
 }
 
-function GuestError({ reason }: { reason: ResolveFailure }) {
-  const strings = getUiStrings("en");
+function GuestError({
+  reason,
+  locale,
+}: {
+  reason: ResolveFailure;
+  locale: string;
+}) {
+  const strings = getUiStrings(locale);
 
   const copy: Record<ResolveFailure, { title: string; body: string }> = {
     invalid_format: {
