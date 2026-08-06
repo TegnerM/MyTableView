@@ -63,7 +63,7 @@ export default async function ShopPage({
     });
 
     products = list.data
-      .map((product) => {
+      .map((product): ShopProduct | null => {
         const price = product.default_price;
         if (!price || typeof price === "string") return null;
         if (price.type !== "one_time" || !price.active) return null;
