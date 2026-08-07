@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Fraunces } from "next/font/google";
 import { EmailLink } from "@/components/EmailLink";
 import { TrackBeacon } from "@/components/TrackBeacon";
+import { PLANS, type Plan } from "@/lib/billing/plans";
 import {
   getLandingStrings,
   resolveLandingLocale,
@@ -106,6 +107,31 @@ export default async function HomePage({ searchParams }: PageProps) {
     "Oracle Micros",
   ];
 
+  // Pricing straight from the plan ladder — the landing page can never
+  // disagree with what checkout actually charges. Formatted per locale
+  // so €1,490 reads as 1.490 € where it should.
+  const euro = (amount: number) =>
+    new Intl.NumberFormat(locale === "no" ? "nb" : locale, {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0,
+    }).format(amount);
+
+  const pricingTiers = [1, 3, 5, 10]
+    .map((size) => {
+      const monthly = PLANS.find(
+        (plan) => plan.maxVenues === size && plan.interval === "monthly"
+      );
+      const yearly = PLANS.find(
+        (plan) => plan.maxVenues === size && plan.interval === "yearly"
+      );
+      return monthly && yearly ? { size, monthly, yearly } : null;
+    })
+    .filter(
+      (tier): tier is { size: number; monthly: Plan; yearly: Plan } =>
+        tier !== null
+    );
+
   return (
     <div className="lp" lang={locale}>
       <TrackBeacon />
@@ -121,8 +147,7 @@ export default async function HomePage({ searchParams }: PageProps) {
         <nav className="lp-nav" aria-label="Main">
           <a href="#features">{t.nav.features}</a>
           <a href="#how-it-works">{t.nav.howItWorks}</a>
-          <a href="#get-started">{t.nav.pricing}</a>
-          <a href="#integrations">{t.nav.resources}</a>
+          <a href="#pricing">{t.nav.pricing}</a>
         </nav>
 
         <div className="lp-header-cta">
@@ -366,6 +391,37 @@ export default async function HomePage({ searchParams }: PageProps) {
               {t.how.noteAfter}
             </p>
           </div>
+        </section>
+
+        <section className="lp-pricing" id="pricing">
+          <div className="lp-pricing-head">
+            <h2 className={fraunces.className}>{t.pricing.title}</h2>
+            <p>{t.pricing.sub}</p>
+          </div>
+
+          <div className="lp-pricing-grid">
+            {pricingTiers.map(({ size, monthly, yearly }) => (
+              <article key={size} className="lp-price-card">
+                <p className="lp-price-tier">
+                  {size === 1
+                    ? t.pricing.tier1
+                    : t.pricing.tierN.replace("{n}", String(size))}
+                </p>
+                <p className="lp-price-main">
+                  <strong>{euro(monthly.amount)}</strong>
+                  <span>{t.pricing.perMonth}</span>
+                </p>
+                <p className="lp-price-year">
+                  {t.pricing.yearlyLine.replace("{price}", euro(yearly.amount))}
+                </p>
+                <Link href="/staff/sign-up" className="lp-btn lp-btn-ghost">
+                  {t.pricing.cta}
+                </Link>
+              </article>
+            ))}
+          </div>
+
+          <p className="lp-pricing-foot">{t.pricing.foot}</p>
         </section>
 
         <section className="lp-integrations" id="integrations">

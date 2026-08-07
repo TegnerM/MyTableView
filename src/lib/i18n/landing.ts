@@ -13,7 +13,6 @@ const EN = {
     features: "Features",
     howItWorks: "How it works",
     pricing: "Pricing",
-    resources: "Resources",
     logIn: "Log in",
   },
   hero: {
@@ -109,6 +108,16 @@ const EN = {
     line2:
       "Nothing to replace, nothing to migrate — your POS keeps ringing up orders while we look after the people ordering them.",
   },
+  pricing: {
+    title: "Simple pricing",
+    sub: "Every plan includes everything — live floor, insights, unlimited staff. Pick the size that fits, switch or cancel anytime.",
+    tier1: "1 restaurant",
+    tierN: "Up to {n} restaurants",
+    perMonth: "/ month",
+    yearlyLine: "or {price} / year — 2 months free",
+    cta: "Start your free trial",
+    foot: "14-day free trial on every plan — no credit card, cancel anytime.",
+  },
   demo: {
     title: "Put it on one table and see",
     body: "No demos, no sales calls. Try it free for 14 days — print a QR code for your first table and start tonight, your NFC tags arrive by post. No credit card, cancel anytime.",
@@ -124,7 +133,6 @@ const ES: LandingStrings = {
     features: "Funciones",
     howItWorks: "Cómo funciona",
     pricing: "Precios",
-    resources: "Recursos",
     logIn: "Entrar",
   },
   hero: {
@@ -220,6 +228,16 @@ const ES: LandingStrings = {
     line2:
       "Nada que sustituir, nada que migrar — tu TPV sigue cobrando los pedidos mientras nosotros cuidamos de quienes los piden.",
   },
+  pricing: {
+    title: "Precios sencillos",
+    sub: "Todos los planes lo incluyen todo — sala en vivo, estadísticas y personal ilimitado. Elige el tamaño que encaje, cambia o cancela cuando quieras.",
+    tier1: "1 restaurante",
+    tierN: "Hasta {n} restaurantes",
+    perMonth: "/ mes",
+    yearlyLine: "o {price} / año — 2 meses gratis",
+    cta: "Empieza tu prueba gratis",
+    foot: "14 días de prueba gratis en todos los planes — sin tarjeta, cancela cuando quieras.",
+  },
   demo: {
     title: "Ponlo en una mesa y compruébalo",
     body: "Sin demos ni llamadas comerciales. Pruébalo gratis 14 días — imprime un código QR para tu primera mesa y empieza esta noche; las etiquetas NFC llegan por correo. Sin tarjeta, cancela cuando quieras.",
@@ -230,7 +248,7 @@ const ES: LandingStrings = {
 
 
 const DA: LandingStrings = {
-  nav: { features: "Funktioner", howItWorks: "Sådan virker det", pricing: "Priser", resources: "Ressourcer", logIn: "Log ind" },
+  nav: { features: "Funktioner", howItWorks: "Sådan virker det", pricing: "Priser", logIn: "Log ind" },
   hero: {
     titleLine1: "Se alle borde",
     titleLine2: "med ét blik.",
@@ -291,6 +309,16 @@ const DA: LandingStrings = {
     line1: "MyTableView kører ved siden af det, du har på disken i dag.",
     line2: "Intet at udskifte, intet at flytte — dit kassesystem slår stadig ordrer ind, mens vi tager os af dem, der bestiller.",
   },
+  pricing: {
+    title: "Enkle priser",
+    sub: "Alle planer indeholder alt — live bordplan, indsigt og ubegrænset personale. Vælg størrelsen der passer, skift eller opsig når som helst.",
+    tier1: "1 restaurant",
+    tierN: "Op til {n} restauranter",
+    perMonth: "/ måned",
+    yearlyLine: "eller {price} / år — 2 måneder gratis",
+    cta: "Start din gratis prøveperiode",
+    foot: "14 dages gratis prøve på alle planer — uden kreditkort, opsig når som helst.",
+  },
   demo: {
     title: "Sæt det på ét bord og se selv",
     body: "Ingen demoer, ingen salgsopkald. Prøv gratis i 14 dage — print en QR-kode til dit første bord og start i aften; dine NFC-brikker kommer med posten. Uden kreditkort, opsig når som helst.",
@@ -300,7 +328,7 @@ const DA: LandingStrings = {
 };
 
 const SV: LandingStrings = {
-  nav: { features: "Funktioner", howItWorks: "Så funkar det", pricing: "Priser", resources: "Resurser", logIn: "Logga in" },
+  nav: { features: "Funktioner", howItWorks: "Så funkar det", pricing: "Priser", logIn: "Logga in" },
   hero: {
     titleLine1: "Se alla bord",
     titleLine2: "med en blick.",
@@ -361,6 +389,16 @@ const SV: LandingStrings = {
     line1: "MyTableView kör vid sidan av det du har på disken idag.",
     line2: "Inget att byta ut, inget att flytta — ditt kassasystem fortsätter slå in beställningar medan vi tar hand om dem som beställer.",
   },
+  pricing: {
+    title: "Enkla priser",
+    sub: "Alla planer innehåller allt — live bordskarta, insikter och obegränsad personal. Välj storleken som passar, byt eller avsluta när som helst.",
+    tier1: "1 restaurang",
+    tierN: "Upp till {n} restauranger",
+    perMonth: "/ månad",
+    yearlyLine: "eller {price} / år — 2 månader gratis",
+    cta: "Starta din gratisperiod",
+    foot: "14 dagar gratis på alla planer — inget kreditkort, avsluta när som helst.",
+  },
   demo: {
     title: "Sätt det på ett bord och se själv",
     body: "Inga demos, inga säljsamtal. Prova gratis i 14 dagar — skriv ut en QR-kod till ditt första bord och börja ikväll; dina NFC-brickor kommer med posten. Inget kreditkort, avsluta när du vill.",
@@ -370,7 +408,7 @@ const SV: LandingStrings = {
 };
 
 const NO: LandingStrings = {
-  nav: { features: "Funksjoner", howItWorks: "Slik virker det", pricing: "Priser", resources: "Ressurser", logIn: "Logg inn" },
+  nav: { features: "Funksjoner", howItWorks: "Slik virker det", pricing: "Priser", logIn: "Logg inn" },
   hero: {
     titleLine1: "Se alle bord",
     titleLine2: "med ett blikk.",
@@ -431,6 +469,16 @@ const NO: LandingStrings = {
     line1: "MyTableView kjører ved siden av det du har på disken i dag.",
     line2: "Ingenting å bytte ut, ingenting å flytte — kassesystemet ditt slår fortsatt inn bestillinger mens vi tar oss av dem som bestiller.",
   },
+  pricing: {
+    title: "Enkle priser",
+    sub: "Alle planer inneholder alt — live bordkart, innsikt og ubegrenset personale. Velg størrelsen som passer, bytt eller avslutt når som helst.",
+    tier1: "1 restaurant",
+    tierN: "Opptil {n} restauranter",
+    perMonth: "/ måned",
+    yearlyLine: "eller {price} / år — 2 måneder gratis",
+    cta: "Start din gratisperiode",
+    foot: "14 dager gratis på alle planer — uten kredittkort, avslutt når som helst.",
+  },
   demo: {
     title: "Sett det på ett bord og se selv",
     body: "Ingen demoer, ingen salgssamtaler. Prøv gratis i 14 dager — skriv ut en QR-kode til ditt første bord og start i kveld; NFC-brikkene kommer i posten. Uten kredittkort, avslutt når som helst.",
@@ -440,7 +488,7 @@ const NO: LandingStrings = {
 };
 
 const DE: LandingStrings = {
-  nav: { features: "Funktionen", howItWorks: "So funktioniert es", pricing: "Preise", resources: "Ressourcen", logIn: "Anmelden" },
+  nav: { features: "Funktionen", howItWorks: "So funktioniert es", pricing: "Preise", logIn: "Anmelden" },
   hero: {
     titleLine1: "Alle Tische",
     titleLine2: "auf einen Blick.",
@@ -501,6 +549,16 @@ const DE: LandingStrings = {
     line1: "MyTableView läuft neben dem, was heute auf Ihrer Theke steht.",
     line2: "Nichts zu ersetzen, nichts zu migrieren — Ihr Kassensystem bucht weiter Bestellungen, während wir uns um die kümmern, die bestellen.",
   },
+  pricing: {
+    title: "Einfache Preise",
+    sub: "Jeder Plan enthält alles — Live-Tischplan, Auswertung und unbegrenztes Personal. Wählen Sie die passende Größe, wechseln oder kündigen Sie jederzeit.",
+    tier1: "1 Restaurant",
+    tierN: "Bis zu {n} Restaurants",
+    perMonth: "/ Monat",
+    yearlyLine: "oder {price} / Jahr — 2 Monate gratis",
+    cta: "Kostenlos testen",
+    foot: "14 Tage kostenlos testen bei jedem Plan — ohne Kreditkarte, jederzeit kündbar.",
+  },
   demo: {
     title: "An einem Tisch ausprobieren und selbst sehen",
     body: "Keine Demos, keine Verkaufsanrufe. 14 Tage kostenlos testen — QR-Code für den ersten Tisch drucken und heute Abend starten; Ihre NFC-Tags kommen mit der Post. Ohne Kreditkarte, jederzeit kündbar.",
@@ -510,7 +568,7 @@ const DE: LandingStrings = {
 };
 
 const NL: LandingStrings = {
-  nav: { features: "Functies", howItWorks: "Hoe het werkt", pricing: "Prijzen", resources: "Bronnen", logIn: "Inloggen" },
+  nav: { features: "Functies", howItWorks: "Hoe het werkt", pricing: "Prijzen", logIn: "Inloggen" },
   hero: {
     titleLine1: "Zie alle tafels",
     titleLine2: "in één oogopslag.",
@@ -571,6 +629,16 @@ const NL: LandingStrings = {
     line1: "MyTableView draait naast wat er vandaag op je toonbank staat.",
     line2: "Niets te vervangen, niets te migreren — je kassasysteem blijft bestellingen aanslaan terwijl wij zorgen voor de mensen die bestellen.",
   },
+  pricing: {
+    title: "Eenvoudige prijzen",
+    sub: "Elk abonnement bevat alles — live plattegrond, inzichten en onbeperkt personeel. Kies de maat die past, wissel of zeg op wanneer je wilt.",
+    tier1: "1 restaurant",
+    tierN: "Tot {n} restaurants",
+    perMonth: "/ maand",
+    yearlyLine: "of {price} / jaar — 2 maanden gratis",
+    cta: "Start je gratis proefperiode",
+    foot: "14 dagen gratis bij elk abonnement — geen creditcard, opzeggen wanneer je wilt.",
+  },
   demo: {
     title: "Zet het op één tafel en zie het zelf",
     body: "Geen demo's, geen verkoopgesprekken. Probeer het 14 dagen gratis — print een QR-code voor je eerste tafel en begin vanavond; je NFC-tags komen met de post. Geen creditcard, altijd opzegbaar.",
@@ -580,7 +648,7 @@ const NL: LandingStrings = {
 };
 
 const FR: LandingStrings = {
-  nav: { features: "Fonctionnalités", howItWorks: "Comment ça marche", pricing: "Tarifs", resources: "Ressources", logIn: "Se connecter" },
+  nav: { features: "Fonctionnalités", howItWorks: "Comment ça marche", pricing: "Tarifs", logIn: "Se connecter" },
   hero: {
     titleLine1: "Toutes vos tables",
     titleLine2: "d'un seul coup d'œil.",
@@ -640,6 +708,16 @@ const FR: LandingStrings = {
     title: "Pas une caisse de plus",
     line1: "MyTableView fonctionne à côté de ce qui est sur votre comptoir aujourd'hui.",
     line2: "Rien à remplacer, rien à migrer — votre caisse continue d'encaisser les commandes pendant que nous nous occupons de ceux qui les passent.",
+  },
+  pricing: {
+    title: "Des tarifs simples",
+    sub: "Chaque formule comprend tout — plan de salle en direct, statistiques et personnel illimité. Choisissez la taille qui convient, changez ou résiliez à tout moment.",
+    tier1: "1 restaurant",
+    tierN: "Jusqu'à {n} restaurants",
+    perMonth: "/ mois",
+    yearlyLine: "ou {price} / an — 2 mois offerts",
+    cta: "Commencer l'essai gratuit",
+    foot: "14 jours d'essai gratuit sur chaque formule — sans carte bancaire, résiliez à tout moment.",
   },
   demo: {
     title: "Installez-le sur une table et voyez",
