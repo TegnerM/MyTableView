@@ -42,6 +42,40 @@ export function TagBatchesPanel({
     );
   };
 
+  const deleteStock = async (batchName: string, stock: number) => {
+    // Assigned tags survive by construction; this only clears chips
+    // that were never written or shipped.
+    if (
+      !window.confirm(
+        `Delete ${stock} unassigned stock tags from "${batchName}"? Assigned tags are kept.`
+      )
+    ) {
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/admin/action", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete_stock_tags", batch: batchName }),
+      });
+      const payload = (await response.json().catch(() => null)) as {
+        ok?: boolean;
+        detail?: string;
+      } | null;
+      if (!response.ok || !payload?.ok) {
+        setError(payload?.detail ?? "Delete failed.");
+        return;
+      }
+      window.location.reload();
+    } catch {
+      setError("Delete failed.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const generate = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setBusy(true);
@@ -131,12 +165,13 @@ export function TagBatchesPanel({
             <th>Batch</th>
             <th>In stock</th>
             <th>Assigned</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           {batches.length === 0 ? (
             <tr>
-              <td colSpan={3}>No batches yet.</td>
+              <td colSpan={4}>No batches yet.</td>
             </tr>
           ) : (
             batches.map((row) => (
@@ -144,6 +179,18 @@ export function TagBatchesPanel({
                 <td className="mtv-cell-title">{row.batch}</td>
                 <td>{row.stock}</td>
                 <td>{row.assigned}</td>
+                <td>
+                  {row.stock > 0 ? (
+                    <button
+                      type="button"
+                      className="mtv-admin-btn"
+                      disabled={busy}
+                      onClick={() => void deleteStock(row.batch, row.stock)}
+                    >
+                      Delete stock ({row.stock})
+                    </button>
+                  ) : null}
+                </td>
               </tr>
             ))
           )}

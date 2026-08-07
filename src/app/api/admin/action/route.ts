@@ -749,6 +749,45 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true, tags: created ?? [] });
     }
 
+    case "delete_stock_tags": {
+      // Only rows still in stock: an assigned or once-used tag anchors
+      // request history and can never be deleted from here.
+      const batch =
+        typeof body.batch === "string" &&
+        /^[a-z0-9-]{2,40}$/.test(body.batch.trim().toLowerCase())
+          ? body.batch.trim().toLowerCase()
+          : null;
+      if (!batch) {
+        return NextResponse.json(
+          { ok: false, detail: "batch required" },
+          { status: 400 }
+        );
+      }
+
+      const { data: deleted, error } = await service
+        .from("tags")
+        .delete()
+        .eq("batch", batch)
+        .eq("status", "stock")
+        .select("id");
+
+      if (error) {
+        return NextResponse.json(
+          { ok: false, detail: error.message },
+          { status: 500 }
+        );
+      }
+
+      await logAudit(
+        gate.userId,
+        "delete_stock_tags",
+        {},
+        { batch, deleted: (deleted ?? []).length },
+        ip
+      );
+      return NextResponse.json({ ok: true, deleted: (deleted ?? []).length });
+    }
+
     // ---------------------------------------------------- payouts
 
     case "record_payout": {
