@@ -22,6 +22,7 @@ const NAV: { key: string; label: string; href: string }[] = [
   { key: "influencers", label: "Influencers", href: "/admin/influencers" },
   { key: "invites", label: "Invites", href: "/admin/invites" },
   { key: "vouchers", label: "Vouchers", href: "/admin/vouchers" },
+  { key: "tags", label: "Tags", href: "/admin/tags" },
 ];
 
 type Props = {

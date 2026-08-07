@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { requireAdmin, logAudit } from "@/lib/admin/auth";
 import { getServiceClient } from "@/lib/supabase/service";
 import { sendInviteEmail } from "@/lib/email/resend";
+import { generateTagBatch } from "@/lib/tags/generate-ids";
 
 /**
  * POST /api/admin/action — every admin mutation funnels through here.
@@ -46,6 +47,9 @@ type Body = {
   maxRedemptions?: unknown;
   promoCodeId?: unknown;
   amountEur?: unknown;
+  count?: unknown;
+  batch?: unknown;
+  refPrefix?: unknown;
 };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -679,6 +683,70 @@ export async function POST(request: Request) {
         ip
       );
       return NextResponse.json({ ok: true });
+    }
+
+    // ------------------------------------------------------- tags
+
+    case "generate_tag_batch": {
+      // Mint stock NFC tag rows for a manufacturing run: unguessable
+      // IDs from the shared generator, written to chips before posting.
+      const count = Number(body.count);
+      const batch =
+        typeof body.batch === "string" &&
+        /^[a-z0-9-]{2,40}$/.test(body.batch.trim().toLowerCase())
+          ? body.batch.trim().toLowerCase()
+          : null;
+      const refPrefix =
+        typeof body.refPrefix === "string" &&
+        /^[A-Z0-9-]{0,8}$/.test(body.refPrefix.trim().toUpperCase())
+          ? body.refPrefix.trim().toUpperCase()
+          : "";
+
+      if (!batch || !Number.isInteger(count) || count < 1 || count > 500) {
+        return NextResponse.json(
+          { ok: false, detail: "batch (a-z 0-9 -) and count (1-500) required" },
+          { status: 400 }
+        );
+      }
+
+      // printed_ref numbering continues where the batch left off, so a
+      // second run for the same batch never duplicates references.
+      const { count: existing } = await service
+        .from("tags")
+        .select("id", { count: "exact", head: true })
+        .eq("batch", batch);
+
+      const start = (existing ?? 0) + 1;
+      const ids = generateTagBatch(count);
+      const rows = ids.map((id, index) => ({
+        id,
+        batch,
+        status: "stock",
+        printed_ref: refPrefix
+          ? `${refPrefix}${String(start + index).padStart(3, "0")}`
+          : null,
+      }));
+
+      const { data: created, error } = await service
+        .from("tags")
+        .insert(rows)
+        .select("id, printed_ref");
+
+      if (error) {
+        return NextResponse.json(
+          { ok: false, detail: error.message },
+          { status: 500 }
+        );
+      }
+
+      await logAudit(
+        gate.userId,
+        "generate_tag_batch",
+        {},
+        { batch, count, ref_prefix: refPrefix || null },
+        ip
+      );
+      return NextResponse.json({ ok: true, tags: created ?? [] });
     }
 
     // ---------------------------------------------------- payouts
