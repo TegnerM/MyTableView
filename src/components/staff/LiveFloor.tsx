@@ -17,6 +17,7 @@ import {
 import { RequestQueue } from "@/components/staff/RequestQueue";
 import { EscalationAlerts } from "@/components/staff/EscalationAlerts";
 import { FloorPlan } from "@/components/staff/FloorPlan";
+import { GetStarted, type GetStartedSteps } from "@/components/staff/GetStarted";
 import { StaffShell } from "@/components/staff/StaffShell";
 import { pickLocale } from "@/lib/i18n/guest";
 import {
@@ -53,9 +54,16 @@ type Props = {
   locale: string;
   /** Server-stamped clock: keeps SSR text and hydration identical. */
   initialNow: number;
+  /** Onboarding card state — null for everyone but a fresh owner. */
+  getStarted?: GetStartedSteps | null;
 };
 
-export function LiveFloor({ initialState, locale, initialNow }: Props) {
+export function LiveFloor({
+  initialState,
+  locale,
+  initialNow,
+  getStarted = null,
+}: Props) {
   const router = useRouter();
 
   // SSR renders English; the cookie (or browser language) takes over
@@ -498,6 +506,8 @@ export function LiveFloor({ initialState, locale, initialNow }: Props) {
         <header className="mtv-greeting-row">
           <h1 className="mtv-greeting">{state.identity.venueName}</h1>
         </header>
+
+        {getStarted ? <GetStarted steps={getStarted} t={t} /> : null}
 
         {connection === "offline" ? (
           <div className="mtv-offline-banner" role="alert">

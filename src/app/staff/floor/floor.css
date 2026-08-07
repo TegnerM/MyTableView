@@ -1759,3 +1759,183 @@
   overflow: hidden;
   clip: rect(0 0 0 0);
 }
+
+/* ------------------------------------------------- get started card */
+
+/* The onboarding card a brand-new owner sees at the top of Overview.
+   Teal-edged so it reads as guidance, not another status panel; every
+   colour comes from the theme tokens so night mode needs nothing. */
+.mtv-gs{
+  background: var(--mtv-card);
+  border: 1.5px solid var(--mtv-teal);
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  margin: 0 0 1rem;
+  box-shadow: 0 6px 18px var(--mtv-shadow);
+}
+
+.mtv-gs-head{
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.mtv-gs-head h2{
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.mtv-gs-head p{
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  color: var(--mtv-text-muted);
+}
+
+/* Conic progress ring: the gradient stop is set inline (done × 25%). */
+.mtv-gs-ring{
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.mtv-gs-ring span{
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--mtv-card);
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--mtv-teal-deep);
+}
+
+.mtv-gs-steps{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.mtv-gs-step{
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 10px;
+}
+
+.mtv-gs-step[data-now="true"]{
+  background: var(--mtv-teal-wash);
+}
+
+.mtv-gs-mark{
+  flex: 0 0 auto;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: 0.05rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--mtv-line);
+  display: grid;
+  place-items: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.mtv-gs-step[data-done="true"] .mtv-gs-mark{
+  background: var(--mtv-good);
+  border-color: var(--mtv-good);
+}
+
+.mtv-gs-step[data-now="true"] .mtv-gs-mark{
+  border-color: var(--mtv-teal);
+}
+
+.mtv-gs-step-body{
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+}
+
+.mtv-gs-label{
+  font-weight: 650;
+  font-size: 0.92rem;
+}
+
+.mtv-gs-step[data-done="true"] .mtv-gs-label{
+  color: var(--mtv-text-muted);
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+.mtv-gs-link{
+  font-size: 0.85rem;
+  font-weight: 650;
+  color: var(--mtv-teal-deep);
+  text-decoration: none;
+}
+
+.mtv-gs-link:hover{
+  text-decoration: underline;
+}
+
+.mtv-gs-action{
+  flex: 1 1 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.15rem;
+}
+
+.mtv-gs-action p{
+  flex: 1 1 16rem;
+  margin: 0;
+  font-size: 0.83rem;
+  color: var(--mtv-text-muted);
+  line-height: 1.45;
+}
+
+.mtv-gs-error{
+  margin: 0.6rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--mtv-overdue-deep);
+}
+
+.mtv-gs-done{
+  margin: 0.7rem 0 0;
+  font-size: 0.88rem;
+  font-weight: 650;
+  color: var(--mtv-good-deep);
+}
+
+.mtv-gs-dismiss{
+  margin-top: 0.6rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.8rem;
+  color: var(--mtv-text-muted);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (max-width: 640px){
+  .mtv-gs{
+    padding: 0.85rem;
+  }
+
+  .mtv-gs-action .mtv-btn{
+    flex: 1 1 100%;
+  }
+}
