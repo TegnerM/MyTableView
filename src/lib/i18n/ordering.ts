@@ -55,6 +55,8 @@ const EN = {
     close: "Close",
     cancel: "Cancel",
     languageHint: "Fill in every language your guests use.",
+    translations: "Translations (optional)",
+    translationsHint: "Guests whose language has no translation simply see your main language.",
   },
 
   board: {
@@ -180,6 +182,8 @@ const DICTS: Record<string, OrderingStrings> = {
       close: "Cerrar",
       cancel: "Cancelar",
       languageHint: "Rellena todos los idiomas que usan tus clientes.",
+      translations: "Traducciones (opcional)",
+      translationsHint: "Los clientes sin traducción en su idioma ven simplemente tu idioma principal.",
     },
     board: {
       title: "Pedidos",
@@ -296,6 +300,8 @@ const DICTS: Record<string, OrderingStrings> = {
       close: "Luk",
       cancel: "Annuller",
       languageHint: "Udfyld alle de sprog dine gæster bruger.",
+      translations: "Oversættelser (valgfrit)",
+      translationsHint: "Gæster uden oversættelse på deres sprog ser blot dit hovedsprog.",
     },
     board: {
       title: "Bestillinger",
@@ -412,6 +418,8 @@ const DICTS: Record<string, OrderingStrings> = {
       close: "Stäng",
       cancel: "Avbryt",
       languageHint: "Fyll i alla språk dina gäster använder.",
+      translations: "Översättningar (valfritt)",
+      translationsHint: "Gäster utan översättning på sitt språk ser helt enkelt ditt huvudspråk.",
     },
     board: {
       title: "Beställningar",
@@ -528,6 +536,8 @@ const DICTS: Record<string, OrderingStrings> = {
       close: "Lukk",
       cancel: "Avbryt",
       languageHint: "Fyll ut alle språkene gjestene dine bruker.",
+      translations: "Oversettelser (valgfritt)",
+      translationsHint: "Gjester uten oversettelse på sitt språk ser rett og slett hovedspråket ditt.",
     },
     board: {
       title: "Bestillinger",
@@ -644,6 +654,8 @@ const DICTS: Record<string, OrderingStrings> = {
       close: "Schließen",
       cancel: "Abbrechen",
       languageHint: "Füllen Sie alle Sprachen aus, die Ihre Gäste nutzen.",
+      translations: "Übersetzungen (optional)",
+      translationsHint: "Gäste ohne Übersetzung in ihrer Sprache sehen einfach Ihre Hauptsprache.",
     },
     board: {
       title: "Bestellungen",
@@ -760,6 +772,8 @@ const DICTS: Record<string, OrderingStrings> = {
       close: "Sluiten",
       cancel: "Annuleren",
       languageHint: "Vul elke taal in die je gasten gebruiken.",
+      translations: "Vertalingen (optioneel)",
+      translationsHint: "Gasten zonder vertaling in hun taal zien gewoon je hoofdtaal.",
     },
     board: {
       title: "Bestellingen",
@@ -876,6 +890,8 @@ const DICTS: Record<string, OrderingStrings> = {
       close: "Fermer",
       cancel: "Annuler",
       languageHint: "Remplissez chaque langue utilisée par vos clients.",
+      translations: "Traductions (facultatif)",
+      translationsHint: "Les clients sans traduction dans leur langue voient simplement votre langue principale.",
     },
     board: {
       title: "Commandes",

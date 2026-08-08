@@ -27,8 +27,11 @@ import {
 
 type Props = {
   initialMenu: VenueMenu;
-  /** The venue's published guest languages — one input per language. */
+  /** The venue's published guest languages. */
   venueLocales: string[];
+  /** The venue's main language — the only field shown by default;
+   *  other languages live behind an optional "Translations" fold. */
+  defaultLocale: string;
 };
 
 type SaveState = "idle" | "saving" | "saved" | "failed";
@@ -53,7 +56,7 @@ async function post(payload: Record<string, unknown>): Promise<{
   }
 }
 
-export function MenuEditor({ initialMenu, venueLocales }: Props) {
+export function MenuEditor({ initialMenu, venueLocales, defaultLocale }: Props) {
   const router = useRouter();
 
   const [locale, setLocale] = useState("en");
@@ -62,7 +65,9 @@ export function MenuEditor({ initialMenu, venueLocales }: Props) {
   }, []);
   const t = getOrderingStrings(locale);
 
-  const locales = venueLocales.length > 0 ? venueLocales : ["en"];
+  const primary = defaultLocale || venueLocales[0] || "en";
+  // Main language first, the rest only inside the Translations fold.
+  const others = venueLocales.filter((code) => code !== primary);
 
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(
     initialMenu.categories[0]?.id ?? null
@@ -117,7 +122,8 @@ export function MenuEditor({ initialMenu, venueLocales }: Props) {
         <CategoryForm
           key="new-category"
           t={t}
-          locales={locales}
+          primary={primary}
+          others={others}
           category={null}
           onDone={(newId) => {
             setAddingCategory(false);
@@ -139,7 +145,8 @@ export function MenuEditor({ initialMenu, venueLocales }: Props) {
           <CategoryForm
             key={activeCategory.id}
             t={t}
-            locales={locales}
+            primary={primary}
+            others={others}
             category={activeCategory}
             onDone={() => refresh()}
             onCancel={null}
@@ -155,7 +162,8 @@ export function MenuEditor({ initialMenu, venueLocales }: Props) {
                 key={item.id}
                 t={t}
                 locale={locale}
-                locales={locales}
+                primary={primary}
+                others={others}
                 item={item}
                 expanded={expandedItemId === item.id}
                 onToggle={() =>
@@ -169,7 +177,8 @@ export function MenuEditor({ initialMenu, venueLocales }: Props) {
               <ItemForm
                 key={`new-item-${activeCategory.id}`}
                 t={t}
-                locales={locales}
+                primary={primary}
+                others={others}
                 categoryId={activeCategory.id}
                 item={null}
                 onDone={() => {
@@ -201,13 +210,15 @@ export function MenuEditor({ initialMenu, venueLocales }: Props) {
 
 function CategoryForm({
   t,
-  locales,
+  primary,
+  others,
   category,
   onDone,
   onCancel,
 }: {
   t: ReturnType<typeof getOrderingStrings>;
-  locales: string[];
+  primary: string;
+  others: string[];
   category: MenuCategory | null;
   onDone: (newId?: string) => void;
   onCancel: (() => void) | null;
@@ -215,6 +226,10 @@ function CategoryForm({
   const [name, setName] = useState<LocaleMap>(category?.name ?? {});
   const [station, setStation] = useState<Station>(category?.station ?? "kitchen");
   const [state, setState] = useState<SaveState>("idle");
+  // Open automatically when a translation already exists.
+  const [showTranslations, setShowTranslations] = useState(() =>
+    others.some((code) => Boolean(category?.name?.[code]))
+  );
 
   const save = async () => {
     setState("saving");
@@ -253,22 +268,18 @@ function CategoryForm({
   return (
     <div className="mtv-menued-catform" data-new={category ? "false" : "true"}>
       <div className="mtv-menued-fields">
-        {locales.map((code) => (
-          <label key={code} className="mtv-menued-field">
-            <span>
-              {t.editor.categoryName} <i>{code.toUpperCase()}</i>
-            </span>
-            <input
-              type="text"
-              maxLength={120}
-              value={name[code] ?? ""}
-              placeholder={t.editor.newCategory}
-              onChange={(event) =>
-                setName((prev) => ({ ...prev, [code]: event.target.value }))
-              }
-            />
-          </label>
-        ))}
+        <label className="mtv-menued-field">
+          <span>{t.editor.categoryName}</span>
+          <input
+            type="text"
+            maxLength={120}
+            value={name[primary] ?? ""}
+            placeholder={t.editor.newCategory}
+            onChange={(event) =>
+              setName((prev) => ({ ...prev, [primary]: event.target.value }))
+            }
+          />
+        </label>
 
         <label className="mtv-menued-field mtv-menued-field-station">
           <span>{t.editor.station}</span>
@@ -282,6 +293,32 @@ function CategoryForm({
         </label>
       </div>
       <p className="mtv-menued-help">{t.editor.stationHelp}</p>
+
+      {others.length > 0 ? (
+        <TranslationsFold
+          t={t}
+          open={showTranslations}
+          onToggle={() => setShowTranslations((value) => !value)}
+        >
+          <div className="mtv-menued-fields">
+            {others.map((code) => (
+              <label key={code} className="mtv-menued-field">
+                <span>
+                  {t.editor.categoryName} <i>{code.toUpperCase()}</i>
+                </span>
+                <input
+                  type="text"
+                  maxLength={120}
+                  value={name[code] ?? ""}
+                  onChange={(event) =>
+                    setName((prev) => ({ ...prev, [code]: event.target.value }))
+                  }
+                />
+              </label>
+            ))}
+          </div>
+        </TranslationsFold>
+      ) : null}
 
       <div className="mtv-menued-actions">
         <button
@@ -337,7 +374,8 @@ function CategoryForm({
 function ItemCard({
   t,
   locale,
-  locales,
+  primary,
+  others,
   item,
   expanded,
   onToggle,
@@ -345,7 +383,8 @@ function ItemCard({
 }: {
   t: ReturnType<typeof getOrderingStrings>;
   locale: string;
-  locales: string[];
+  primary: string;
+  others: string[];
   item: MenuItem;
   expanded: boolean;
   onToggle: () => void;
@@ -401,7 +440,8 @@ function ItemCard({
       {expanded ? (
         <ItemForm
           t={t}
-          locales={locales}
+          primary={primary}
+          others={others}
           categoryId={item.categoryId}
           item={item}
           onDone={onChanged}
@@ -414,14 +454,16 @@ function ItemCard({
 
 function ItemForm({
   t,
-  locales,
+  primary,
+  others,
   categoryId,
   item,
   onDone,
   onCancel,
 }: {
   t: ReturnType<typeof getOrderingStrings>;
-  locales: string[];
+  primary: string;
+  others: string[];
   categoryId: string;
   item: MenuItem | null;
   onDone: () => void;
@@ -436,6 +478,11 @@ function ItemForm({
   const [photo, setPhoto] = useState<string | null>(item?.photo ?? null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [state, setState] = useState<SaveState>("idle");
+  const [showTranslations, setShowTranslations] = useState(() =>
+    others.some(
+      (code) => Boolean(item?.name?.[code]) || Boolean(item?.description?.[code])
+    )
+  );
 
   const priceCents = useMemo(() => {
     const value = Number.parseFloat(price.replace(",", "."));
@@ -495,41 +542,72 @@ function ItemForm({
   return (
     <div className="mtv-menued-itemform">
       <div className="mtv-menued-fields">
-        {locales.map((code) => (
-          <label key={`name-${code}`} className="mtv-menued-field">
-            <span>
-              {t.editor.itemName} <i>{code.toUpperCase()}</i>
-            </span>
-            <input
-              type="text"
-              maxLength={120}
-              value={name[code] ?? ""}
-              placeholder={t.editor.newItem}
-              onChange={(event) =>
-                setName((prev) => ({ ...prev, [code]: event.target.value }))
-              }
-            />
-          </label>
-        ))}
+        <label className="mtv-menued-field">
+          <span>{t.editor.itemName}</span>
+          <input
+            type="text"
+            maxLength={120}
+            value={name[primary] ?? ""}
+            placeholder={t.editor.newItem}
+            onChange={(event) =>
+              setName((prev) => ({ ...prev, [primary]: event.target.value }))
+            }
+          />
+        </label>
+        <label className="mtv-menued-field mtv-menued-field-wide">
+          <span>{t.editor.description}</span>
+          <textarea
+            rows={2}
+            maxLength={400}
+            value={description[primary] ?? ""}
+            onChange={(event) =>
+              setDescription((prev) => ({ ...prev, [primary]: event.target.value }))
+            }
+          />
+        </label>
       </div>
 
-      <div className="mtv-menued-fields">
-        {locales.map((code) => (
-          <label key={`desc-${code}`} className="mtv-menued-field mtv-menued-field-wide">
-            <span>
-              {t.editor.description} <i>{code.toUpperCase()}</i>
-            </span>
-            <textarea
-              rows={2}
-              maxLength={400}
-              value={description[code] ?? ""}
-              onChange={(event) =>
-                setDescription((prev) => ({ ...prev, [code]: event.target.value }))
-              }
-            />
-          </label>
-        ))}
-      </div>
+      {others.length > 0 ? (
+        <TranslationsFold
+          t={t}
+          open={showTranslations}
+          onToggle={() => setShowTranslations((value) => !value)}
+        >
+          {others.map((code) => (
+            <div key={code} className="mtv-menued-fields">
+              <label className="mtv-menued-field">
+                <span>
+                  {t.editor.itemName} <i>{code.toUpperCase()}</i>
+                </span>
+                <input
+                  type="text"
+                  maxLength={120}
+                  value={name[code] ?? ""}
+                  onChange={(event) =>
+                    setName((prev) => ({ ...prev, [code]: event.target.value }))
+                  }
+                />
+              </label>
+              <label className="mtv-menued-field mtv-menued-field-wide">
+                <span>
+                  {t.editor.description} <i>{code.toUpperCase()}</i>
+                </span>
+                <textarea
+                  rows={2}
+                  maxLength={400}
+                  value={description[code] ?? ""}
+                  onChange={(event) =>
+                    setDescription((prev) => ({
+                      ...prev,
+                      [code]: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+            </div>
+          ))}
+        </TranslationsFold>
+      ) : null}
 
       <div className="mtv-menued-fields">
         <label className="mtv-menued-field mtv-menued-field-price">
@@ -573,15 +651,13 @@ function ItemForm({
             onClick={() => toggleAllergen(allergen.code)}
           >
             <span aria-hidden="true">{allergen.emoji}</span>{" "}
-            {allergen.names.en === allergen.names[locales[0]]
-              ? allergen.names.en
-              : (allergen.names[locales[0]] ?? allergen.names.en)}
+            {allergen.names[primary] ?? allergen.names.en}
           </button>
         ))}
       </div>
 
       {item ? (
-        <OptionsEditor t={t} locales={locales} item={item} onChanged={onDone} />
+        <OptionsEditor t={t} primary={primary} item={item} onChanged={onDone} />
       ) : null}
 
       <div className="mtv-menued-actions">
@@ -643,16 +719,47 @@ function ItemForm({
   );
 }
 
+/* ---------------------------------------------------- translations */
+
+function TranslationsFold({
+  t,
+  open,
+  onToggle,
+  children,
+}: {
+  t: ReturnType<typeof getOrderingStrings>;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mtv-menued-fold" data-open={open ? "true" : "false"}>
+      <button type="button" className="mtv-menued-fold-toggle" onClick={onToggle}>
+        <span className="mtv-menued-fold-caret" aria-hidden="true">
+          {open ? "▾" : "▸"}
+        </span>
+        {t.editor.translations}
+      </button>
+      {open ? (
+        <div className="mtv-menued-fold-body">
+          <p className="mtv-menued-help">{t.editor.translationsHint}</p>
+          {children}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 /* --------------------------------------------------------- options */
 
 function OptionsEditor({
   t,
-  locales,
+  primary,
   item,
   onChanged,
 }: {
   t: ReturnType<typeof getOrderingStrings>;
-  locales: string[];
+  primary: string;
   item: MenuItem;
   onChanged: () => void;
 }) {
@@ -701,10 +808,7 @@ function OptionsEditor({
       {item.options.map((option) => (
         <div key={option.id} className="mtv-menued-option-row">
           <span className="mtv-menued-option-name">
-            {locales
-              .map((code) => option.name[code])
-              .filter(Boolean)
-              .join(" / ") || "—"}
+            {option.name[primary] ?? Object.values(option.name)[0] ?? "—"}
           </span>
           <span className="mtv-menued-option-price">
             {option.surchargeCents > 0
@@ -723,18 +827,15 @@ function OptionsEditor({
       ))}
 
       <div className="mtv-menued-option-new">
-        {locales.map((code) => (
-          <input
-            key={code}
-            type="text"
-            maxLength={120}
-            value={draftName[code] ?? ""}
-            placeholder={`${t.editor.optionName} ${code.toUpperCase()}`}
-            onChange={(event) =>
-              setDraftName((prev) => ({ ...prev, [code]: event.target.value }))
-            }
-          />
-        ))}
+        <input
+          type="text"
+          maxLength={120}
+          value={draftName[primary] ?? ""}
+          placeholder={t.editor.optionName}
+          onChange={(event) =>
+            setDraftName((prev) => ({ ...prev, [primary]: event.target.value }))
+          }
+        />
         <input
           type="text"
           inputMode="decimal"

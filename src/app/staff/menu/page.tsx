@@ -98,7 +98,11 @@ export default async function StaffMenuPage() {
           </p>
         ) : null}
 
-        <MenuEditor initialMenu={menu} venueLocales={venueLocales} />
+        <MenuEditor
+          initialMenu={menu}
+          venueLocales={venueLocales}
+          defaultLocale={venue?.default_locale ?? venueLocales[0] ?? "en"}
+        />
       </main>
     </StaffShell>
   );

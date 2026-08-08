@@ -490,3 +490,35 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+/* ------------------------------------------------ translations fold */
+
+.mtv-menued-fold {
+  margin: 0.2rem 0 0.6rem;
+  border: 1px dashed var(--mtv-line, #e3e6ea);
+  border-radius: 0.75rem;
+}
+
+.mtv-menued-fold-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.55rem 0.8rem;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--mtv-muted, #7a858f);
+  cursor: pointer;
+  text-align: left;
+}
+
+.mtv-menued-fold-caret {
+  color: #8a6d33;
+}
+
+.mtv-menued-fold-body {
+  padding: 0.2rem 0.8rem 0.7rem;
+}
