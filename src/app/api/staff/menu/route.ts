@@ -163,6 +163,22 @@ async function itemSave(ctx: Ctx, body: Record<string, unknown>) {
   const service = getServiceClient();
 
   if (typeof body.id === "string") {
+    // A dish hidden only because it had no price comes back the moment
+    // it gets one. A deliberate 86 (priced dish, availability off) is
+    // the owner's call and stays off.
+    const { data: existing } = await service
+      .from("menu_items")
+      .select("price_cents, available")
+      .eq("id", body.id)
+      .eq("venue_id", ctx.venueId)
+      .maybeSingle<{ price_cents: number; available: boolean }>();
+
+    const revive =
+      existing !== null &&
+      existing.available === false &&
+      existing.price_cents <= 0 &&
+      priceCents > 0;
+
     const { data, error } = await service
       .from("menu_items")
       .update({
@@ -171,6 +187,7 @@ async function itemSave(ctx: Ctx, body: Record<string, unknown>) {
         price_cents: priceCents,
         photo,
         allergens,
+        ...(revive ? { available: true } : {}),
       })
       .eq("id", body.id)
       .eq("venue_id", ctx.venueId)

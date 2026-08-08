@@ -9,9 +9,13 @@ import type {
 
 /**
  * Loads a venue's guest-facing menu: active categories with their
- * active items and options, in the owner's order. Unavailable ("86'd")
- * items ARE included — the guest sees "sold out today" rather than a
- * dish silently vanishing mid-browse.
+ * active items and options, in the owner's order.
+ *
+ * Two different kinds of "not orderable", handled differently:
+ *   - UNPRICED dishes (imported, price not set yet) are invisible to
+ *     guests — a menu full of "sold out" placeholders looks broken.
+ *   - 86'd dishes (owner flipped availability off mid-service) DO show
+ *     as "sold out today" — a dish vanishing mid-browse is worse.
  *
  * Service-role read, same as the rest of the guest surface.
  */
@@ -61,6 +65,7 @@ export async function loadGuestMenu(venueId: string): Promise<VenueMenu> {
       )
       .eq("venue_id", venueId)
       .eq("active", true)
+      .gt("price_cents", 0)
       .order("sort_order", { ascending: true })
       .returns<ItemRow[]>(),
     supabase

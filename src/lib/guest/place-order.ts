@@ -194,7 +194,7 @@ export async function placeGuestOrder(
     if (!item || !item.active || !item.menu_categories?.active) {
       return { ok: false, reason: "unknown_item" };
     }
-    if (!item.available) {
+    if (!item.available || item.price_cents <= 0) {
       return { ok: false, reason: "item_unavailable" };
     }
   }
