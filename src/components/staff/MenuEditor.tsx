@@ -79,6 +79,67 @@ export function MenuEditor({
   const manualLocales = autoTranslate ? [] : others;
 
   const [toggleBusy, setToggleBusy] = useState(false);
+  const [importBusy, setImportBusy] = useState(false);
+  const [importNotice, setImportNotice] = useState<string | null>(null);
+  const [importError, setImportError] = useState(false);
+
+  const runImport = async (fileList: FileList) => {
+    setImportBusy(true);
+    setImportNotice(null);
+    setImportError(false);
+    try {
+      const form = new FormData();
+      for (const file of Array.from(fileList)) {
+        form.append("files", file);
+      }
+      const response = await fetch("/api/staff/menu/import", {
+        method: "POST",
+        body: form,
+      });
+      const payload = (await response.json().catch(() => null)) as {
+        ok?: boolean;
+        itemsCreated?: number;
+        itemsUpdated?: number;
+        needsPrice?: number;
+        skipped?: unknown[];
+      } | null;
+
+      if (!response.ok || !payload?.ok) {
+        setImportError(true);
+        setImportNotice(t.editor.importFailed);
+        return;
+      }
+
+      const parts = [
+        t.editor.importDone
+          .replace("{created}", String(payload.itemsCreated ?? 0))
+          .replace("{updated}", String(payload.itemsUpdated ?? 0)),
+      ];
+      if ((payload.needsPrice ?? 0) > 0) {
+        parts.push(
+          t.editor.importNeedsPrice.replace(
+            "{count}",
+            String(payload.needsPrice)
+          )
+        );
+      }
+      if ((payload.skipped?.length ?? 0) > 0) {
+        parts.push(
+          t.editor.importSkipped.replace(
+            "{count}",
+            String(payload.skipped?.length)
+          )
+        );
+      }
+      setImportNotice(parts.join(" "));
+      router.refresh();
+    } catch {
+      setImportError(true);
+      setImportNotice(t.editor.importFailed);
+    } finally {
+      setImportBusy(false);
+    }
+  };
   const setAutoTranslate = async (enabled: boolean) => {
     setToggleBusy(true);
     await post({ action: "auto_translate", enabled });
@@ -148,7 +209,33 @@ export function MenuEditor({
         >
           {t.editor.addCategory}
         </button>
+
+        <label className="mtv-menued-import" data-busy={importBusy ? "true" : "false"}>
+          <input
+            type="file"
+            accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            multiple
+            disabled={importBusy}
+            onChange={(event) => {
+              if (event.target.files && event.target.files.length > 0) {
+                void runImport(event.target.files);
+                event.target.value = "";
+              }
+            }}
+          />
+          {importBusy ? t.editor.importing : t.editor.importBtn}
+        </label>
       </div>
+
+      {importNotice ? (
+        <p
+          className="mtv-menued-import-notice"
+          data-error={importError ? "true" : "false"}
+          role="status"
+        >
+          {importNotice}
+        </p>
+      ) : null}
 
       {addingCategory ? (
         <CategoryForm

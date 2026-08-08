@@ -558,3 +558,40 @@
   border: 1px dashed var(--mtv-line, #e3e6ea);
   border-radius: 0.75rem;
 }
+
+/* ------------------------------------------------ spreadsheet import */
+
+.mtv-menued-import {
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--mtv-line, #e3e6ea);
+  background: var(--mtv-panel, #fff);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.mtv-menued-import[data-busy="true"] {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.mtv-menued-import input {
+  display: none;
+}
+
+.mtv-menued-import-notice {
+  margin: 0.7rem 0 0;
+  padding: 0.6rem 0.85rem;
+  background: #eef6f0;
+  border: 1px solid #cfe5d6;
+  border-radius: 0.7rem;
+  font-size: 0.85rem;
+}
+
+.mtv-menued-import-notice[data-error="true"] {
+  background: #fbf3f2;
+  border-color: #e5b9b9;
+  color: #c03338;
+}

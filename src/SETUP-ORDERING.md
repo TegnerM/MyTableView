@@ -54,6 +54,25 @@ to `.env.local` and your hosting env. Without the key nothing breaks —
 guests in other languages simply see the main language until the key
 is added (re-save a dish to translate it).
 
+## 3c. Spreadsheet import
+
+The Menu page has an **Import spreadsheet** button (next to
+"+ Add category"). It takes one or several .xlsx files in the menu
+template format (Dish Name | Category | Default Description |
+Allergens | Diet Tags | Restaurant Price | Active) — your 10 example
+templates import as-is: categories are created automatically (drink
+categories go to the Bar station), allergen/diet words are matched
+tolerantly ("Gluten, Milk, vegetarian"), Yes/No maps to available, and
+re-importing a corrected file UPDATES dishes instead of duplicating
+them. Rows without a price import as sold-out at 0.00 € until priced.
+If auto-translate is on, imported dishes translate in the same run.
+
+Requires one new package — run once after pulling:
+
+```bash
+npm install
+```
+
 ## 4. Try the whole loop (sandbox)
 
 1. **Menu**: staff sidebar → Menu → add a category "Drinks" (station:

@@ -172,3 +172,191 @@ export async function autoTranslateMenuRow(
     );
   }
 }
+
+
+/* ------------------------------------------------------------------ */
+/* Batch translation for the spreadsheet importer.                     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Translates a batch of texts into one target language with as few
+ * DeepL calls as possible (up to 45 texts per request). Returns the
+ * translations positionally; failures return an empty array.
+ */
+async function translateBatch(
+  texts: string[],
+  sourceLocale: string,
+  targetLocale: string
+): Promise<string[]> {
+  const key = process.env.DEEPL_API_KEY;
+  const targetLang = DEEPL_LANG[targetLocale.split("-")[0]];
+  const source = DEEPL_LANG[sourceLocale.split("-")[0]];
+  if (!key || !targetLang || targetLang === source || texts.length === 0) {
+    return [];
+  }
+
+  const out: string[] = [];
+
+  for (let start = 0; start < texts.length; start += 45) {
+    const chunk = texts.slice(start, start + 45);
+    try {
+      const response = await fetch(deeplEndpoint(key), {
+        method: "POST",
+        headers: {
+          Authorization: `DeepL-Auth-Key ${key}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: chunk,
+          target_lang: targetLang,
+          ...(source ? { source_lang: source } : {}),
+        }),
+        signal: AbortSignal.timeout(15000),
+      });
+
+      if (!response.ok) {
+        console.error("translateBatch: deepl refused", response.status);
+        return [];
+      }
+
+      const payload = (await response.json()) as {
+        translations?: { text?: string }[];
+      };
+      for (const entry of payload.translations ?? []) {
+        out.push(entry.text ?? "");
+      }
+    } catch (error) {
+      console.error(
+        "translateBatch: failed",
+        error instanceof Error ? error.message : error
+      );
+      return [];
+    }
+  }
+
+  return out.length === texts.length ? out : [];
+}
+
+export type ImportTranslationResult = {
+  itemsTranslated: number;
+  /** True when the time budget ran out before every language finished —
+   *  the rest translates when those dishes are next saved. */
+  timedOut: boolean;
+};
+
+/**
+ * Translates freshly imported items into the venue's other guest
+ * languages, batched, within a time budget (serverless functions have
+ * a hard ceiling — a half-translated menu beats a dead request).
+ * Respects the venue's auto-translate switch.
+ */
+export async function translateImportedItems(
+  venueId: string,
+  items: { id: string; name: string; description: string | null }[],
+  deadlineAt: number
+): Promise<ImportTranslationResult> {
+  const none: ImportTranslationResult = { itemsTranslated: 0, timedOut: false };
+
+  if (!process.env.DEEPL_API_KEY || items.length === 0) {
+    return none;
+  }
+
+  try {
+    const service = getServiceClient();
+
+    const { data: venue } = await service
+      .from("venues")
+      .select("default_locale, locales, menu_auto_translate")
+      .eq("id", venueId)
+      .maybeSingle<{
+        default_locale: string | null;
+        locales: string[] | null;
+        menu_auto_translate: boolean | null;
+      }>();
+
+    if (venue?.menu_auto_translate === false) {
+      return none;
+    }
+
+    const primary = venue?.default_locale ?? "en";
+    const targets = (venue?.locales ?? []).filter((code) => code !== primary);
+    if (targets.length === 0) {
+      return none;
+    }
+
+    const names = items.map((item) => item.name);
+    const descriptions = items.map((item) => item.description ?? "");
+
+    const nameMaps: Record<string, string>[] = items.map((item) => ({
+      [primary]: item.name,
+    }));
+    const descriptionMaps: (Record<string, string> | null)[] = items.map(
+      (item) => (item.description ? { [primary]: item.description } : null)
+    );
+
+    let timedOut = false;
+
+    for (const target of targets) {
+      if (Date.now() > deadlineAt) {
+        timedOut = true;
+        break;
+      }
+
+      const translatedNames = await translateBatch(names, primary, target);
+      if (translatedNames.length === names.length) {
+        translatedNames.forEach((value, index) => {
+          if (value.trim() !== "") {
+            nameMaps[index][target] = value;
+          }
+        });
+      }
+
+      if (Date.now() > deadlineAt) {
+        timedOut = true;
+        break;
+      }
+
+      // Only items that HAVE a description need one translated; empty
+      // strings keep positions aligned and cost DeepL nothing.
+      const translatedDescriptions = await translateBatch(
+        descriptions,
+        primary,
+        target
+      );
+      if (translatedDescriptions.length === descriptions.length) {
+        translatedDescriptions.forEach((value, index) => {
+          const map = descriptionMaps[index];
+          if (map && value.trim() !== "") {
+            map[target] = value;
+          }
+        });
+      }
+    }
+
+    let written = 0;
+    for (let index = 0; index < items.length; index += 1) {
+      const update: Record<string, unknown> = { name: nameMaps[index] };
+      if (descriptionMaps[index]) {
+        update.description = descriptionMaps[index];
+      }
+
+      const { error } = await service
+        .from("menu_items")
+        .update(update)
+        .eq("id", items[index].id)
+        .eq("venue_id", venueId);
+
+      if (!error) {
+        written += 1;
+      }
+    }
+
+    return { itemsTranslated: written, timedOut };
+  } catch (error) {
+    console.error(
+      "translateImportedItems: failed",
+      error instanceof Error ? error.message : error
+    );
+    return none;
+  }
+}
