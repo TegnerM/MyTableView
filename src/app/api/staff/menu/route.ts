@@ -3,6 +3,7 @@ import { resolveStaff } from "@/lib/staff/venue-context";
 import { getServiceClient } from "@/lib/supabase/service";
 import { isAllergenCode } from "@/lib/menu/allergens";
 import { isStation } from "@/lib/menu/types";
+import { autoTranslateMenuRow } from "@/lib/menu/translate";
 
 /**
  * POST /api/staff/menu — every menu-editor mutation.
@@ -83,6 +84,11 @@ async function categorySave(ctx: Ctx, body: Record<string, unknown>) {
       .eq("venue_id", ctx.venueId)
       .select("id")
       .maybeSingle<{ id: string }>();
+    if (data?.id) {
+      await autoTranslateMenuRow("menu_categories", data.id, ctx.venueId, {
+        name: primaryText(name),
+      });
+    }
     return finish(data?.id, error?.message);
   }
 
@@ -97,6 +103,11 @@ async function categorySave(ctx: Ctx, body: Record<string, unknown>) {
     })
     .select("id")
     .single<{ id: string }>();
+  if (data?.id) {
+    await autoTranslateMenuRow("menu_categories", data.id, ctx.venueId, {
+      name: primaryText(name),
+    });
+  }
   return finish(data?.id, error?.message);
 }
 
@@ -163,6 +174,12 @@ async function itemSave(ctx: Ctx, body: Record<string, unknown>) {
       .eq("venue_id", ctx.venueId)
       .select("id")
       .maybeSingle<{ id: string }>();
+    if (data?.id) {
+      await autoTranslateMenuRow("menu_items", data.id, ctx.venueId, {
+        name: primaryText(name),
+        description: primaryText(description),
+      });
+    }
     return finish(data?.id, error?.message);
   }
 
@@ -197,6 +214,12 @@ async function itemSave(ctx: Ctx, body: Record<string, unknown>) {
     })
     .select("id")
     .single<{ id: string }>();
+  if (data?.id) {
+    await autoTranslateMenuRow("menu_items", data.id, ctx.venueId, {
+      name: primaryText(name),
+      description: primaryText(description),
+    });
+  }
   return finish(data?.id, error?.message);
 }
 
@@ -239,6 +262,11 @@ async function optionSave(ctx: Ctx, body: Record<string, unknown>) {
       .eq("venue_id", ctx.venueId)
       .select("id")
       .maybeSingle<{ id: string }>();
+    if (data?.id) {
+      await autoTranslateMenuRow("menu_item_options", data.id, ctx.venueId, {
+        name: primaryText(name),
+      });
+    }
     return finish(data?.id, error?.message);
   }
 
@@ -278,6 +306,11 @@ async function optionSave(ctx: Ctx, body: Record<string, unknown>) {
     })
     .select("id")
     .single<{ id: string }>();
+  if (data?.id) {
+    await autoTranslateMenuRow("menu_item_options", data.id, ctx.venueId, {
+      name: primaryText(name),
+    });
+  }
   return finish(data?.id, error?.message);
 }
 
@@ -380,6 +413,17 @@ async function nextSortOrder(
   }
   const { data } = await query.maybeSingle<{ sort_order: number }>();
   return (data?.sort_order ?? 0) + 1;
+}
+
+/** The one text value the editor writes (its single-language field). */
+function primaryText(
+  map: Record<string, string> | null | undefined
+): string | undefined {
+  if (!map) {
+    return undefined;
+  }
+  const values = Object.values(map).filter((value) => value.trim() !== "");
+  return values[0];
 }
 
 function cleanLocaleMap(

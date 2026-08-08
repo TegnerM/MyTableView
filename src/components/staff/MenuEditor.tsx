@@ -223,13 +223,10 @@ function CategoryForm({
   onDone: (newId?: string) => void;
   onCancel: (() => void) | null;
 }) {
+  void others; // translations are generated server-side now
   const [name, setName] = useState<LocaleMap>(category?.name ?? {});
   const [station, setStation] = useState<Station>(category?.station ?? "kitchen");
   const [state, setState] = useState<SaveState>("idle");
-  // Open automatically when a translation already exists.
-  const [showTranslations, setShowTranslations] = useState(() =>
-    others.some((code) => Boolean(category?.name?.[code]))
-  );
 
   const save = async () => {
     setState("saving");
@@ -293,32 +290,6 @@ function CategoryForm({
         </label>
       </div>
       <p className="mtv-menued-help">{t.editor.stationHelp}</p>
-
-      {others.length > 0 ? (
-        <TranslationsFold
-          t={t}
-          open={showTranslations}
-          onToggle={() => setShowTranslations((value) => !value)}
-        >
-          <div className="mtv-menued-fields">
-            {others.map((code) => (
-              <label key={code} className="mtv-menued-field">
-                <span>
-                  {t.editor.categoryName} <i>{code.toUpperCase()}</i>
-                </span>
-                <input
-                  type="text"
-                  maxLength={120}
-                  value={name[code] ?? ""}
-                  onChange={(event) =>
-                    setName((prev) => ({ ...prev, [code]: event.target.value }))
-                  }
-                />
-              </label>
-            ))}
-          </div>
-        </TranslationsFold>
-      ) : null}
 
       <div className="mtv-menued-actions">
         <button
@@ -469,6 +440,7 @@ function ItemForm({
   onDone: () => void;
   onCancel: () => void;
 }) {
+  void others; // translations are generated server-side now
   const [name, setName] = useState<LocaleMap>(item?.name ?? {});
   const [description, setDescription] = useState<LocaleMap>(item?.description ?? {});
   const [price, setPrice] = useState(
@@ -478,11 +450,6 @@ function ItemForm({
   const [photo, setPhoto] = useState<string | null>(item?.photo ?? null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [state, setState] = useState<SaveState>("idle");
-  const [showTranslations, setShowTranslations] = useState(() =>
-    others.some(
-      (code) => Boolean(item?.name?.[code]) || Boolean(item?.description?.[code])
-    )
-  );
 
   const priceCents = useMemo(() => {
     const value = Number.parseFloat(price.replace(",", "."));
@@ -566,48 +533,6 @@ function ItemForm({
           />
         </label>
       </div>
-
-      {others.length > 0 ? (
-        <TranslationsFold
-          t={t}
-          open={showTranslations}
-          onToggle={() => setShowTranslations((value) => !value)}
-        >
-          {others.map((code) => (
-            <div key={code} className="mtv-menued-fields">
-              <label className="mtv-menued-field">
-                <span>
-                  {t.editor.itemName} <i>{code.toUpperCase()}</i>
-                </span>
-                <input
-                  type="text"
-                  maxLength={120}
-                  value={name[code] ?? ""}
-                  onChange={(event) =>
-                    setName((prev) => ({ ...prev, [code]: event.target.value }))
-                  }
-                />
-              </label>
-              <label className="mtv-menued-field mtv-menued-field-wide">
-                <span>
-                  {t.editor.description} <i>{code.toUpperCase()}</i>
-                </span>
-                <textarea
-                  rows={2}
-                  maxLength={400}
-                  value={description[code] ?? ""}
-                  onChange={(event) =>
-                    setDescription((prev) => ({
-                      ...prev,
-                      [code]: event.target.value,
-                    }))
-                  }
-                />
-              </label>
-            </div>
-          ))}
-        </TranslationsFold>
-      ) : null}
 
       <div className="mtv-menued-fields">
         <label className="mtv-menued-field mtv-menued-field-price">
@@ -714,37 +639,6 @@ function ItemForm({
           }}
           onClose={() => setPickerOpen(false)}
         />
-      ) : null}
-    </div>
-  );
-}
-
-/* ---------------------------------------------------- translations */
-
-function TranslationsFold({
-  t,
-  open,
-  onToggle,
-  children,
-}: {
-  t: ReturnType<typeof getOrderingStrings>;
-  open: boolean;
-  onToggle: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="mtv-menued-fold" data-open={open ? "true" : "false"}>
-      <button type="button" className="mtv-menued-fold-toggle" onClick={onToggle}>
-        <span className="mtv-menued-fold-caret" aria-hidden="true">
-          {open ? "▾" : "▸"}
-        </span>
-        {t.editor.translations}
-      </button>
-      {open ? (
-        <div className="mtv-menued-fold-body">
-          <p className="mtv-menued-help">{t.editor.translationsHint}</p>
-          {children}
-        </div>
       ) : null}
     </div>
   );

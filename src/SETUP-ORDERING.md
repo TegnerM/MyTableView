@@ -39,6 +39,21 @@ STRIPE_PRICE_ORDERING_MONTHLY=price_...
 STRIPE_PRICE_ORDERING_YEARLY=price_...
 ```
 
+## 3b. Automatic menu translation (recommended, 2 minutes)
+
+The menu editor asks for ONE language — yours. The server translates
+names, descriptions and options into the venue's other guest languages
+automatically on every save. To switch that on, create a free DeepL
+API account (500,000 characters/month free) and add:
+
+```bash
+DEEPL_API_KEY=xxxxxxxx-xxxx-...:fx
+```
+
+to `.env.local` and your hosting env. Without the key nothing breaks —
+guests in other languages simply see the main language until the key
+is added (re-save a dish to translate it).
+
 ## 4. Try the whole loop (sandbox)
 
 1. **Menu**: staff sidebar → Menu → add a category "Drinks" (station:
