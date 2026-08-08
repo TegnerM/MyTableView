@@ -42,6 +42,11 @@ export default function DemoPage() {
           the wall tablet and the waiter&apos;s phone react the same instant.
           Nothing to install, nothing to sign up for.
         </p>
+        <p className="od-crosslink">
+          <Link href="/demo/ordering">
+            See the ordering demo — kitchen, bar &amp; waiter screens →
+          </Link>
+        </p>
       </section>
 
       <DemoInteractive />

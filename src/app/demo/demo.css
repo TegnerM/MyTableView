@@ -593,3 +593,8 @@
   .dm-frames { gap: 1.5rem; }
   .dm-step { font-size: 0.78rem; }
 }
+
+/* Cross-link between the two demos. */
+.od-crosslink { margin-top: 0.9rem !important; font-size: 0.9rem; }
+.od-crosslink a { color: var(--mtv-brand-teal-deep, #0b5f56); font-weight: 650; text-decoration: none; }
+.od-crosslink a:hover { text-decoration: underline; }
