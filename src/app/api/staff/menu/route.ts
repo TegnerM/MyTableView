@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { resolveStaff } from "@/lib/staff/venue-context";
 import { getServiceClient } from "@/lib/supabase/service";
 import { isAllergenCode } from "@/lib/menu/allergens";
-import { isStation } from "@/lib/menu/types";
+import { isStationSlug } from "@/lib/menu/types";
+import { isVenueStation } from "@/lib/stations";
 import { autoTranslateMenuRow } from "@/lib/menu/translate";
 
 /**
@@ -72,7 +73,10 @@ export async function POST(request: Request) {
 
 async function categorySave(ctx: Ctx, body: Record<string, unknown>) {
   const name = cleanLocaleMap(body.name, MAX_TEXT);
-  if (!name || !isStation(body.station)) {
+  if (!name || !isStationSlug(body.station)) {
+    return bad();
+  }
+  if (!(await isVenueStation(ctx.venueId, body.station))) {
     return bad();
   }
 

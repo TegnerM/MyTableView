@@ -49,6 +49,8 @@ export type GuestVenue = {
   locales: string[];
   serviceMode: ServiceMode;
   branding: Record<string, unknown>;
+  /** 'restaurant' | 'bar' | 'hotel' — picks the guest experience. */
+  edition: string;
   /** Guests can browse the menu and order right now. */
   orderingLive: boolean;
   /** Cart service line, 0-20 %. */
@@ -100,6 +102,7 @@ type TagRow = {
     service_mode: ServiceMode;
     branding: Record<string, unknown>;
     trial_ends_at: string | null;
+    edition: string | null;
     ordering_active: boolean | null;
     service_charge_pct: number | string | null;
     accounts: { billing_status: string | null } | null;
@@ -156,6 +159,7 @@ export async function resolveTag(rawTagId: string): Promise<ResolveResult> {
           service_mode,
           branding,
           trial_ends_at,
+          edition,
           ordering_active,
           service_charge_pct,
           accounts:account_id ( billing_status )
@@ -228,6 +232,7 @@ export async function resolveTag(rawTagId: string): Promise<ResolveResult> {
         locales: venue.locales ?? [],
         serviceMode: venue.service_mode,
         branding: venue.branding ?? {},
+        edition: venue.edition ?? "restaurant",
         orderingLive: isOrderingLive(
           venue.ordering_active,
           venue.trial_ends_at,

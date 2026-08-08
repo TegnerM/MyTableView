@@ -279,3 +279,66 @@
   flex-basis: 100%;
   margin: 0;
 }
+
+/* ---------------------------------------------- venue type (edition) */
+
+.mtv-edition-options {
+  margin-top: 0.9rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.6rem;
+}
+
+@media (min-width: 560px) {
+  .mtv-edition-options {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.mtv-edition-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--mtv-line, #d8dce1);
+  background: var(--mtv-bg, #fff);
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.mtv-edition-option b {
+  display: block;
+  font-size: 0.95rem;
+  padding-right: 1.6rem;
+}
+
+.mtv-edition-option span {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  opacity: 0.75;
+}
+
+.mtv-edition-option[data-active="true"] {
+  border-color: var(--mtv-accent, #b8892d);
+  box-shadow: 0 0 0 1px var(--mtv-accent, #b8892d) inset;
+  cursor: default;
+}
+
+.mtv-edition-option:disabled[data-active="false"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.mtv-edition-check {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.9rem;
+  font-style: normal;
+  font-weight: 800;
+  color: var(--mtv-accent, #b8892d);
+}

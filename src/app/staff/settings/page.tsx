@@ -6,6 +6,7 @@ import { EscalationSettingsForm } from "@/components/staff/EscalationSettingsFor
 import { TurnSettingsForm } from "@/components/staff/TurnSettingsForm";
 import { BillingCard } from "@/components/staff/BillingCard";
 import { OrderingCard } from "@/components/staff/OrderingCard";
+import { EditionCard } from "@/components/staff/EditionCard";
 import { TagsCard, type TagRow } from "@/components/staff/TagsCard";
 import {
   TeamCard,
@@ -77,7 +78,7 @@ export default async function StaffSettingsPage() {
   const { data } = await supabase
     .from("venues")
     .select(
-      "escalation_repeat_threshold, escalation_grace_seconds, turn_standard_minutes, turn_large_minutes, turn_large_party_size"
+      "escalation_repeat_threshold, escalation_grace_seconds, turn_standard_minutes, turn_large_minutes, turn_large_party_size, edition"
     )
     .eq("id", identity.venueId)
     .maybeSingle<{
@@ -86,6 +87,7 @@ export default async function StaffSettingsPage() {
       turn_standard_minutes: number | null;
       turn_large_minutes: number | null;
       turn_large_party_size: number | null;
+      edition: string | null;
     }>();
 
   const current = {
@@ -233,6 +235,11 @@ export default async function StaffSettingsPage() {
           serviceChargePct={billing.serviceChargePct}
           trialEndsAt={billing.trialEndsAt}
           accountStatus={billing.accountStatus}
+          isOwner={identity.role === "owner"}
+        />
+
+        <EditionCard
+          edition={data?.edition ?? "restaurant"}
           isOwner={identity.role === "owner"}
         />
 

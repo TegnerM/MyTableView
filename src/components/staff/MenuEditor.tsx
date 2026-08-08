@@ -15,6 +15,7 @@ import {
   type Station,
   type VenueMenu,
 } from "@/lib/menu/types";
+import type { VenueStation } from "@/lib/stations";
 
 /**
  * The menu editor — categories, dishes, options, allergens, photos.
@@ -34,6 +35,8 @@ type Props = {
   /** true = the server machine-translates on save; false = the owner
    *  writes every language by hand (per-language fields appear). */
   autoTranslate: boolean;
+  /** The venue's stations (display names follow the edition). */
+  stations: VenueStation[];
 };
 
 type SaveState = "idle" | "saving" | "saved" | "failed";
@@ -77,6 +80,7 @@ export function MenuEditor({
   venueLocales,
   defaultLocale,
   autoTranslate,
+  stations,
 }: Props) {
   const router = useRouter();
 
@@ -85,6 +89,16 @@ export function MenuEditor({
     setLocale(readStaffLocale());
   }, []);
   const t = getOrderingStrings(locale);
+
+  const stationLabel = (slug: string): string => {
+    const station = stations.find((entry) => entry.slug === slug);
+    const name = station ? pickLocale(station.name, locale) : "";
+    return name || (slug === "bar" ? t.editor.stationBar : t.editor.stationKitchen);
+  };
+  const stationOptions = stations.map((station) => ({
+    slug: station.slug,
+    label: stationLabel(station.slug),
+  }));
 
   const primary = defaultLocale || venueLocales[0] || "en";
   const others = venueLocales.filter((code) => code !== primary);
@@ -213,7 +227,7 @@ export function MenuEditor({
           >
             {pickLocale(category.name, locale) || "—"}
             <span className="mtv-menued-cat-station">
-              {category.station === "bar" ? t.editor.stationBar : t.editor.stationKitchen}
+              {stationLabel(category.station)}
             </span>
           </button>
         ))}
@@ -291,6 +305,7 @@ export function MenuEditor({
           t={t}
           primary={primary}
           others={manualLocales}
+          stationOptions={stationOptions}
           category={null}
           onDone={(newId) => {
             setAddingCategory(false);
@@ -314,6 +329,7 @@ export function MenuEditor({
             t={t}
             primary={primary}
             others={manualLocales}
+            stationOptions={stationOptions}
             category={activeCategory}
             onDone={() => refresh()}
             onCancel={null}
@@ -379,6 +395,7 @@ function CategoryForm({
   t,
   primary,
   others,
+  stationOptions,
   category,
   onDone,
   onCancel,
@@ -386,6 +403,7 @@ function CategoryForm({
   t: ReturnType<typeof getOrderingStrings>;
   primary: string;
   others: string[];
+  stationOptions: { slug: string; label: string }[];
   category: MenuCategory | null;
   onDone: (newId?: string) => void;
   onCancel: (() => void) | null;
@@ -451,8 +469,11 @@ function CategoryForm({
             value={station}
             onChange={(event) => setStation(event.target.value as Station)}
           >
-            <option value="kitchen">{t.editor.stationKitchen}</option>
-            <option value="bar">{t.editor.stationBar}</option>
+            {stationOptions.map((option) => (
+              <option key={option.slug} value={option.slug}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </label>
       </div>

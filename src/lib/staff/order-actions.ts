@@ -137,7 +137,7 @@ export async function loadBoardTickets(venueId: string): Promise<BoardTicket[]> 
     return {
       id: row.id,
       orderId: row.order_id,
-      station: (row.station === "bar" ? "bar" : "kitchen") as Station,
+      station: (row.station || "kitchen") as Station,
       state: row.state as TicketState,
       tableLabel: row.orders?.tables?.label ?? "",
       areaName: row.orders?.tables?.areas?.name ?? null,

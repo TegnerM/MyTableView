@@ -5,6 +5,7 @@ import { getStaffIdentity } from "@/lib/staff/floor-state";
 import { getVenueBilling } from "@/lib/staff/billing";
 import { getServiceClient } from "@/lib/supabase/service";
 import { loadStaffMenu } from "@/lib/staff/menu-data";
+import { loadVenueStations } from "@/lib/stations";
 import { MenuEditor } from "@/components/staff/MenuEditor";
 import { StaffShell } from "@/components/staff/StaffShell";
 import { TrialLocked } from "@/components/staff/TrialLocked";
@@ -57,7 +58,7 @@ export default async function StaffMenuPage() {
   const t = getOrderingStrings(locale);
 
   const service = getServiceClient();
-  const [{ data: venue }, menu] = await Promise.all([
+  const [{ data: venue }, menu, stations] = await Promise.all([
     service
       .from("venues")
       .select("locales, default_locale, menu_auto_translate")
@@ -68,6 +69,7 @@ export default async function StaffMenuPage() {
         menu_auto_translate: boolean | null;
       }>(),
     loadStaffMenu(identity.venueId),
+    loadVenueStations(identity.venueId),
   ]);
 
   const venueLocales =
@@ -107,6 +109,7 @@ export default async function StaffMenuPage() {
           venueLocales={venueLocales}
           defaultLocale={venue?.default_locale ?? venueLocales[0] ?? "en"}
           autoTranslate={venue?.menu_auto_translate ?? true}
+          stations={stations}
         />
       </main>
     </StaffShell>

@@ -128,6 +128,17 @@ const EN = {
     onlyOwner: "Only the owner can change the Ordering module.",
   },
 
+  edition: {
+    title: "Venue type",
+    desc: "How MyTableView presents itself to your guests. Same engine underneath — the guest page adapts to the venue.",
+    restaurant: "Restaurant",
+    bar: "Bar",
+    restaurantNote: "Restaurant — the classic warm guest page: menu, requests, bill.",
+    barNote: "Bar — dark guest page with Order drinks, Another round and live order status. Adds bar request buttons.",
+    confirm: "Switch this venue to {name}? The guest page changes immediately.",
+    onlyOwner: "Only the owner can change the venue type.",
+  },
+
   insights: {
     title: "Ordering — service clock",
     sub: "Placed → started → ready → delivered, timed per station. Last 24 hours.",
@@ -141,6 +152,8 @@ const EN = {
     pickup: "Pickup",
     noData: "No orders in the last 24 hours.",
     minutes: "min",
+    roundsPerGuest: "Rounds per guest",
+    busiestAreas: "Busiest areas",
   },
 };
 
@@ -265,6 +278,17 @@ const DICTS: Record<string, OrderingStrings> = {
       error: "Algo salió mal. Inténtalo de nuevo.",
       onlyOwner: "Solo el propietario puede cambiar el módulo de pedidos.",
     },
+    edition: {
+      title: "Tipo de local",
+      desc: "Cómo se presenta MyTableView a tus clientes. El mismo motor por debajo — la página del cliente se adapta al local.",
+      restaurant: "Restaurante",
+      bar: "Bar",
+      restaurantNote: "Restaurante — la página clásica y cálida: carta, peticiones, cuenta.",
+      barNote: "Bar — página oscura con Pedir bebidas, Otra ronda y estado del pedido en directo. Añade botones de bar.",
+      confirm: "¿Cambiar este local a {name}? La página del cliente cambia al instante.",
+      onlyOwner: "Solo el propietario puede cambiar el tipo de local.",
+    },
+
     insights: {
       title: "Pedidos — reloj de servicio",
       sub: "Pedido → empezado → listo → entregado, por estación. Últimas 24 horas.",
@@ -278,6 +302,8 @@ const DICTS: Record<string, OrderingStrings> = {
       pickup: "Recogida",
       noData: "Sin pedidos en las últimas 24 horas.",
       minutes: "min",
+      roundsPerGuest: "Rondas por cliente",
+      busiestAreas: "Zonas con más pedidos",
     },
   },
 
@@ -397,6 +423,17 @@ const DICTS: Record<string, OrderingStrings> = {
       error: "Noget gik galt. Prøv igen.",
       onlyOwner: "Kun ejeren kan ændre bestillingsmodulet.",
     },
+    edition: {
+      title: "Type af sted",
+      desc: "Sådan præsenterer MyTableView sig for dine gæster. Samme motor nedenunder — gæstesiden tilpasser sig stedet.",
+      restaurant: "Restaurant",
+      bar: "Bar",
+      restaurantNote: "Restaurant — den klassiske varme gæsteside: menu, anmodninger, regning.",
+      barNote: "Bar — mørk gæsteside med Bestil drinks, En runde til og live ordrestatus. Tilføjer bar-knapper.",
+      confirm: "Skift dette sted til {name}? Gæstesiden ændres med det samme.",
+      onlyOwner: "Kun ejeren kan ændre stedets type.",
+    },
+
     insights: {
       title: "Bestillinger — serviceur",
       sub: "Bestilt → startet → klar → leveret, pr. station. Seneste 24 timer.",
@@ -410,6 +447,8 @@ const DICTS: Record<string, OrderingStrings> = {
       pickup: "Afhentning",
       noData: "Ingen bestillinger de seneste 24 timer.",
       minutes: "min",
+      roundsPerGuest: "Runder pr. gæst",
+      busiestAreas: "Travleste områder",
     },
   },
 
@@ -529,6 +568,17 @@ const DICTS: Record<string, OrderingStrings> = {
       error: "Något gick fel. Försök igen.",
       onlyOwner: "Endast ägaren kan ändra beställningsmodulen.",
     },
+    edition: {
+      title: "Typ av ställe",
+      desc: "Hur MyTableView visas för dina gäster. Samma motor under huven — gästsidan anpassar sig efter stället.",
+      restaurant: "Restaurang",
+      bar: "Bar",
+      restaurantNote: "Restaurang — den klassiska varma gästsidan: meny, önskemål, nota.",
+      barNote: "Bar — mörk gästsida med Beställ drycker, En runda till och orderstatus live. Lägger till bar-knappar.",
+      confirm: "Byta detta ställe till {name}? Gästsidan ändras direkt.",
+      onlyOwner: "Endast ägaren kan ändra typ av ställe.",
+    },
+
     insights: {
       title: "Beställningar — serviceklocka",
       sub: "Beställd → startad → klar → levererad, per station. Senaste 24 timmarna.",
@@ -542,6 +592,8 @@ const DICTS: Record<string, OrderingStrings> = {
       pickup: "Upphämtning",
       noData: "Inga beställningar de senaste 24 timmarna.",
       minutes: "min",
+      roundsPerGuest: "Rundor per gäst",
+      busiestAreas: "Livligaste områden",
     },
   },
 
@@ -661,6 +713,17 @@ const DICTS: Record<string, OrderingStrings> = {
       error: "Noe gikk galt. Prøv igjen.",
       onlyOwner: "Bare eieren kan endre bestillingsmodulen.",
     },
+    edition: {
+      title: "Type sted",
+      desc: "Hvordan MyTableView presenterer seg for gjestene dine. Samme motor under panseret — gjestesiden tilpasser seg stedet.",
+      restaurant: "Restaurant",
+      bar: "Bar",
+      restaurantNote: "Restaurant — den klassiske varme gjestesiden: meny, forespørsler, regning.",
+      barNote: "Bar — mørk gjesteside med Bestill drikke, En runde til og live ordrestatus. Legger til bar-knapper.",
+      confirm: "Bytte dette stedet til {name}? Gjestesiden endres umiddelbart.",
+      onlyOwner: "Bare eieren kan endre type sted.",
+    },
+
     insights: {
       title: "Bestillinger — serviceklokke",
       sub: "Bestilt → startet → klar → levert, per stasjon. Siste 24 timer.",
@@ -674,6 +737,8 @@ const DICTS: Record<string, OrderingStrings> = {
       pickup: "Henting",
       noData: "Ingen bestillinger siste 24 timer.",
       minutes: "min",
+      roundsPerGuest: "Runder per gjest",
+      busiestAreas: "Travleste områder",
     },
   },
 
@@ -793,6 +858,17 @@ const DICTS: Record<string, OrderingStrings> = {
       error: "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
       onlyOwner: "Nur der Inhaber kann das Bestellmodul ändern.",
     },
+    edition: {
+      title: "Art des Betriebs",
+      desc: "Wie sich MyTableView Ihren Gästen präsentiert. Derselbe Motor darunter — die Gästeseite passt sich dem Betrieb an.",
+      restaurant: "Restaurant",
+      bar: "Bar",
+      restaurantNote: "Restaurant — die klassische warme Gästeseite: Karte, Anfragen, Rechnung.",
+      barNote: "Bar — dunkle Gästeseite mit Getränke bestellen, Noch eine Runde und Live-Bestellstatus. Fügt Bar-Buttons hinzu.",
+      confirm: "Diesen Betrieb auf {name} umstellen? Die Gästeseite ändert sich sofort.",
+      onlyOwner: "Nur der Inhaber kann die Betriebsart ändern.",
+    },
+
     insights: {
       title: "Bestellungen — Serviceuhr",
       sub: "Bestellt → begonnen → fertig → geliefert, je Station. Letzte 24 Stunden.",
@@ -806,6 +882,8 @@ const DICTS: Record<string, OrderingStrings> = {
       pickup: "Abholung",
       noData: "Keine Bestellungen in den letzten 24 Stunden.",
       minutes: "Min.",
+      roundsPerGuest: "Runden pro Gast",
+      busiestAreas: "Aktivste Bereiche",
     },
   },
 
@@ -925,6 +1003,17 @@ const DICTS: Record<string, OrderingStrings> = {
       error: "Er ging iets mis. Probeer het opnieuw.",
       onlyOwner: "Alleen de eigenaar kan de bestelmodule wijzigen.",
     },
+    edition: {
+      title: "Type zaak",
+      desc: "Hoe MyTableView zich aan je gasten presenteert. Dezelfde motor eronder — de gastenpagina past zich aan de zaak aan.",
+      restaurant: "Restaurant",
+      bar: "Bar",
+      restaurantNote: "Restaurant — de klassieke warme gastenpagina: menukaart, verzoeken, rekening.",
+      barNote: "Bar — donkere gastenpagina met Drankjes bestellen, Nog een rondje en live bestelstatus. Voegt barknoppen toe.",
+      confirm: "Deze zaak omzetten naar {name}? De gastenpagina verandert direct.",
+      onlyOwner: "Alleen de eigenaar kan het type zaak wijzigen.",
+    },
+
     insights: {
       title: "Bestellingen — serviceklok",
       sub: "Besteld → gestart → klaar → bezorgd, per post. Afgelopen 24 uur.",
@@ -938,6 +1027,8 @@ const DICTS: Record<string, OrderingStrings> = {
       pickup: "Ophalen",
       noData: "Geen bestellingen in de afgelopen 24 uur.",
       minutes: "min",
+      roundsPerGuest: "Rondjes per gast",
+      busiestAreas: "Drukste zones",
     },
   },
 
@@ -1057,6 +1148,17 @@ const DICTS: Record<string, OrderingStrings> = {
       error: "Un problème est survenu. Veuillez réessayer.",
       onlyOwner: "Seul le propriétaire peut modifier le module commandes.",
     },
+    edition: {
+      title: "Type d'établissement",
+      desc: "Comment MyTableView se présente à vos clients. Le même moteur en dessous — la page client s'adapte à l'établissement.",
+      restaurant: "Restaurant",
+      bar: "Bar",
+      restaurantNote: "Restaurant — la page client classique et chaleureuse : carte, demandes, addition.",
+      barNote: "Bar — page sombre avec Commander des boissons, Une autre tournée et le suivi de commande en direct. Ajoute des boutons bar.",
+      confirm: "Passer cet établissement en {name} ? La page client change immédiatement.",
+      onlyOwner: "Seul le propriétaire peut changer le type d'établissement.",
+    },
+
     insights: {
       title: "Commandes — horloge de service",
       sub: "Commandée → démarrée → prête → livrée, par poste. Dernières 24 heures.",
@@ -1070,6 +1172,8 @@ const DICTS: Record<string, OrderingStrings> = {
       pickup: "Retrait",
       noData: "Aucune commande ces dernières 24 heures.",
       minutes: "min",
+      roundsPerGuest: "Tournées par client",
+      busiestAreas: "Zones les plus actives",
     },
   },
 };

@@ -8,12 +8,12 @@
 
 export type LocaleMap = Record<string, string>;
 
-export type Station = "kitchen" | "bar";
+/** Station slug — venue-defined (see lib/stations). 'kitchen' and
+ *  'bar' are the seeded defaults; editions add their own. */
+export type Station = string;
 
-export const STATIONS: Station[] = ["kitchen", "bar"];
-
-export function isStation(value: unknown): value is Station {
-  return value === "kitchen" || value === "bar";
+export function isStationSlug(value: unknown): value is Station {
+  return typeof value === "string" && /^[a-z0-9_-]{1,40}$/.test(value);
 }
 
 export type MenuOption = {

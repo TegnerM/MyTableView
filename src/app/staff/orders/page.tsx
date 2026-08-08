@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getStaffIdentity } from "@/lib/staff/floor-state";
 import { getVenueBilling } from "@/lib/staff/billing";
 import { loadBoardTickets } from "@/lib/staff/order-actions";
+import { loadVenueStations } from "@/lib/stations";
 import { OrdersBoard } from "@/components/staff/OrdersBoard";
 import { TrialLocked } from "@/components/staff/TrialLocked";
 import "../floor/floor.css";
@@ -37,11 +38,15 @@ export default async function StaffOrdersPage() {
     );
   }
 
-  const tickets = await loadBoardTickets(identity.venueId);
+  const [tickets, stations] = await Promise.all([
+    loadBoardTickets(identity.venueId),
+    loadVenueStations(identity.venueId),
+  ]);
 
   return (
     <OrdersBoard
       identity={identity}
+      stations={stations}
       initialTickets={tickets}
       initialNow={Date.now()}
     />

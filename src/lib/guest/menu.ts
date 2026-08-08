@@ -121,7 +121,7 @@ export async function loadGuestMenu(venueId: string): Promise<VenueMenu> {
     .map((row) => ({
       id: row.id,
       name: row.name ?? {},
-      station: (row.station === "bar" ? "bar" : "kitchen") as Station,
+      station: (row.station || "kitchen") as Station,
       sortOrder: row.sort_order,
       items: itemsByCategory.get(row.id) ?? [],
     }))

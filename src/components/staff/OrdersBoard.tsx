@@ -9,6 +9,7 @@ import { readStaffLocale } from "@/lib/i18n/staff";
 import { pickLocale } from "@/lib/i18n/guest";
 import { formatElapsed, type StaffIdentity } from "@/lib/staff/floor-types";
 import type { BoardTicket, Station, TicketState } from "@/lib/menu/types";
+import type { VenueStation } from "@/lib/stations";
 
 /**
  * The Orders board — three separate views, one per job:
@@ -30,11 +31,13 @@ type BoardView = Station | "waiter";
 
 type Props = {
   identity: StaffIdentity;
+  /** The venue's stations, in display order. */
+  stations: VenueStation[];
   initialTickets: BoardTicket[];
   initialNow: number;
 };
 
-export function OrdersBoard({ identity, initialTickets, initialNow }: Props) {
+export function OrdersBoard({ identity, stations, initialTickets, initialNow }: Props) {
   const router = useRouter();
 
   const [locale, setLocale] = useState("en");
@@ -43,18 +46,35 @@ export function OrdersBoard({ identity, initialTickets, initialNow }: Props) {
   }, []);
   const t = getOrderingStrings(locale);
 
+  // Station display names come from the venue (Bar edition renames
+  // 'kitchen' to "Snack kitchen" without touching a single ticket).
+  const stationLabel = useCallback(
+    (slug: string): string => {
+      const station = stations.find((entry) => entry.slug === slug);
+      if (station) {
+        const name = pickLocale(station.name, locale);
+        if (name) return name;
+      }
+      return slug === "bar" ? t.board.bar : t.board.kitchen;
+    },
+    [stations, locale, t]
+  );
+
   const [view, setView] = useState<BoardView>("waiter");
   useEffect(() => {
     try {
       const stored = window.localStorage.getItem(STATION_KEY);
-      if (stored === "kitchen" || stored === "bar" || stored === "waiter") {
+      if (
+        stored === "waiter" ||
+        (stored && stations.some((station) => station.slug === stored))
+      ) {
         setView(stored);
       }
       // Devices that stored the old "all" mode become waiter view.
     } catch {
       // Private browsing: waiter view.
     }
-  }, []);
+  }, [stations]);
 
   const pickView = useCallback((next: BoardView) => {
     setView(next);
@@ -238,22 +258,20 @@ export function OrdersBoard({ identity, initialTickets, initialNow }: Props) {
             role="tablist"
             aria-label={t.board.stationAria}
           >
-            {(["kitchen", "bar", "waiter"] as BoardView[]).map((option) => (
-              <button
-                key={option}
-                type="button"
-                role="tab"
-                aria-selected={view === option}
-                data-active={view === option ? "true" : "false"}
-                onClick={() => pickView(option)}
-              >
-                {option === "kitchen"
-                  ? t.board.kitchen
-                  : option === "bar"
-                    ? t.board.bar
-                    : t.board.waiters}
-              </button>
-            ))}
+            {[...stations.map((station) => station.slug), "waiter"].map(
+              (option) => (
+                <button
+                  key={option}
+                  type="button"
+                  role="tab"
+                  aria-selected={view === option}
+                  data-active={view === option ? "true" : "false"}
+                  onClick={() => pickView(option)}
+                >
+                  {option === "waiter" ? t.board.waiters : stationLabel(option)}
+                </button>
+              )
+            )}
           </div>
         </header>
 
@@ -288,6 +306,7 @@ export function OrdersBoard({ identity, initialTickets, initialNow }: Props) {
                     t={t}
                     locale={locale}
                     ticket={ticket}
+                    stationLabel={stationLabel(ticket.station)}
                     now={now}
                     busy={busy === ticket.id}
                     view={view}
@@ -307,6 +326,7 @@ function Ticket({
   t,
   locale,
   ticket,
+  stationLabel,
   now,
   busy,
   view,
@@ -315,6 +335,7 @@ function Ticket({
   t: ReturnType<typeof getOrderingStrings>;
   locale: string;
   ticket: BoardTicket;
+  stationLabel: string;
   now: number;
   busy: boolean;
   view: BoardView;
@@ -347,7 +368,7 @@ function Ticket({
           {pickLocale(ticket.areaName ?? {}, locale)}
         </span>
         <span className="mtv-ticket-station" data-station={ticket.station}>
-          {ticket.station === "bar" ? t.board.bar : t.board.kitchen}
+          {stationLabel}
         </span>
         <span className="mtv-ticket-age" data-warn={warn ? "true" : "false"}>
           {formatElapsed(ageFrom, now)}

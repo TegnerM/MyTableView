@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { pickLocale, type LocaleMap } from "@/lib/i18n/guest";
 import type { UiStringsShape } from "@/lib/i18n/guest";
 import { getAllergen } from "@/lib/menu/allergens";
@@ -31,6 +31,14 @@ type Props = {
   serviceChargePct: number;
   menu: VenueMenu;
   strings: UiStringsShape;
+  /** "gold" (restaurant, default) or "bar" — pure CSS reskin. */
+  theme?: "gold" | "bar";
+  /** "card" renders the entry card (default); "none" hides it — the
+   *  host (e.g. the bar home) opens the overlay via externalOpen. */
+  entry?: "card" | "none";
+  /** Flip to true to open the menu overlay from outside. */
+  externalOpen?: boolean;
+  onExternalOpenHandled?: () => void;
 };
 
 type CartLine = {
@@ -66,6 +74,10 @@ export function MenuOrder({
   serviceChargePct,
   menu,
   strings,
+  theme = "gold",
+  entry = "card",
+  externalOpen = false,
+  onExternalOpenHandled,
 }: Props) {
   const t = strings;
   const [screen, setScreen] = useState<Screen>({ kind: "closed" });
@@ -76,6 +88,15 @@ export function MenuOrder({
   const [note, setNote] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // A host page (the bar home) can open the overlay from its own
+  // buttons instead of the built-in entry card.
+  useEffect(() => {
+    if (externalOpen) {
+      setScreen({ kind: "menu" });
+      onExternalOpenHandled?.();
+    }
+  }, [externalOpen, onExternalOpenHandled]);
 
   const pick = useCallback(
     (map: LocaleMap) => pickLocale(map, locale, venueDefaultLocale),
@@ -180,6 +201,7 @@ export function MenuOrder({
   return (
     <>
       {/* Entry card — sits at the top of the request area. */}
+      {entry === "card" ? (
       <button
         type="button"
         className="mtv-menu-entry"
@@ -196,9 +218,10 @@ export function MenuOrder({
           <Chevron />
         </span>
       </button>
+      ) : null}
 
       {screen.kind !== "closed" ? (
-        <div className="mtv-menu-overlay" role="dialog" aria-modal="true">
+        <div className="mtv-menu-overlay" data-theme={theme} role="dialog" aria-modal="true">
           {screen.kind === "menu" && activeCategory ? (
             <MenuScreen
               t={t}

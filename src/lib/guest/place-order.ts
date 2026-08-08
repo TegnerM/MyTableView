@@ -252,8 +252,7 @@ export async function placeGuestOrder(
     const lineTotal = unit * line.quantity;
     subtotal += lineTotal;
 
-    const station: Station =
-      item.menu_categories?.station === "bar" ? "bar" : "kitchen";
+    const station: Station = item.menu_categories?.station || "kitchen";
 
     const list = byStation.get(station) ?? [];
     list.push({

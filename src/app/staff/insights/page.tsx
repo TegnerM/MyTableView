@@ -107,6 +107,13 @@ type TicketTimingRow = {
   delivered_at: string | null;
 };
 
+type OrderRoundRow = {
+  id: string;
+  session_id: string | null;
+  sessions: { guest_count: number | null } | null;
+  tables: { areas: { name: Record<string, string> | null } | null } | null;
+};
+
 /**
  * The service clock, last 24 hours. Preparation = placed → ready per
  * station; pickup = ready → delivered. Cancelled tickets don't count —
@@ -118,17 +125,66 @@ async function loadOrderingInsights(
   const service = getServiceClient();
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-  const { data, error } = await service
-    .from("order_tickets")
-    .select("order_id, station, state, created_at, ready_at, delivered_at")
-    .eq("venue_id", venueId)
-    .gte("created_at", since)
-    .neq("state", "cancelled")
-    .returns<TicketTimingRow[]>();
+  const [{ data, error }, roundsResult] = await Promise.all([
+    service
+      .from("order_tickets")
+      .select("order_id, station, state, created_at, ready_at, delivered_at")
+      .eq("venue_id", venueId)
+      .gte("created_at", since)
+      .neq("state", "cancelled")
+      .returns<TicketTimingRow[]>(),
+    service
+      .from("orders")
+      .select(
+        "id, session_id, sessions:session_id ( guest_count ), tables:table_id ( areas:area_id ( name ) )"
+      )
+      .eq("venue_id", venueId)
+      .gte("created_at", since)
+      .neq("state", "cancelled")
+      .returns<OrderRoundRow[]>(),
+  ]);
 
   if (error) {
     console.error("insights: ordering query failed", error.message);
   }
+  if (roundsResult.error) {
+    console.error("insights: rounds query failed", roundsResult.error.message);
+  }
+
+  // Rounds per guest: total orders over total seated guests of the
+  // sessions that ordered. A session without a headcount counts as 1.
+  const roundRows = roundsResult.data ?? [];
+  const guestsBySession = new Map<string, number>();
+  for (const row of roundRows) {
+    if (!row.session_id) continue;
+    guestsBySession.set(
+      row.session_id,
+      Math.max(1, row.sessions?.guest_count ?? 1)
+    );
+  }
+  const totalGuests = [...guestsBySession.values()].reduce(
+    (sum, count) => sum + count,
+    0
+  );
+  const roundsPerGuest =
+    totalGuests > 0
+      ? Math.round((roundRows.length / totalGuests) * 10) / 10
+      : null;
+
+  // Busiest areas: orders per area, top 3.
+  const areaTally = new Map<string, { name: Record<string, string>; count: number }>();
+  for (const row of roundRows) {
+    const name = row.tables?.areas?.name;
+    if (!name) continue;
+    const key = JSON.stringify(name);
+    const entry = areaTally.get(key) ?? { name, count: 0 };
+    entry.count += 1;
+    areaTally.set(key, entry);
+  }
+  const busiestAreas = [...areaTally.values()]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 3)
+    .map((entry) => ({ name: entry.name, count: entry.count }));
 
   const tickets = data ?? [];
   const orders = new Set(tickets.map((ticket) => ticket.order_id)).size;
@@ -203,6 +259,8 @@ async function loadOrderingInsights(
     avgBarSeconds: avg(barPreps),
     avgPickupSeconds: avg(pickups),
     hours,
+    roundsPerGuest,
+    busiestAreas,
   };
 }
 

@@ -1,4 +1,5 @@
 import { getOrderingStrings } from "@/lib/i18n/ordering";
+import { pickLocale, type LocaleMap } from "@/lib/i18n/guest";
 
 /**
  * The service clock — Ordering's section on Insights.
@@ -22,6 +23,10 @@ export type OrderingInsightsData = {
   avgBarSeconds: number | null;
   avgPickupSeconds: number | null;
   hours: OrderingHourPoint[];
+  /** Orders per guest across the window (the bar's "rounds"). */
+  roundsPerGuest: number | null;
+  /** Areas ranked by order count, top 3. */
+  busiestAreas: { name: LocaleMap; count: number }[];
 };
 
 const PICKUP_WARN_SECONDS = 4 * 60;
@@ -97,7 +102,34 @@ export function OrderingInsights({
                 {pickupWarn ? ` — ${t.insights.pickupWarn}` : ""}
               </span>
             </div>
+            {data.roundsPerGuest !== null ? (
+              <div className="mtv-ordins-kpi">
+                <span className="mtv-ordins-value">
+                  {data.roundsPerGuest.toFixed(1)}
+                </span>
+                <span className="mtv-ordins-label">{t.insights.roundsPerGuest}</span>
+              </div>
+            ) : null}
           </div>
+
+          {data.busiestAreas.length > 0 ? (
+            <>
+              <h3 className="mtv-ordins-byhour">{t.insights.busiestAreas}</h3>
+              <div className="mtv-ordins-areas">
+                {data.busiestAreas.map((area, index) => (
+                  <div key={index} className="mtv-ordins-area">
+                    <span className="mtv-ordins-area-rank">{index + 1}</span>
+                    <span className="mtv-ordins-area-name">
+                      {pickLocale(area.name, locale) || "—"}
+                    </span>
+                    <span className="mtv-ordins-area-count">
+                      {area.count} <i>{t.insights.orders.toLowerCase()}</i>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : null}
 
           <h3 className="mtv-ordins-byhour">{t.insights.byHour}</h3>
           <div className="mtv-ordins-bars">

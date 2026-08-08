@@ -344,3 +344,58 @@
   overflow: hidden;
   clip: rect(0 0 0 0);
 }
+
+/* ---------------------------------------------- busiest areas */
+
+.mtv-ordins-areas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.4rem;
+}
+
+.mtv-ordins-area {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.7rem;
+  border: 1px solid var(--mtv-line, #d8dce1);
+  background: var(--mtv-bg, #fff);
+}
+
+.mtv-ordins-area-rank {
+  flex: 0 0 auto;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--mtv-accent-soft, #f4e8cf);
+  color: var(--mtv-accent, #b8892d);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.mtv-ordins-area-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 700;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mtv-ordins-area-count {
+  flex: 0 0 auto;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.mtv-ordins-area-count i {
+  font-style: normal;
+  font-weight: 400;
+  opacity: 0.65;
+  font-size: 0.75rem;
+}

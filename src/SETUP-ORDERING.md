@@ -124,3 +124,39 @@ npm install
   fine), open Orders, pick their station once — remembered per device.
 - Guest status bar ("Table 1 · Terrace-Zone 1 …") no longer truncates
   — same fix as the mockup you approved.
+
+---
+
+# Bar edition — setup steps (added 2026-08-09)
+
+## 1. Run the bar-edition migration (FIRST, before deploying)
+
+Supabase Dashboard → SQL Editor → paste the whole of
+`src/sql/2026-08-09_bar_edition.sql` → run.
+
+What it does: `venues.edition` (default `restaurant`), the `stations`
+table (per-venue station names — the engine every edition rides on),
+seeds Kitchen/Bar stations for all existing venues, and loosens the
+old fixed station checks so future editions can add their own.
+
+## 2. Deploy the code
+
+Push to main as usual.
+
+## 3. Switch a venue to Bar
+
+Settings → **Venue type** → Bar (owner only, instant, reversible).
+
+What changes when you switch:
+- The guest page becomes the dark bar experience you approved:
+  Order drinks · Another round · Snacks · Call staff · Ask for the
+  bill, plus the live order-status chip and timeline (real
+  timestamps, never estimates).
+- The kitchen station is renamed "Snack kitchen" on the staff
+  boards (slug stays `kitchen` — no data moves).
+- Bar request buttons are seeded once if missing: More napkins,
+  Clean the table, Bring the bill, We'll pay at the bar.
+- Insights gains "Rounds per guest" and "Busiest areas".
+
+Switching back to Restaurant restores names and the warm guest page;
+nothing is deleted either way.
