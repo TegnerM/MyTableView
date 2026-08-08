@@ -57,6 +57,8 @@ const EN = {
     languageHint: "Fill in every language your guests use.",
     translations: "Translations (optional)",
     translationsHint: "Guests whose language has no translation simply see your main language.",
+    autoTranslate: "Translate automatically",
+    autoTranslateHint: "On: names and descriptions are translated into your guests' languages when you save. Off: you write the translations yourself.",
   },
 
   board: {
@@ -184,6 +186,8 @@ const DICTS: Record<string, OrderingStrings> = {
       languageHint: "Rellena todos los idiomas que usan tus clientes.",
       translations: "Traducciones (opcional)",
       translationsHint: "Los clientes sin traducción en su idioma ven simplemente tu idioma principal.",
+      autoTranslate: "Traducir automáticamente",
+      autoTranslateHint: "Activado: nombres y descripciones se traducen a los idiomas de tus clientes al guardar. Desactivado: escribes las traducciones tú mismo.",
     },
     board: {
       title: "Pedidos",
@@ -302,6 +306,8 @@ const DICTS: Record<string, OrderingStrings> = {
       languageHint: "Udfyld alle de sprog dine gæster bruger.",
       translations: "Oversættelser (valgfrit)",
       translationsHint: "Gæster uden oversættelse på deres sprog ser blot dit hovedsprog.",
+      autoTranslate: "Oversæt automatisk",
+      autoTranslateHint: "Til: navne og beskrivelser oversættes til dine gæsters sprog, når du gemmer. Fra: du skriver selv oversættelserne.",
     },
     board: {
       title: "Bestillinger",
@@ -420,6 +426,8 @@ const DICTS: Record<string, OrderingStrings> = {
       languageHint: "Fyll i alla språk dina gäster använder.",
       translations: "Översättningar (valfritt)",
       translationsHint: "Gäster utan översättning på sitt språk ser helt enkelt ditt huvudspråk.",
+      autoTranslate: "Översätt automatiskt",
+      autoTranslateHint: "På: namn och beskrivningar översätts till dina gästers språk när du sparar. Av: du skriver översättningarna själv.",
     },
     board: {
       title: "Beställningar",
@@ -538,6 +546,8 @@ const DICTS: Record<string, OrderingStrings> = {
       languageHint: "Fyll ut alle språkene gjestene dine bruker.",
       translations: "Oversettelser (valgfritt)",
       translationsHint: "Gjester uten oversettelse på sitt språk ser rett og slett hovedspråket ditt.",
+      autoTranslate: "Oversett automatisk",
+      autoTranslateHint: "På: navn og beskrivelser oversettes til gjestenes språk når du lagrer. Av: du skriver oversettelsene selv.",
     },
     board: {
       title: "Bestillinger",
@@ -656,6 +666,8 @@ const DICTS: Record<string, OrderingStrings> = {
       languageHint: "Füllen Sie alle Sprachen aus, die Ihre Gäste nutzen.",
       translations: "Übersetzungen (optional)",
       translationsHint: "Gäste ohne Übersetzung in ihrer Sprache sehen einfach Ihre Hauptsprache.",
+      autoTranslate: "Automatisch übersetzen",
+      autoTranslateHint: "An: Namen und Beschreibungen werden beim Speichern in die Sprachen Ihrer Gäste übersetzt. Aus: Sie schreiben die Übersetzungen selbst.",
     },
     board: {
       title: "Bestellungen",
@@ -774,6 +786,8 @@ const DICTS: Record<string, OrderingStrings> = {
       languageHint: "Vul elke taal in die je gasten gebruiken.",
       translations: "Vertalingen (optioneel)",
       translationsHint: "Gasten zonder vertaling in hun taal zien gewoon je hoofdtaal.",
+      autoTranslate: "Automatisch vertalen",
+      autoTranslateHint: "Aan: namen en beschrijvingen worden bij het opslaan vertaald naar de talen van je gasten. Uit: je schrijft de vertalingen zelf.",
     },
     board: {
       title: "Bestellingen",
@@ -892,6 +906,8 @@ const DICTS: Record<string, OrderingStrings> = {
       languageHint: "Remplissez chaque langue utilisée par vos clients.",
       translations: "Traductions (facultatif)",
       translationsHint: "Les clients sans traduction dans leur langue voient simplement votre langue principale.",
+      autoTranslate: "Traduire automatiquement",
+      autoTranslateHint: "Activé : noms et descriptions sont traduits dans les langues de vos clients à l'enregistrement. Désactivé : vous écrivez les traductions vous-même.",
     },
     board: {
       title: "Commandes",

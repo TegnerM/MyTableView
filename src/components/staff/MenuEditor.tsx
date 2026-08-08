@@ -29,9 +29,11 @@ type Props = {
   initialMenu: VenueMenu;
   /** The venue's published guest languages. */
   venueLocales: string[];
-  /** The venue's main language — the only field shown by default;
-   *  other languages live behind an optional "Translations" fold. */
+  /** The venue's main language — the field everyone always sees. */
   defaultLocale: string;
+  /** true = the server machine-translates on save; false = the owner
+   *  writes every language by hand (per-language fields appear). */
+  autoTranslate: boolean;
 };
 
 type SaveState = "idle" | "saving" | "saved" | "failed";
@@ -56,7 +58,12 @@ async function post(payload: Record<string, unknown>): Promise<{
   }
 }
 
-export function MenuEditor({ initialMenu, venueLocales, defaultLocale }: Props) {
+export function MenuEditor({
+  initialMenu,
+  venueLocales,
+  defaultLocale,
+  autoTranslate,
+}: Props) {
   const router = useRouter();
 
   const [locale, setLocale] = useState("en");
@@ -66,8 +73,18 @@ export function MenuEditor({ initialMenu, venueLocales, defaultLocale }: Props) 
   const t = getOrderingStrings(locale);
 
   const primary = defaultLocale || venueLocales[0] || "en";
-  // Main language first, the rest only inside the Translations fold.
   const others = venueLocales.filter((code) => code !== primary);
+  // With auto-translate ON the editor shows only the main language;
+  // OFF surfaces one field per guest language for hand translation.
+  const manualLocales = autoTranslate ? [] : others;
+
+  const [toggleBusy, setToggleBusy] = useState(false);
+  const setAutoTranslate = async (enabled: boolean) => {
+    setToggleBusy(true);
+    await post({ action: "auto_translate", enabled });
+    setToggleBusy(false);
+    router.refresh();
+  };
 
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(
     initialMenu.categories[0]?.id ?? null
@@ -87,6 +104,21 @@ export function MenuEditor({ initialMenu, venueLocales, defaultLocale }: Props) 
 
   return (
     <div className="mtv-menued">
+      {others.length > 0 ? (
+        <div className="mtv-menued-translate">
+          <label className="mtv-menued-translate-switch">
+            <input
+              type="checkbox"
+              checked={autoTranslate}
+              disabled={toggleBusy}
+              onChange={(event) => void setAutoTranslate(event.target.checked)}
+            />
+            <span>{t.editor.autoTranslate}</span>
+          </label>
+          <p className="mtv-menued-help">{t.editor.autoTranslateHint}</p>
+        </div>
+      ) : null}
+
       <div className="mtv-menued-cats" role="tablist">
         {initialMenu.categories.map((category) => (
           <button
@@ -123,7 +155,7 @@ export function MenuEditor({ initialMenu, venueLocales, defaultLocale }: Props) 
           key="new-category"
           t={t}
           primary={primary}
-          others={others}
+          others={manualLocales}
           category={null}
           onDone={(newId) => {
             setAddingCategory(false);
@@ -146,7 +178,7 @@ export function MenuEditor({ initialMenu, venueLocales, defaultLocale }: Props) 
             key={activeCategory.id}
             t={t}
             primary={primary}
-            others={others}
+            others={manualLocales}
             category={activeCategory}
             onDone={() => refresh()}
             onCancel={null}
@@ -163,7 +195,7 @@ export function MenuEditor({ initialMenu, venueLocales, defaultLocale }: Props) 
                 t={t}
                 locale={locale}
                 primary={primary}
-                others={others}
+                others={manualLocales}
                 item={item}
                 expanded={expandedItemId === item.id}
                 onToggle={() =>
@@ -178,7 +210,7 @@ export function MenuEditor({ initialMenu, venueLocales, defaultLocale }: Props) 
                 key={`new-item-${activeCategory.id}`}
                 t={t}
                 primary={primary}
-                others={others}
+                others={manualLocales}
                 categoryId={activeCategory.id}
                 item={null}
                 onDone={() => {
@@ -223,7 +255,6 @@ function CategoryForm({
   onDone: (newId?: string) => void;
   onCancel: (() => void) | null;
 }) {
-  void others; // translations are generated server-side now
   const [name, setName] = useState<LocaleMap>(category?.name ?? {});
   const [station, setStation] = useState<Station>(category?.station ?? "kitchen");
   const [state, setState] = useState<SaveState>("idle");
@@ -290,6 +321,29 @@ function CategoryForm({
         </label>
       </div>
       <p className="mtv-menued-help">{t.editor.stationHelp}</p>
+
+      {others.length > 0 ? (
+        <div className="mtv-menued-manual">
+          <p className="mtv-menued-subhead">{t.editor.translations}</p>
+          <div className="mtv-menued-fields">
+            {others.map((code) => (
+              <label key={code} className="mtv-menued-field">
+                <span>
+                  {t.editor.categoryName} <i>{code.toUpperCase()}</i>
+                </span>
+                <input
+                  type="text"
+                  maxLength={120}
+                  value={name[code] ?? ""}
+                  onChange={(event) =>
+                    setName((prev) => ({ ...prev, [code]: event.target.value }))
+                  }
+                />
+              </label>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <div className="mtv-menued-actions">
         <button
@@ -440,7 +494,6 @@ function ItemForm({
   onDone: () => void;
   onCancel: () => void;
 }) {
-  void others; // translations are generated server-side now
   const [name, setName] = useState<LocaleMap>(item?.name ?? {});
   const [description, setDescription] = useState<LocaleMap>(item?.description ?? {});
   const [price, setPrice] = useState(
@@ -563,6 +616,45 @@ function ItemForm({
           </button>
         </div>
       </div>
+
+      {others.length > 0 ? (
+        <div className="mtv-menued-manual">
+          <p className="mtv-menued-subhead">{t.editor.translations}</p>
+          {others.map((code) => (
+            <div key={code} className="mtv-menued-fields">
+              <label className="mtv-menued-field">
+                <span>
+                  {t.editor.itemName} <i>{code.toUpperCase()}</i>
+                </span>
+                <input
+                  type="text"
+                  maxLength={120}
+                  value={name[code] ?? ""}
+                  onChange={(event) =>
+                    setName((prev) => ({ ...prev, [code]: event.target.value }))
+                  }
+                />
+              </label>
+              <label className="mtv-menued-field mtv-menued-field-wide">
+                <span>
+                  {t.editor.description} <i>{code.toUpperCase()}</i>
+                </span>
+                <textarea
+                  rows={2}
+                  maxLength={400}
+                  value={description[code] ?? ""}
+                  onChange={(event) =>
+                    setDescription((prev) => ({
+                      ...prev,
+                      [code]: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       <p className="mtv-menued-subhead">{t.editor.allergensTitle}</p>
       <div className="mtv-menued-allergens">

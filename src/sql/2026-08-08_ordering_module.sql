@@ -17,6 +17,12 @@ alter table public.venues
 alter table public.venues
   add column if not exists service_charge_pct numeric(4,1) not null default 0;
 
+-- Menu translation mode: true = the server machine-translates menu
+-- text into the venue's other guest languages on save; false = the
+-- owner writes every language by hand in the editor.
+alter table public.venues
+  add column if not exists menu_auto_translate boolean not null default true;
+
 -- Paid ordering seats, mirrored from the Stripe subscription item by
 -- the webhook / toggle API. Billing bookkeeping only — the guest gate
 -- is ordering_active + (trial running OR account subscribed).

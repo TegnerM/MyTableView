@@ -118,9 +118,18 @@ export async function autoTranslateMenuRow(
 
     const { data: venue } = await service
       .from("venues")
-      .select("default_locale, locales")
+      .select("default_locale, locales, menu_auto_translate")
       .eq("id", venueId)
-      .maybeSingle<{ default_locale: string | null; locales: string[] | null }>();
+      .maybeSingle<{
+        default_locale: string | null;
+        locales: string[] | null;
+        menu_auto_translate: boolean | null;
+      }>();
+
+    // The owner chose to translate by hand — never overwrite their work.
+    if (venue?.menu_auto_translate === false) {
+      return;
+    }
 
     const primary = venue?.default_locale ?? "en";
     const targets = (venue?.locales ?? []).filter(

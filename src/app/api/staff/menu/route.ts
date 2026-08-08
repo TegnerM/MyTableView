@@ -61,6 +61,8 @@ export async function POST(request: Request) {
       return optionSave(ctx, body);
     case "option_delete":
       return deactivate(ctx, body, "menu_item_options");
+    case "auto_translate":
+      return setAutoTranslate(ctx, body);
     default:
       return bad();
   }
@@ -312,6 +314,22 @@ async function optionSave(ctx: Ctx, body: Record<string, unknown>) {
     });
   }
   return finish(data?.id, error?.message);
+}
+
+async function setAutoTranslate(ctx: Ctx, body: Record<string, unknown>) {
+  if (typeof body.enabled !== "boolean") {
+    return bad();
+  }
+  const service = getServiceClient();
+  const { error } = await service
+    .from("venues")
+    .update({ menu_auto_translate: body.enabled })
+    .eq("id", ctx.venueId);
+  if (error) {
+    console.error("staff/menu: auto_translate failed", error.message);
+    return NextResponse.json({ ok: false, reason: "error" }, { status: 500 });
+  }
+  return NextResponse.json({ ok: true }, { status: 200 });
 }
 
 /* ------------------------------------------------------------ shared */

@@ -60,9 +60,13 @@ export default async function StaffMenuPage() {
   const [{ data: venue }, menu] = await Promise.all([
     service
       .from("venues")
-      .select("locales, default_locale")
+      .select("locales, default_locale, menu_auto_translate")
       .eq("id", identity.venueId)
-      .maybeSingle<{ locales: string[] | null; default_locale: string | null }>(),
+      .maybeSingle<{
+        locales: string[] | null;
+        default_locale: string | null;
+        menu_auto_translate: boolean | null;
+      }>(),
     loadStaffMenu(identity.venueId),
   ]);
 
@@ -102,6 +106,7 @@ export default async function StaffMenuPage() {
           initialMenu={menu}
           venueLocales={venueLocales}
           defaultLocale={venue?.default_locale ?? venueLocales[0] ?? "en"}
+          autoTranslate={venue?.menu_auto_translate ?? true}
         />
       </main>
     </StaffShell>
