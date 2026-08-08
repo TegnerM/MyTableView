@@ -1,5 +1,5 @@
 import { getServiceClient } from "@/lib/supabase/service";
-import { isVenueLocked } from "@/lib/billing/status";
+import { isVenueLocked, isOrderingLive } from "@/lib/billing/status";
 
 /**
  * Resolves an NFC tag to a live guest context.
@@ -36,6 +36,8 @@ export type GuestRequestType = {
   icon: string | null;
   closesSession: boolean;
   sortOrder: number;
+  /** Redundant while the menu is live (Drinks/Coffee/... buttons). */
+  orderable: boolean;
 };
 
 export type GuestVenue = {
@@ -47,6 +49,10 @@ export type GuestVenue = {
   locales: string[];
   serviceMode: ServiceMode;
   branding: Record<string, unknown>;
+  /** Guests can browse the menu and order right now. */
+  orderingLive: boolean;
+  /** Cart service line, 0-20 %. */
+  serviceChargePct: number;
 };
 
 export type GuestContext = {
@@ -94,6 +100,8 @@ type TagRow = {
     service_mode: ServiceMode;
     branding: Record<string, unknown>;
     trial_ends_at: string | null;
+    ordering_active: boolean | null;
+    service_charge_pct: number | string | null;
     accounts: { billing_status: string | null } | null;
   } | null;
 };
@@ -107,6 +115,7 @@ type RequestTypeRow = {
   icon: string | null;
   closes_session: boolean;
   sort_order: number;
+  orderable: boolean | null;
 };
 
 type OpenRequestRow = {
@@ -147,6 +156,8 @@ export async function resolveTag(rawTagId: string): Promise<ResolveResult> {
           service_mode,
           branding,
           trial_ends_at,
+          ordering_active,
+          service_charge_pct,
           accounts:account_id ( billing_status )
         )
       `
@@ -217,6 +228,12 @@ export async function resolveTag(rawTagId: string): Promise<ResolveResult> {
         locales: venue.locales ?? [],
         serviceMode: venue.service_mode,
         branding: venue.branding ?? {},
+        orderingLive: isOrderingLive(
+          venue.ordering_active,
+          venue.trial_ends_at,
+          venue.accounts?.billing_status
+        ),
+        serviceChargePct: Number(venue.service_charge_pct ?? 0) || 0,
       },
       table: {
         id: tag.tables.id,
@@ -285,7 +302,7 @@ async function loadRequestTypes(venueId: string): Promise<GuestRequestType[]> {
 
   const { data, error } = await supabase
     .from("request_types")
-    .select("id, code, kind, label, sublabel, icon, closes_session, sort_order")
+    .select("id, code, kind, label, sublabel, icon, closes_session, sort_order, orderable")
     .eq("venue_id", venueId)
     .eq("active", true)
     .order("sort_order", { ascending: true })
@@ -305,6 +322,7 @@ async function loadRequestTypes(venueId: string): Promise<GuestRequestType[]> {
     icon: row.icon,
     closesSession: row.closes_session,
     sortOrder: row.sort_order,
+    orderable: Boolean(row.orderable),
   }));
 }
 

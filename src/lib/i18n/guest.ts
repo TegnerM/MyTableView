@@ -101,7 +101,7 @@ export function resolveGuestLocale(
   return venueDefault;
 }
 
-type UiStrings = {
+export type UiStrings = {
   welcome: string;
   howCanWeHelp: string;
   table: string;
@@ -133,6 +133,28 @@ type UiStrings = {
   enjoyYourStay: string;
   appreciateYou: string;
   guests: string;
+  menuViewTitle: string;
+  menuViewSub: string;
+  menuTitle: string;
+  menuSoldOut: string;
+  menuOptions: string;
+  menuAddToOrder: string;
+  menuViewOrder: string;
+  menuYourOrder: string;
+  menuAddNote: string;
+  menuSubtotal: string;
+  menuService: string;
+  menuTotal: string;
+  menuPayAtTable: string;
+  menuPlaceOrder: string;
+  menuOrderSentTitle: string;
+  menuOrderSentBody: string;
+  menuKeepOrdering: string;
+  menuBackToStart: string;
+  menuOrderFailed: string;
+  menuOrderRateLimited: string;
+  menuItemUnavailable: string;
+  menuBack: string;
 };
 
 export const UI_STRINGS: Record<string, UiStrings> = {
@@ -170,6 +192,28 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     enjoyYourStay: "Enjoy your time at {venue}",
     appreciateYou: "We appreciate you",
     guests: "Guests",
+    menuViewTitle: "View menu & order",
+    menuViewSub: "Food & drinks, straight to your table",
+    menuTitle: "Menu",
+    menuSoldOut: "Sold out today",
+    menuOptions: "Options",
+    menuAddToOrder: "Add to order",
+    menuViewOrder: "View order",
+    menuYourOrder: "Your order",
+    menuAddNote: "Add a note for the kitchen… (optional)",
+    menuSubtotal: "Subtotal",
+    menuService: "Service {pct}%",
+    menuTotal: "Total",
+    menuPayAtTable: "You pay at the table, as usual — nothing is charged online.",
+    menuPlaceOrder: "Place order",
+    menuOrderSentTitle: "Order sent!",
+    menuOrderSentBody: "We've received your order for {table}. Your waiter is on it.",
+    menuKeepOrdering: "Keep ordering",
+    menuBackToStart: "Back to start",
+    menuOrderFailed: "Could not send your order. Please try again.",
+    menuOrderRateLimited: "Please wait a moment before ordering again.",
+    menuItemUnavailable: "Sorry — something in your order just sold out. Please review it.",
+    menuBack: "Back",
   },
   es: {
     welcome: "¡Bienvenido!",
@@ -205,6 +249,28 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     enjoyYourStay: "Disfrute de su estancia en {venue}",
     appreciateYou: "Le agradecemos su visita",
     guests: "Comensales",
+    menuViewTitle: "Ver carta y pedir",
+    menuViewSub: "Comida y bebida, directo a su mesa",
+    menuTitle: "Carta",
+    menuSoldOut: "Agotado hoy",
+    menuOptions: "Opciones",
+    menuAddToOrder: "Añadir al pedido",
+    menuViewOrder: "Ver pedido",
+    menuYourOrder: "Su pedido",
+    menuAddNote: "Añadir una nota para la cocina… (opcional)",
+    menuSubtotal: "Subtotal",
+    menuService: "Servicio {pct}%",
+    menuTotal: "Total",
+    menuPayAtTable: "Paga en la mesa, como siempre — no se cobra nada online.",
+    menuPlaceOrder: "Enviar pedido",
+    menuOrderSentTitle: "¡Pedido enviado!",
+    menuOrderSentBody: "Hemos recibido su pedido para {table}. Su camarero se encarga.",
+    menuKeepOrdering: "Seguir pidiendo",
+    menuBackToStart: "Volver al inicio",
+    menuOrderFailed: "No se pudo enviar el pedido. Inténtelo de nuevo.",
+    menuOrderRateLimited: "Espere un momento antes de pedir de nuevo.",
+    menuItemUnavailable: "Lo sentimos — algo de su pedido se acaba de agotar. Revíselo.",
+    menuBack: "Atrás",
   },
   da: {
     welcome: "Velkommen!",
@@ -240,6 +306,28 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     enjoyYourStay: "Nyd dit besøg på {venue}",
     appreciateYou: "Vi sætter pris på dit besøg",
     guests: "Gæster",
+    menuViewTitle: "Se menu & bestil",
+    menuViewSub: "Mad og drikke, direkte til dit bord",
+    menuTitle: "Menu",
+    menuSoldOut: "Udsolgt i dag",
+    menuOptions: "Tilvalg",
+    menuAddToOrder: "Læg i bestilling",
+    menuViewOrder: "Se bestilling",
+    menuYourOrder: "Din bestilling",
+    menuAddNote: "Tilføj en note til køkkenet… (valgfrit)",
+    menuSubtotal: "Subtotal",
+    menuService: "Service {pct}%",
+    menuTotal: "I alt",
+    menuPayAtTable: "Du betaler ved bordet som altid — intet trækkes online.",
+    menuPlaceOrder: "Send bestilling",
+    menuOrderSentTitle: "Bestilling sendt!",
+    menuOrderSentBody: "Vi har modtaget din bestilling til {table}. Din tjener er i gang.",
+    menuKeepOrdering: "Bestil mere",
+    menuBackToStart: "Tilbage til start",
+    menuOrderFailed: "Bestillingen kunne ikke sendes. Prøv igen.",
+    menuOrderRateLimited: "Vent et øjeblik, før du bestiller igen.",
+    menuItemUnavailable: "Beklager — noget i din bestilling er lige udsolgt. Se den efter.",
+    menuBack: "Tilbage",
   },
   sv: {
     welcome: "Välkommen!",
@@ -275,6 +363,28 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     enjoyYourStay: "Njut av din tid på {venue}",
     appreciateYou: "Vi uppskattar ditt besök",
     guests: "Gäster",
+    menuViewTitle: "Se meny & beställ",
+    menuViewSub: "Mat och dryck, direkt till ditt bord",
+    menuTitle: "Meny",
+    menuSoldOut: "Slutsåld idag",
+    menuOptions: "Tillval",
+    menuAddToOrder: "Lägg till i beställningen",
+    menuViewOrder: "Visa beställning",
+    menuYourOrder: "Din beställning",
+    menuAddNote: "Lägg till en notering till köket… (valfritt)",
+    menuSubtotal: "Delsumma",
+    menuService: "Service {pct}%",
+    menuTotal: "Totalt",
+    menuPayAtTable: "Du betalar vid bordet som vanligt — inget dras online.",
+    menuPlaceOrder: "Skicka beställning",
+    menuOrderSentTitle: "Beställning skickad!",
+    menuOrderSentBody: "Vi har tagit emot din beställning för {table}. Din servitör är på gång.",
+    menuKeepOrdering: "Fortsätt beställa",
+    menuBackToStart: "Tillbaka till start",
+    menuOrderFailed: "Beställningen kunde inte skickas. Försök igen.",
+    menuOrderRateLimited: "Vänta en stund innan du beställer igen.",
+    menuItemUnavailable: "Tyvärr — något i din beställning tog just slut. Se över den.",
+    menuBack: "Tillbaka",
   },
   no: {
     welcome: "Velkommen!",
@@ -310,6 +420,28 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     enjoyYourStay: "Nyt tiden din på {venue}",
     appreciateYou: "Vi setter pris på besøket ditt",
     guests: "Gjester",
+    menuViewTitle: "Se meny & bestill",
+    menuViewSub: "Mat og drikke, rett til bordet ditt",
+    menuTitle: "Meny",
+    menuSoldOut: "Utsolgt i dag",
+    menuOptions: "Tilvalg",
+    menuAddToOrder: "Legg i bestillingen",
+    menuViewOrder: "Se bestilling",
+    menuYourOrder: "Din bestilling",
+    menuAddNote: "Legg til en beskjed til kjøkkenet… (valgfritt)",
+    menuSubtotal: "Delsum",
+    menuService: "Service {pct}%",
+    menuTotal: "Totalt",
+    menuPayAtTable: "Du betaler ved bordet som vanlig — ingenting trekkes på nett.",
+    menuPlaceOrder: "Send bestilling",
+    menuOrderSentTitle: "Bestilling sendt!",
+    menuOrderSentBody: "Vi har mottatt bestillingen din for {table}. Servitøren din er i gang.",
+    menuKeepOrdering: "Bestill mer",
+    menuBackToStart: "Tilbake til start",
+    menuOrderFailed: "Bestillingen kunne ikke sendes. Prøv igjen.",
+    menuOrderRateLimited: "Vent litt før du bestiller igjen.",
+    menuItemUnavailable: "Beklager — noe i bestillingen din ble nettopp utsolgt. Se over den.",
+    menuBack: "Tilbake",
   },
   de: {
     welcome: "Willkommen!",
@@ -345,6 +477,28 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     enjoyYourStay: "Genießen Sie Ihre Zeit im {venue}",
     appreciateYou: "Wir freuen uns über Ihren Besuch",
     guests: "Gäste",
+    menuViewTitle: "Karte ansehen & bestellen",
+    menuViewSub: "Essen & Getränke, direkt an Ihren Tisch",
+    menuTitle: "Karte",
+    menuSoldOut: "Heute ausverkauft",
+    menuOptions: "Optionen",
+    menuAddToOrder: "Zur Bestellung hinzufügen",
+    menuViewOrder: "Bestellung ansehen",
+    menuYourOrder: "Ihre Bestellung",
+    menuAddNote: "Notiz für die Küche hinzufügen… (optional)",
+    menuSubtotal: "Zwischensumme",
+    menuService: "Service {pct}%",
+    menuTotal: "Gesamt",
+    menuPayAtTable: "Sie zahlen wie gewohnt am Tisch — online wird nichts abgebucht.",
+    menuPlaceOrder: "Bestellung senden",
+    menuOrderSentTitle: "Bestellung gesendet!",
+    menuOrderSentBody: "Wir haben Ihre Bestellung für {table} erhalten. Ihr Kellner kümmert sich.",
+    menuKeepOrdering: "Weiter bestellen",
+    menuBackToStart: "Zurück zum Start",
+    menuOrderFailed: "Bestellung konnte nicht gesendet werden. Bitte erneut versuchen.",
+    menuOrderRateLimited: "Bitte warten Sie einen Moment, bevor Sie erneut bestellen.",
+    menuItemUnavailable: "Entschuldigung — etwas aus Ihrer Bestellung ist gerade ausverkauft. Bitte prüfen.",
+    menuBack: "Zurück",
   },
   nl: {
     welcome: "Welkom!",
@@ -380,6 +534,28 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     enjoyYourStay: "Geniet van uw tijd bij {venue}",
     appreciateYou: "We waarderen uw bezoek",
     guests: "Gasten",
+    menuViewTitle: "Bekijk menu & bestel",
+    menuViewSub: "Eten en drinken, rechtstreeks aan je tafel",
+    menuTitle: "Menu",
+    menuSoldOut: "Vandaag uitverkocht",
+    menuOptions: "Opties",
+    menuAddToOrder: "Toevoegen aan bestelling",
+    menuViewOrder: "Bekijk bestelling",
+    menuYourOrder: "Je bestelling",
+    menuAddNote: "Voeg een notitie voor de keuken toe… (optioneel)",
+    menuSubtotal: "Subtotaal",
+    menuService: "Service {pct}%",
+    menuTotal: "Totaal",
+    menuPayAtTable: "Je betaalt aan tafel, zoals altijd — online wordt niets afgeschreven.",
+    menuPlaceOrder: "Bestelling versturen",
+    menuOrderSentTitle: "Bestelling verzonden!",
+    menuOrderSentBody: "We hebben je bestelling voor {table} ontvangen. Je ober gaat ermee aan de slag.",
+    menuKeepOrdering: "Verder bestellen",
+    menuBackToStart: "Terug naar start",
+    menuOrderFailed: "Bestelling kon niet worden verzonden. Probeer het opnieuw.",
+    menuOrderRateLimited: "Wacht even voordat je opnieuw bestelt.",
+    menuItemUnavailable: "Sorry — iets uit je bestelling is net uitverkocht. Controleer je bestelling.",
+    menuBack: "Terug",
   },
   fr: {
     welcome: "Bienvenue !",
@@ -415,6 +591,28 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     enjoyYourStay: "Profitez de votre moment chez {venue}",
     appreciateYou: "Merci de votre visite",
     guests: "Convives",
+    menuViewTitle: "Voir la carte & commander",
+    menuViewSub: "Plats et boissons, directement à votre table",
+    menuTitle: "Carte",
+    menuSoldOut: "Épuisé aujourd'hui",
+    menuOptions: "Options",
+    menuAddToOrder: "Ajouter à la commande",
+    menuViewOrder: "Voir la commande",
+    menuYourOrder: "Votre commande",
+    menuAddNote: "Ajouter une note pour la cuisine… (facultatif)",
+    menuSubtotal: "Sous-total",
+    menuService: "Service {pct}%",
+    menuTotal: "Total",
+    menuPayAtTable: "Vous payez à table, comme d'habitude — rien n'est débité en ligne.",
+    menuPlaceOrder: "Envoyer la commande",
+    menuOrderSentTitle: "Commande envoyée !",
+    menuOrderSentBody: "Nous avons bien reçu votre commande pour {table}. Votre serveur s'en occupe.",
+    menuKeepOrdering: "Continuer à commander",
+    menuBackToStart: "Retour à l'accueil",
+    menuOrderFailed: "Impossible d'envoyer la commande. Veuillez réessayer.",
+    menuOrderRateLimited: "Patientez un instant avant de commander à nouveau.",
+    menuItemUnavailable: "Désolé — un article de votre commande vient d'être épuisé. Vérifiez-la.",
+    menuBack: "Retour",
   },
 };
 
@@ -433,3 +631,6 @@ export function getUiStrings(locale: Locale): UiStrings {
 
   return UI_STRINGS[FALLBACK_LOCALE];
 }
+
+/** Alias for client components that receive the strings as props. */
+export type UiStringsShape = UiStrings;

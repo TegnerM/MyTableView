@@ -83,6 +83,36 @@ export const PLANS: Plan[] = [
   },
 ];
 
+/**
+ * The Ordering module add-on — priced PER RESTAURANT on top of the
+ * account subscription, one Stripe subscription item whose quantity is
+ * the number of restaurants with Ordering switched on (trial venues
+ * ride free and don't count).
+ *
+ * Price resolution differs from the base tiers: env var first, then a
+ * Stripe lookup_key ("mtv_ordering_monthly"/"mtv_ordering_yearly") —
+ * the server creates product + price on first use if neither exists,
+ * so sandbox AND live need zero manual Stripe setup.
+ */
+export const ORDERING_ADDON = {
+  monthly: {
+    amount: 19,
+    priceLabel: "€19 / month",
+    envVar: "STRIPE_PRICE_ORDERING_MONTHLY",
+    lookupKey: "mtv_ordering_monthly",
+    interval: "month" as const,
+  },
+  yearly: {
+    amount: 190,
+    priceLabel: "€190 / year",
+    envVar: "STRIPE_PRICE_ORDERING_YEARLY",
+    lookupKey: "mtv_ordering_yearly",
+    interval: "year" as const,
+  },
+} as const;
+
+export type OrderingInterval = keyof typeof ORDERING_ADDON;
+
 export function getPlan(key: string | null | undefined): Plan | null {
   return PLANS.find((plan) => plan.key === key) ?? null;
 }

@@ -7,7 +7,13 @@ import {
   type InsightsData,
   type WeeklyPoint,
 } from "@/components/staff/InsightsView";
+import {
+  OrderingInsights,
+  type OrderingHourPoint,
+  type OrderingInsightsData,
+} from "@/components/staff/OrderingInsights";
 import { StaffShell } from "@/components/staff/StaffShell";
+import { getServiceClient } from "@/lib/supabase/service";
 import { resolveStaffLocale, STAFF_LANG_COOKIE } from "@/lib/i18n/staff";
 import "../floor/floor.css";
 import "./insights.css";
@@ -66,6 +72,8 @@ export default async function StaffInsightsPage() {
 
   const ratings = rows ?? [];
 
+  const ordering = await loadOrderingInsights(identity.venueId);
+
   const data: InsightsData = {
     venueName: identity.venueName,
     responses: ratings.length,
@@ -83,8 +91,119 @@ export default async function StaffInsightsPage() {
       venues={identity.venues}
     >
       <InsightsView data={data} locale={locale} />
+      <OrderingInsights data={ordering} locale={locale} />
     </StaffShell>
   );
+}
+
+/* ------------------------------------------------- ordering clock */
+
+type TicketTimingRow = {
+  order_id: string;
+  station: string;
+  state: string;
+  created_at: string;
+  ready_at: string | null;
+  delivered_at: string | null;
+};
+
+/**
+ * The service clock, last 24 hours. Preparation = placed → ready per
+ * station; pickup = ready → delivered. Cancelled tickets don't count —
+ * they measure a mistake, not the service.
+ */
+async function loadOrderingInsights(
+  venueId: string
+): Promise<OrderingInsightsData> {
+  const service = getServiceClient();
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+  const { data, error } = await service
+    .from("order_tickets")
+    .select("order_id, station, state, created_at, ready_at, delivered_at")
+    .eq("venue_id", venueId)
+    .gte("created_at", since)
+    .neq("state", "cancelled")
+    .returns<TicketTimingRow[]>();
+
+  if (error) {
+    console.error("insights: ordering query failed", error.message);
+  }
+
+  const tickets = data ?? [];
+  const orders = new Set(tickets.map((ticket) => ticket.order_id)).size;
+
+  const prepSeconds = (ticket: TicketTimingRow): number | null =>
+    ticket.ready_at
+      ? (new Date(ticket.ready_at).getTime() -
+          new Date(ticket.created_at).getTime()) /
+        1000
+      : null;
+
+  const pickupSeconds = (ticket: TicketTimingRow): number | null =>
+    ticket.ready_at && ticket.delivered_at
+      ? (new Date(ticket.delivered_at).getTime() -
+          new Date(ticket.ready_at).getTime()) /
+        1000
+      : null;
+
+  const kitchenPreps = tickets
+    .filter((ticket) => ticket.station === "kitchen")
+    .map(prepSeconds)
+    .filter((value): value is number => value !== null && value >= 0);
+  const barPreps = tickets
+    .filter((ticket) => ticket.station === "bar")
+    .map(prepSeconds)
+    .filter((value): value is number => value !== null && value >= 0);
+  const pickups = tickets
+    .map(pickupSeconds)
+    .filter((value): value is number => value !== null && value >= 0);
+
+  const avg = (values: number[]): number | null =>
+    values.length === 0
+      ? null
+      : values.reduce((sum, value) => sum + value, 0) / values.length;
+
+  // Hour buckets keyed by the hour-start EPOCH, oldest → newest. The
+  // 24h window spans two calendar days, so keying by "HH:00" alone
+  // would merge yesterday-15:xx with today-15:xx into one bar.
+  const buckets = new Map<number, { prep: number[]; pickup: number[]; count: number; label: string }>();
+  for (const ticket of tickets) {
+    const at = new Date(ticket.created_at);
+    const hourStart = new Date(at);
+    hourStart.setMinutes(0, 0, 0);
+    const key = hourStart.getTime();
+    const bucket =
+      buckets.get(key) ?? {
+        prep: [],
+        pickup: [],
+        count: 0,
+        label: `${String(at.getHours()).padStart(2, "0")}:00`,
+      };
+    bucket.count += 1;
+    const prep = prepSeconds(ticket);
+    if (prep !== null && prep >= 0) bucket.prep.push(prep);
+    const pickup = pickupSeconds(ticket);
+    if (pickup !== null && pickup >= 0) bucket.pickup.push(pickup);
+    buckets.set(key, bucket);
+  }
+
+  const hours: OrderingHourPoint[] = [...buckets.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([, bucket]) => ({
+      label: bucket.label,
+      count: bucket.count,
+      avgPrepSeconds: avg(bucket.prep),
+      avgPickupSeconds: avg(bucket.pickup),
+    }));
+
+  return {
+    orders,
+    avgKitchenSeconds: avg(kitchenPreps),
+    avgBarSeconds: avg(barPreps),
+    avgPickupSeconds: avg(pickups),
+    hours,
+  };
 }
 
 function average(values: number[]): number | null {

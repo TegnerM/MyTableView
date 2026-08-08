@@ -5,6 +5,7 @@ import { getServerClient } from "@/lib/supabase/server";
 import { EscalationSettingsForm } from "@/components/staff/EscalationSettingsForm";
 import { TurnSettingsForm } from "@/components/staff/TurnSettingsForm";
 import { BillingCard } from "@/components/staff/BillingCard";
+import { OrderingCard } from "@/components/staff/OrderingCard";
 import { TagsCard, type TagRow } from "@/components/staff/TagsCard";
 import {
   TeamCard,
@@ -223,6 +224,15 @@ export default async function StaffSettingsPage() {
           trialDaysLeft={billing.trialDaysLeft}
           venueCount={identity.venues?.length ?? 1}
           maxVenues={billing.maxVenues}
+          isOwner={identity.role === "owner"}
+        />
+
+        <OrderingCard
+          orderingActive={billing.orderingActive}
+          orderingLive={billing.orderingLive}
+          serviceChargePct={billing.serviceChargePct}
+          trialEndsAt={billing.trialEndsAt}
+          accountStatus={billing.accountStatus}
           isOwner={identity.role === "owner"}
         />
 

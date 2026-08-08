@@ -1,6 +1,7 @@
 import { getServerClient } from "@/lib/supabase/server";
 import { getServiceClient } from "@/lib/supabase/service";
 import { resolveStaff } from "@/lib/staff/venue-context";
+import { settleTicketsForRequests } from "@/lib/staff/order-actions";
 
 /**
  * Staff actions on requests.
@@ -153,6 +154,15 @@ export async function fulfilRequest(requestId: string): Promise<ActionResult> {
     return { ok: false, reason: "invalid_state" };
   }
 
+  // An order request cleared by the waiter delivers its tickets too —
+  // the kitchen/bar board must not keep a served order glowing.
+  await settleTicketsForRequests(
+    [updated.id],
+    staff.venueId,
+    staff.staffId,
+    "delivered"
+  );
+
   let sessionClosed = false;
 
   if (request.request_types?.closes_session) {
@@ -240,6 +250,9 @@ export async function fulfilTableRequests(
       .is("acknowledged_at", null);
   }
 
+  // Orders among the cleared requests count as delivered.
+  await settleTicketsForRequests(ids, staff.venueId, staff.staffId, "delivered");
+
   let sessionClosed = false;
 
   const closer = pending.find((row) => row.request_types?.closes_session);
@@ -308,6 +321,15 @@ export async function closeSessionManually(
   const supabase = await getServerClient();
   const now = new Date().toISOString();
 
+  // Grab the outstanding requests BEFORE cancelling so their orders'
+  // kitchen/bar tickets can be cancelled along with them.
+  const { data: outstanding } = await supabase
+    .from("requests")
+    .select("id")
+    .eq("session_id", sessionId)
+    .in("state", ["open", "acknowledged"])
+    .returns<{ id: string }[]>();
+
   const { error: cancelError } = await supabase
     .from("requests")
     .update({ state: "cancelled", cancelled_at: now })
@@ -318,6 +340,13 @@ export async function closeSessionManually(
     console.error("closeSessionManually: cancel failed", cancelError);
     return { ok: false, reason: "error" };
   }
+
+  await settleTicketsForRequests(
+    (outstanding ?? []).map((row) => row.id),
+    staff.venueId,
+    staff.staffId,
+    "cancelled"
+  );
 
   const { data, error } = await supabase
     .from("sessions")

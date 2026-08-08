@@ -3,7 +3,13 @@ import { resolveStaff } from "@/lib/staff/venue-context";
 import { getServerClient } from "@/lib/supabase/server";
 import { getServiceClient } from "@/lib/supabase/service";
 import { getPlan, isPlanKey } from "@/lib/billing/plans";
-import { getStripe, getPriceId, resolveOrigin } from "@/lib/billing/stripe";
+import {
+  getStripe,
+  getPriceId,
+  getOrderingPriceId,
+  resolveOrigin,
+} from "@/lib/billing/stripe";
+import { isTrialRunning } from "@/lib/billing/status";
 
 /**
  * POST /api/billing/checkout  { plan: PlanKey }
@@ -82,10 +88,15 @@ export async function POST(request: Request) {
   }
 
   // The tier must cover every venue the account already runs.
-  const { count: venueCount } = await service
+  const { data: accountVenues } = await service
     .from("venues")
-    .select("id", { count: "exact", head: true })
-    .eq("account_id", account.id);
+    .select("id, ordering_active, trial_ends_at")
+    .eq("account_id", account.id)
+    .returns<
+      { id: string; ordering_active: boolean; trial_ends_at: string | null }[]
+    >();
+
+  const venueCount = accountVenues?.length ?? null;
 
   const plan = getPlan(planKey);
 
@@ -95,6 +106,12 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
+
+  // Venues that already switched Ordering on and are past their free
+  // trial join the subscription as the €19-per-restaurant add-on item.
+  const orderingQuantity = (accountVenues ?? []).filter(
+    (venue) => venue.ordering_active && !isTrialRunning(venue.trial_ends_at)
+  ).length;
 
   try {
     const stripe = getStripe();
@@ -120,10 +137,21 @@ export async function POST(request: Request) {
 
     const origin = resolveOrigin(request);
 
+    const lineItems: { price: string; quantity: number }[] = [
+      { price: getPriceId(planKey), quantity: 1 },
+    ];
+
+    if (orderingQuantity > 0 && plan) {
+      lineItems.push({
+        price: await getOrderingPriceId(plan.interval),
+        quantity: orderingQuantity,
+      });
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       customer: customerId,
-      line_items: [{ price: getPriceId(planKey), quantity: 1 }],
+      line_items: lineItems,
       allow_promotion_codes: true,
       metadata: { account_id: account.id, plan: planKey },
       subscription_data: {

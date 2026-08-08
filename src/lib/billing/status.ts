@@ -46,6 +46,35 @@ export function isVenueLocked(
   return accountStatus !== "active" && accountStatus !== "past_due";
 }
 
+/**
+ * Whether guests at a venue can browse the menu and order.
+ *
+ * Ordering is ON when the owner switched it on AND either the venue's
+ * own trial is still running (the trial includes the full product) or
+ * the account is subscribed. past_due stays on for the same reason it
+ * doesn't lock the floor: a card retry must never kill service.
+ *
+ * Deliberately independent of the PAID quantity — the quantity on the
+ * Stripe subscription item is kept in sync server-side (toggle API +
+ * daily sweep) and is bookkeeping, never a gate. A sync hiccup must
+ * not switch a live menu off mid-service.
+ */
+export function isOrderingLive(
+  orderingActive: boolean | null | undefined,
+  trialEndsAt: string | null | undefined,
+  accountStatus: string | null | undefined
+): boolean {
+  if (!orderingActive) {
+    return false;
+  }
+
+  if (isTrialRunning(trialEndsAt)) {
+    return true;
+  }
+
+  return accountStatus === "active" || accountStatus === "past_due";
+}
+
 /** Whole days of the venue's own trial left, never negative. Null when
  *  there is no meaningful trial to count (no date, or already over). */
 export function trialDaysLeft(

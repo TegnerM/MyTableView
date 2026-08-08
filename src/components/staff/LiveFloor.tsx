@@ -26,6 +26,7 @@ import {
   type StaffStrings,
 } from "@/lib/i18n/staff";
 import { readStoredZone, storeZone } from "@/lib/staff/zone-memory";
+import { getOrderingStrings } from "@/lib/i18n/ordering";
 
 /**
  * The live floor — the screen a waiter lives on during service.
@@ -102,6 +103,9 @@ export function LiveFloor({
   // (requests land in the cloud with server timestamps); only this
   // screen's view goes stale, so the job is: detect, show, catch up.
   const [connection, setConnection] = useState<"online" | "offline">("online");
+  // Kitchen/bar "ready" bell: banner text + a chime. Cleared by tap or
+  // by the next one replacing it.
+  const [readyAlert, setReadyAlert] = useState<string | null>(null);
   const [lastSyncAt, setLastSyncAt] = useState<number>(() => Date.now());
   const [actError, setActError] = useState(false);
   const connectionRef = useRef<"online" | "offline">("online");
@@ -243,6 +247,9 @@ export function LiveFloor({
     // unfiltered; RLS still scopes what the socket may deliver.
     const specs: { table: string; filter?: string }[] = [
       { table: "requests", filter: `venue_id=eq.${venueId}` },
+      // Station tickets: state flips repaint the queue, and "ready"
+      // rings the bell below.
+      { table: "order_tickets", filter: `venue_id=eq.${venueId}` },
       { table: "sessions", filter: `venue_id=eq.${venueId}` },
       { table: "session_tables" },
       // The floor follows layout and zone edits too.
@@ -284,6 +291,21 @@ export function LiveFloor({
               // Cheap breadcrumb: when "the floor doesn't update", the
               // console shows whether events arrive at all.
               console.debug(`floor realtime: ${table}`, payload.eventType);
+
+              // The pass bell: a station ticket flipping to "ready"
+              // chimes and banners on every floor device.
+              if (table === "order_tickets" && payload.eventType === "UPDATE") {
+                const next = payload.new as {
+                  state?: string;
+                  station?: string;
+                  order_id?: string;
+                };
+                const previous = payload.old as { state?: string } | null;
+                if (next?.state === "ready" && previous?.state !== "ready") {
+                  void announceReady(next.station ?? "", next.order_id ?? null);
+                }
+              }
+
               scheduleRefresh();
             }
           )
@@ -331,6 +353,40 @@ export function LiveFloor({
       document.removeEventListener("visibilitychange", onWake);
     };
   }, [scheduleRefresh]);
+
+  // Fetches the table label for the ready banner (best effort — the
+  // banner shows without it) and rings the chime.
+  const announceReady = useCallback(
+    async (station: string, orderId: string | null) => {
+      const ot = getOrderingStrings(readStaffLocale());
+      const stationName = station === "bar" ? ot.floor.bar : ot.floor.kitchen;
+
+      let label = "";
+      if (orderId) {
+        try {
+          const supabase = getBrowserClient();
+          const { data } = await supabase
+            .from("orders")
+            .select("tables:table_id ( label )")
+            .eq("id", orderId)
+            .maybeSingle<{ tables: { label: string } | null }>();
+          label = data?.tables?.label ?? "";
+        } catch {
+          // Banner without the table number still beats silence.
+        }
+      }
+
+      setReadyAlert(
+        label
+          ? ot.floor.readyBanner
+              .replace("{station}", stationName)
+              .replace("{label}", label)
+          : ot.floor.orderReady.replace("{station}", stationName)
+      );
+      playReadyChime();
+    },
+    []
+  );
 
   const act = useCallback(
     async (payload: Record<string, unknown>) => {
@@ -519,6 +575,20 @@ export function LiveFloor({
                 minute: "2-digit",
               })
             )}
+          </div>
+        ) : null}
+
+        {readyAlert ? (
+          <div className="mtv-ready-banner" role="status">
+            <span aria-hidden="true">🔔</span>
+            <strong>{readyAlert}</strong>
+            <button
+              type="button"
+              className="mtv-btn mtv-btn-small"
+              onClick={() => setReadyAlert(null)}
+            >
+              {t.floor.dismiss}
+            </button>
           </div>
         ) : null}
 
@@ -1061,6 +1131,43 @@ function TableDetail({
       )}
     </section>
   );
+}
+
+/**
+ * The pass bell — two short WebAudio dings, no asset to load. Browsers
+ * gate audio behind a user gesture; a floor device that has been
+ * tapped at least once (every real shift) rings, a fresh untouched tab
+ * shows the banner silently.
+ */
+let chimeContext: AudioContext | null = null;
+
+function playReadyChime() {
+  try {
+    chimeContext = chimeContext ?? new AudioContext();
+    const context = chimeContext;
+    if (context.state === "suspended") {
+      void context.resume();
+    }
+
+    const ding = (at: number, frequency: number) => {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.value = frequency;
+      gain.gain.setValueAtTime(0.0001, at);
+      gain.gain.exponentialRampToValueAtTime(0.4, at + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.6);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(at);
+      oscillator.stop(at + 0.65);
+    };
+
+    ding(context.currentTime, 1318.5); // E6
+    ding(context.currentTime + 0.18, 1760); // A6
+  } catch {
+    // No audio — the banner carries the message.
+  }
 }
 
 /* ------------------------------------------------------------- icons */

@@ -234,3 +234,48 @@
   gap: 0.4rem;
   flex-wrap: wrap;
 }
+
+
+/* ------------------------------------------------ ordering card */
+
+.mtv-ordering-status {
+  margin: 0.4rem 0 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #8a6d33;
+}
+
+.mtv-ordering-status[data-live="true"] {
+  color: #2e8b57;
+}
+
+.mtv-ordering-service {
+  margin-top: 0.9rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.mtv-ordering-service label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.mtv-ordering-service input {
+  font: inherit;
+  width: 6rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--mtv-line, #d8dce1);
+  background: var(--mtv-bg, #fff);
+  color: inherit;
+}
+
+.mtv-ordering-service .mtv-settings-help {
+  flex-basis: 100%;
+  margin: 0;
+}

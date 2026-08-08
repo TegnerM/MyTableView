@@ -13,6 +13,7 @@ export type {
   TableStatus,
   StaffIdentity,
   FloorRequest,
+  FloorRequestOrder,
   FloorTable,
   FloorZone,
   FloorState,
@@ -130,6 +131,14 @@ type RequestRow = {
     icon: string | null;
     closes_session: boolean;
   } | null;
+  orders: {
+    id: string;
+    state: string;
+    total_cents: number;
+    note: string | null;
+    order_items: { name: LocaleMap | null; quantity: number; position: number }[];
+    order_tickets: { station: string; state: string }[];
+  }[];
 };
 
 export async function loadFloorState(
@@ -195,7 +204,12 @@ export async function loadFloorState(
           created_at,
           acknowledged_at,
           tables:table_id ( label ),
-          request_types:request_type_id ( code, label, icon, closes_session )
+          request_types:request_type_id ( code, label, icon, closes_session ),
+          orders (
+            id, state, total_cents, note,
+            order_items ( name, quantity, position ),
+            order_tickets ( station, state )
+          )
         `
       )
       .eq("venue_id", identity.venueId)
@@ -334,6 +348,7 @@ export async function loadFloorState(
       acknowledgedAt: row.acknowledged_at,
       tapCount: taps?.count ?? 1,
       lastTapAt: taps?.lastAt ?? null,
+      order: mapRequestOrder(row),
     });
     requestsByTable.set(row.table_id, list);
   }
@@ -373,4 +388,29 @@ export async function loadFloorState(
   }));
 
   return { identity, tables, areas, escalation, turns };
+}
+
+/** Shapes the embedded order (if any) hanging off a floor request. */
+function mapRequestOrder(row: RequestRow): FloorRequest["order"] {
+  const order = (row.orders ?? [])[0];
+  if (!order) {
+    return null;
+  }
+
+  return {
+    id: order.id,
+    state: order.state,
+    totalCents: order.total_cents,
+    note: order.note,
+    items: [...(order.order_items ?? [])]
+      .sort((a, b) => a.position - b.position)
+      .map((item) => ({ name: item.name ?? {}, quantity: item.quantity })),
+    stations: (order.order_tickets ?? []).map((ticket) => ({
+      station: ticket.station === "bar" ? ("bar" as const) : ("kitchen" as const),
+      state: ticket.state,
+    })),
+    anyReady: (order.order_tickets ?? []).some(
+      (ticket) => ticket.state === "ready"
+    ),
+  };
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase/service";
 import { sendTrialReminderEmail } from "@/lib/email/resend";
+import { syncOrderingQuantity } from "@/lib/billing/ordering";
 
 /**
  * GET /api/cron/trial-reminders — fired daily by Vercel Cron (see
@@ -141,5 +142,48 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.json({ ok: true, checked, sent });
+  // ---- Ordering add-on sweep -----------------------------------------
+  // A venue whose free trial lapsed yesterday with Ordering switched on
+  // starts counting toward the €19-per-restaurant add-on today. The
+  // owner's toggle already syncs on every change; this daily pass
+  // catches the one transition no click triggers: trial expiry.
+  let orderingSynced = 0;
+
+  const { data: orderingAccounts, error: orderingError } = await service
+    .from("venues")
+    .select("account_id, accounts:account_id ( billing_status, stripe_subscription_id )")
+    .eq("ordering_active", true)
+    .returns<
+      {
+        account_id: string;
+        accounts: {
+          billing_status: string | null;
+          stripe_subscription_id: string | null;
+        } | null;
+      }[]
+    >();
+
+  if (orderingError) {
+    console.error("trial-reminders: ordering sweep query failed", orderingError.message);
+  } else {
+    const accountIds = new Set<string>();
+    for (const row of orderingAccounts ?? []) {
+      const status = row.accounts?.billing_status;
+      if (
+        row.accounts?.stripe_subscription_id &&
+        (status === "active" || status === "past_due")
+      ) {
+        accountIds.add(row.account_id);
+      }
+    }
+
+    for (const accountId of accountIds) {
+      const result = await syncOrderingQuantity(accountId);
+      if (result.ok && result.changed) {
+        orderingSynced += 1;
+      }
+    }
+  }
+
+  return NextResponse.json({ ok: true, checked, sent, orderingSynced });
 }

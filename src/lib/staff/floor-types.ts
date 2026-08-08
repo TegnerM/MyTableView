@@ -106,6 +106,18 @@ export type StaffIdentity = {
   venues?: { venueId: string; venueName: string }[];
 };
 
+/** The ordering module's payload on an order-kind request. */
+export type FloorRequestOrder = {
+  id: string;
+  state: string;
+  totalCents: number;
+  note: string | null;
+  items: { name: LocaleMap; quantity: number }[];
+  stations: { station: "kitchen" | "bar"; state: string }[];
+  /** At least one station ticket is ready and waiting for pickup. */
+  anyReady: boolean;
+};
+
 export type FloorRequest = {
   id: string;
   tableId: string;
@@ -126,6 +138,8 @@ export type FloorRequest = {
   tapCount: number;
   /** Most recent press, which is not the same as when they first asked. */
   lastTapAt: string | null;
+  /** Present when this request is a guest ORDER (kind "order"). */
+  order: FloorRequestOrder | null;
 };
 
 export type FloorTable = {

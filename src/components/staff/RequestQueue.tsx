@@ -10,6 +10,8 @@ import {
 } from "@/lib/staff/floor-types";
 import { pickLocale } from "@/lib/i18n/guest";
 import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
+import { getOrderingStrings } from "@/lib/i18n/ordering";
+import { formatCents } from "@/lib/menu/types";
 
 /**
  * The request queue, grouped by table.
@@ -64,6 +66,7 @@ export function RequestQueue({
     setStaffLocale(readStaffLocale());
   }, []);
   const t = getStaffStrings(staffLocale);
+  const ot = getOrderingStrings(staffLocale);
 
   const groups = useMemo<TableGroup[]>(() => {
     const result: TableGroup[] = [];
@@ -188,6 +191,20 @@ export function RequestQueue({
                       )}
                     </span>
                   ) : null}
+                  {group.requests.some((r) => r.order?.anyReady) ? (
+                    <span className="mtv-queue-ready">
+                      🔔 {ot.floor.orderReady.replace(
+                        "{station}",
+                        group.requests
+                          .flatMap((r) => r.order?.stations ?? [])
+                          .filter((st) => st.state === "ready")
+                          .map((st) =>
+                            st.station === "bar" ? ot.floor.bar : ot.floor.kitchen
+                          )
+                          .join(" + ") || ot.floor.kitchen
+                      )}
+                    </span>
+                  ) : null}
                   {summary}
                 </span>
 
@@ -229,6 +246,26 @@ export function RequestQueue({
                         {isRequestEscalated(request, now, settings) ? (
                           <span className="mtv-queue-repeat">
                             {request.tapCount}×
+                          </span>
+                        ) : null}
+                        {request.order ? (
+                          <span className="mtv-queue-order">
+                            {request.order.items.map((line, index) => (
+                              <span key={index} className="mtv-queue-order-line">
+                                {line.quantity}× {pickLocale(line.name, locale)}
+                              </span>
+                            ))}
+                            {request.order.note ? (
+                              <span className="mtv-queue-order-note">
+                                ✎ {request.order.note}
+                              </span>
+                            ) : null}
+                            <span className="mtv-queue-order-total">
+                              {ot.floor.total.replace(
+                                "{amount}",
+                                formatCents(request.order.totalCents, locale)
+                              )}
+                            </span>
                           </span>
                         ) : null}
                       </span>

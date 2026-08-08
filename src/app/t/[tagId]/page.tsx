@@ -4,7 +4,9 @@ import { resolveTag, type ResolveFailure } from "@/lib/guest/resolve-tag";
 import { getStaffIdentity } from "@/lib/staff/floor-state";
 import { getServiceClient } from "@/lib/supabase/service";
 import { RequestPanel } from "@/components/guest/RequestPanel";
+import { MenuOrder } from "@/components/guest/MenuOrder";
 import { SessionStatusBar } from "@/components/guest/SessionStatusBar";
+import { loadGuestMenu } from "@/lib/guest/menu";
 import { TagAssignPanel } from "@/components/staff/TagAssignPanel";
 import { BrandMark } from "@/components/BrandMark";
 import {
@@ -15,6 +17,7 @@ import {
 } from "@/lib/i18n/guest";
 import "./guest.css";
 import "./tag-assign.css";
+import "./menu.css";
 
 /**
  * The guest page — Beach Club Luxury theme (external redesign,
@@ -96,6 +99,18 @@ export default async function GuestTagPage({ params }: PageProps) {
     ? pickLocale(context.table.areaName, locale, context.venue.defaultLocale)
     : "";
 
+  // Ordering module: load the menu only when the venue's switch AND
+  // billing say so. With the menu live, the request buttons the menu
+  // makes redundant (Drinks / Coffee / Dessert) leave the grid.
+  const menu = context.venue.orderingLive
+    ? await loadGuestMenu(context.venue.id)
+    : null;
+  const menuLive = Boolean(menu && menu.categories.length > 0);
+
+  const visibleRequestTypes = menuLive
+    ? context.requestTypes.filter((type) => !type.orderable)
+    : context.requestTypes;
+
   return (
     <main className="mtv-guest">
       {/* Hero header with background image */}
@@ -130,11 +145,23 @@ export default async function GuestTagPage({ params }: PageProps) {
           <h3 className="mtv-section-title">{strings.makeARequest}</h3>
         </div>
 
+        {menuLive && menu ? (
+          <MenuOrder
+            tagId={context.tagId}
+            locale={locale}
+            venueDefaultLocale={context.venue.defaultLocale}
+            tableLabel={`${strings.table} ${context.table.label}`}
+            serviceChargePct={context.venue.serviceChargePct}
+            menu={menu}
+            strings={strings}
+          />
+        ) : null}
+
         <RequestPanel
           tagId={context.tagId}
           locale={locale}
           venueDefaultLocale={context.venue.defaultLocale}
-          requestTypes={context.requestTypes.map((type) => ({
+          requestTypes={visibleRequestTypes.map((type) => ({
             id: type.id,
             code: type.code,
             kind: type.kind,

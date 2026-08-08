@@ -1,6 +1,7 @@
 import { getServerClient } from "@/lib/supabase/server";
 import {
   isVenueLocked,
+  isOrderingLive,
   trialDaysLeft,
   type AccountBillingStatus,
 } from "@/lib/billing/status";
@@ -31,6 +32,12 @@ export type VenueBilling = {
   locked: boolean;
   /** Why a locked venue is locked — drives the lock screen copy. */
   lockReason: "trial" | "canceled";
+  /** The owner's Ordering switch for THIS venue. */
+  orderingActive: boolean;
+  /** Whether guests can actually order right now (switch + trial/sub). */
+  orderingLive: boolean;
+  /** Cart service line, 0–20 %. */
+  serviceChargePct: number;
 };
 
 const OPEN_FALLBACK: VenueBilling = {
@@ -42,10 +49,15 @@ const OPEN_FALLBACK: VenueBilling = {
   trialDaysLeft: null,
   locked: false,
   lockReason: "trial",
+  orderingActive: false,
+  orderingLive: false,
+  serviceChargePct: 0,
 };
 
 type Row = {
   trial_ends_at: string | null;
+  ordering_active: boolean | null;
+  service_charge_pct: number | string | null;
   accounts: {
     billing_status: string | null;
     plan: string | null;
@@ -60,7 +72,7 @@ export async function getVenueBilling(venueId: string): Promise<VenueBilling> {
   const { data, error } = await supabase
     .from("venues")
     .select(
-      "trial_ends_at, accounts:account_id ( billing_status, plan, max_venues, stripe_customer_id )"
+      "trial_ends_at, ordering_active, service_charge_pct, accounts:account_id ( billing_status, plan, max_venues, stripe_customer_id )"
     )
     .eq("id", venueId)
     .maybeSingle<Row>();
@@ -84,5 +96,12 @@ export async function getVenueBilling(venueId: string): Promise<VenueBilling> {
     trialDaysLeft: trialDaysLeft(data.trial_ends_at),
     locked: isVenueLocked(data.trial_ends_at, accountStatus),
     lockReason: accountStatus === "canceled" ? "canceled" : "trial",
+    orderingActive: Boolean(data.ordering_active),
+    orderingLive: isOrderingLive(
+      data.ordering_active,
+      data.trial_ends_at,
+      accountStatus
+    ),
+    serviceChargePct: Number(data.service_charge_pct ?? 0) || 0,
   };
 }

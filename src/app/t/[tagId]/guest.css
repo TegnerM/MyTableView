@@ -283,20 +283,20 @@
 .mtv-status-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  flex: 1;
+  gap: 0.45rem;
+  flex: 1 1 auto;
   min-width: 0;
 }
 
 .mtv-status-item + .mtv-status-item {
   border-left: 1px solid var(--mtv-border);
-  padding-left: 0.75rem;
+  padding-left: 0.55rem;
 }
 
 .mtv-status-icon {
   color: var(--mtv-text-muted);
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   flex: 0 0 auto;
 }
 
@@ -307,7 +307,7 @@
 }
 
 .mtv-status-value {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--mtv-text-dark);
   white-space: nowrap;
@@ -316,7 +316,7 @@
 }
 
 .mtv-status-label {
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   color: var(--mtv-text-muted);
   white-space: nowrap;
   overflow: hidden;

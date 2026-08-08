@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getServiceClient } from "@/lib/supabase/service";
 import { getPlan } from "@/lib/billing/plans";
-import { getStripe, planKeyFromPriceId } from "@/lib/billing/stripe";
+import {
+  getStripe,
+  planKeyFromPriceId,
+  isOrderingPrice,
+} from "@/lib/billing/stripe";
 
 /**
  * POST /api/billing/webhook — Stripe events.
@@ -100,6 +104,25 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   const plan = getPlan(session.metadata?.plan);
 
+  // The checkout may have carried the Ordering add-on as a second line
+  // item — read its quantity off the subscription itself.
+  let orderingQuantity = 0;
+  if (subscriptionId) {
+    try {
+      const subscription = await getStripe().subscriptions.retrieve(
+        subscriptionId,
+        { expand: ["items.data.price"] }
+      );
+      orderingQuantity = orderingQuantityFromItems(subscription);
+    } catch (error) {
+      console.error(
+        "webhook: subscription fetch after checkout failed",
+        error instanceof Error ? error.message : error
+      );
+      // subscription.updated will carry the same information later.
+    }
+  }
+
   const service = getServiceClient();
 
   const { error } = await service
@@ -108,6 +131,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       billing_status: "active",
       plan: plan?.key ?? null,
       max_venues: plan?.maxVenues ?? 1,
+      ordering_quantity: orderingQuantity,
       stripe_subscription_id: subscriptionId,
       ...(customerId ? { stripe_customer_id: customerId } : {}),
     })
@@ -116,6 +140,16 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   if (error) {
     throw new Error(`account update failed: ${error.message}`);
   }
+}
+
+/** Quantity of the Ordering add-on among a subscription's items. */
+function orderingQuantityFromItems(subscription: Stripe.Subscription): number {
+  for (const item of subscription.items.data) {
+    if (isOrderingPrice(item.price)) {
+      return item.quantity ?? 0;
+    }
+  }
+  return 0;
 }
 
 async function handleSubscriptionChange(subscription: Stripe.Subscription) {
@@ -132,13 +166,23 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   }
 
   // Portal upgrades/downgrades arrive as subscription.updated with a
-  // new price — map it back to the tier and its venue limit.
-  const priceId = subscription.items.data[0]?.price?.id ?? null;
-  const plan = getPlan(planKeyFromPriceId(priceId));
+  // new price. With the Ordering add-on the subscription can carry two
+  // items — find the BASE plan among them (the add-on maps to no plan)
+  // and read the add-on quantity while we're at it.
+  let plan = null;
+  for (const item of subscription.items.data) {
+    const matched = getPlan(planKeyFromPriceId(item.price?.id ?? null));
+    if (matched) {
+      plan = matched;
+      break;
+    }
+  }
 
   const update: Record<string, string | number | null> = {
     billing_status: status,
     stripe_subscription_id: subscription.id,
+    ordering_quantity:
+      status === "canceled" ? 0 : orderingQuantityFromItems(subscription),
   };
 
   if (plan) {

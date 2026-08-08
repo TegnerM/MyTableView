@@ -11,6 +11,7 @@ import {
   STAFF_LOCALES,
 } from "@/lib/i18n/staff";
 import { getShopStrings } from "@/lib/i18n/shop";
+import { getOrderingStrings } from "@/lib/i18n/ordering";
 
 /**
  * The one staff chrome: dark sidebar, navigation, user card, day/night
@@ -26,6 +27,8 @@ const THEME_KEY = "mtv-floor-theme";
 
 export type StaffShellSection =
   | "overview"
+  | "orders"
+  | "menu"
   | "layout"
   | "insights"
   | "settings"
@@ -51,6 +54,9 @@ const NAV: {
   icon: () => ReactNode;
 }[] = [
   { key: "overview", href: "/staff/floor", managerOnly: false, icon: OverviewIcon },
+  // Every role sees the Orders board — the bar's iPad signs in as a waiter.
+  { key: "orders", href: "/staff/orders", managerOnly: false, icon: OrdersIcon },
+  { key: "menu", href: "/staff/menu", managerOnly: true, icon: MenuBookIcon },
   { key: "layout", href: "/staff/layout", managerOnly: true, icon: LayoutIcon },
   { key: "insights", href: "/staff/insights", managerOnly: true, icon: ChartIcon },
   { key: "settings", href: "/staff/settings", managerOnly: true, icon: GearIcon },
@@ -172,11 +178,19 @@ export function StaffShell({
         ) : null}
 
         <nav className="mtv-sidebar-nav" aria-label={t.shell.staffNav}>
-          {NAV.filter((item) => isManager || !item.managerOnly).map((item) =>
-            item.key === active ? (
+          {NAV.filter((item) => isManager || !item.managerOnly).map((item) => {
+            const label =
+              item.key === "shop"
+                ? getShopStrings(locale).nav
+                : item.key === "orders"
+                  ? getOrderingStrings(locale).nav.orders
+                  : item.key === "menu"
+                    ? getOrderingStrings(locale).nav.menu
+                    : t.shell[item.key];
+            return item.key === active ? (
               <span key={item.key} className="mtv-nav-item" data-active="true">
                 {item.icon()}
-                {(item.key === "shop" ? getShopStrings(locale).nav : t.shell[item.key])}
+                {label}
               </span>
             ) : (
               <Link
@@ -186,10 +200,10 @@ export function StaffShell({
                 className="mtv-nav-item"
               >
                 {item.icon()}
-                {(item.key === "shop" ? getShopStrings(locale).nav : t.shell[item.key])}
+                {label}
               </Link>
-            )
-          )}
+            );
+          })}
         </nav>
 
         <div className="mtv-sidebar-foot">
@@ -256,6 +270,28 @@ function OverviewIcon() {
       <rect x="11" y="3" width="6" height="6" rx="1.2" />
       <rect x="3" y="11" width="6" height="6" rx="1.2" />
       <rect x="11" y="11" width="6" height="6" rx="1.2" />
+    </svg>
+  );
+}
+
+function OrdersIcon() {
+  return (
+    <svg viewBox="0 0 20 20" className="mtv-nav-icon" aria-hidden="true">
+      <path d="M3 14h14" />
+      <path d="M4.5 14a5.5 5.5 0 0 1 11 0" />
+      <path d="M10 8.5V7" />
+      <circle cx="10" cy="6" r="1" />
+    </svg>
+  );
+}
+
+function MenuBookIcon() {
+  return (
+    <svg viewBox="0 0 20 20" className="mtv-nav-icon" aria-hidden="true">
+      <path d="M4 3.5h7.5a1.8 1.8 0 0 1 1.8 1.8v11.2H5.8A1.8 1.8 0 0 1 4 14.7Z" />
+      <path d="M13.3 5h2.7v9.7a1.8 1.8 0 0 1-1.8 1.8" />
+      <path d="M7 7.5h4" />
+      <path d="M7 10.5h4" />
     </svg>
   );
 }
