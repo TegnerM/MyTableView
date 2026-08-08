@@ -28,14 +28,28 @@ type Props = {
   /** Personal invite token from ?invite= — attributes the signup and
    *  may carry a custom trial length. */
   inviteToken?: string | null;
+  /** Restored from the auth user's metadata after the email-confirm
+   *  round trip, so a bar signup comes back as a bar signup — even
+   *  when the confirmation link was opened on another device. */
+  initialVenueType?: "restaurant" | "bar";
+  initialVenueName?: string;
+  initialDisplayName?: string;
 };
 
 export function SignUpForm({
   alreadySignedIn = false,
   inviteToken = null,
+  initialVenueType = "restaurant",
+  initialVenueName = "",
+  initialDisplayName = "",
 }: Props) {
-  const [venueName, setVenueName] = useState("");
-  const [displayName, setDisplayName] = useState("");
+  // The type picker. Restaurant stays the default so existing links
+  // and half-filled forms behave exactly as before.
+  const [venueType, setVenueType] = useState<"restaurant" | "bar">(
+    initialVenueType
+  );
+  const [venueName, setVenueName] = useState(initialVenueName);
+  const [displayName, setDisplayName] = useState(initialDisplayName);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [referralCode, setReferralCode] = useState("");
@@ -64,6 +78,16 @@ export function SignUpForm({
         const { data, error: signUpError } = await supabase.auth.signUp({
           email: email.trim(),
           password,
+          options: {
+            // Stamped on the auth user so the choice survives the
+            // email-confirm round trip (even on another device). The
+            // sign-up page and /api/signup both read it back.
+            data: {
+              venue_type: venueType,
+              venue_name: venueName.trim(),
+              display_name: displayName.trim(),
+            },
+          },
         });
 
         if (signUpError) {
@@ -89,6 +113,7 @@ export function SignUpForm({
         body: JSON.stringify({
           venueName: venueName.trim(),
           displayName: displayName.trim(),
+          edition: venueType,
           timezone,
           ...(inviteToken ? { inviteToken } : {}),
           ...(referralCode.trim()
@@ -125,8 +150,38 @@ export function SignUpForm({
 
   return (
     <form className="mtv-signin-form" onSubmit={(e) => void submit(e)}>
+      <div className="mtv-field">
+        <span>{t.auth.whatSettingUp}</span>
+        <div className="mtv-type-grid" role="radiogroup" aria-label={t.auth.whatSettingUp}>
+          <button
+            type="button"
+            role="radio"
+            aria-checked={venueType === "restaurant"}
+            className="mtv-type-card"
+            data-on={venueType === "restaurant" ? "true" : "false"}
+            onClick={() => setVenueType("restaurant")}
+          >
+            <span className="mtv-type-ic" aria-hidden="true">🍽️</span>
+            <b>{t.auth.typeRestaurant}</b>
+            <i>{t.auth.typeRestaurantSub}</i>
+          </button>
+          <button
+            type="button"
+            role="radio"
+            aria-checked={venueType === "bar"}
+            className="mtv-type-card"
+            data-on={venueType === "bar" ? "true" : "false"}
+            onClick={() => setVenueType("bar")}
+          >
+            <span className="mtv-type-ic" aria-hidden="true">🍸</span>
+            <b>{t.auth.typeBar}</b>
+            <i>{t.auth.typeBarSub}</i>
+          </button>
+        </div>
+      </div>
+
       <label className="mtv-field">
-        <span>{t.auth.restaurantName}</span>
+        <span>{venueType === "bar" ? t.auth.barName : t.auth.restaurantName}</span>
         <input
           type="text"
           value={venueName}

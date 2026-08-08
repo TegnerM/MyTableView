@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { getServerClient } from "@/lib/supabase/server";
 import { getServiceClient } from "@/lib/supabase/service";
 import { VENUE_COOKIE } from "@/lib/staff/venue-context";
+import { applyEdition, EDITIONS } from "@/lib/edition";
 
 /**
  * POST /api/signup
@@ -26,6 +27,8 @@ type Body = {
   timezone?: unknown;
   inviteToken?: unknown;
   referralCode?: unknown;
+  /** "restaurant" (default) or "bar" — the signup type picker. */
+  edition?: unknown;
 };
 
 export async function POST(request: Request) {
@@ -76,6 +79,19 @@ export async function POST(request: Request) {
       { status: 401 }
     );
   }
+
+  // The type picker. The form's value wins; when it's absent (an old
+  // cached form) the metadata stamped at auth signup is the backstop,
+  // so a bar signup stays a bar signup across the email-confirm round
+  // trip. Anything unexpected falls back to restaurant — the picker
+  // must never fail a signup.
+  const metaVenueType = (user.user_metadata ?? {}).venue_type;
+  const edition =
+    typeof body.edition === "string" && EDITIONS.has(body.edition)
+      ? body.edition
+      : typeof metaVenueType === "string" && EDITIONS.has(metaVenueType)
+        ? metaVenueType
+        : "restaurant";
 
   let service: ReturnType<typeof getServiceClient>;
   try {
@@ -141,6 +157,18 @@ export async function POST(request: Request) {
       },
       { status: 500 }
     );
+  }
+
+  // Born with the right edition: bar venues get their station names
+  // and request buttons before the owner's first page load.
+  // Best-effort — the venue exists either way, and Settings → Venue
+  // type can re-apply if anything here hiccuped.
+  if (edition !== "restaurant") {
+    try {
+      await applyEdition(String(venueId), edition);
+    } catch (editionError) {
+      console.error("signup: apply edition failed", editionError);
+    }
   }
 
   const store = await cookies();

@@ -159,3 +159,67 @@
 .mtv-signin .mtv-signin-alt a:hover{
   text-decoration: underline;
 }
+
+/* ---------------------------------------------- signup type picker */
+
+.mtv-signin .mtv-type-grid{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.6rem;
+}
+
+.mtv-signin .mtv-type-card{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.9rem 0.5rem 0.8rem;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  background: var(--mtv-brand-cream, #fbf9f5);
+  border: 1px solid var(--mtv-brand-line, #e0dace);
+  border-radius: 0.65rem;
+  cursor: pointer;
+}
+
+.mtv-signin .mtv-type-ic{
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.mtv-signin .mtv-type-card b{
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.mtv-signin .mtv-type-card i{
+  font-style: normal;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+.mtv-signin .mtv-type-card[data-on="true"]{
+  border-color: var(--mtv-brand-teal, #12a89a);
+  outline: 2px solid var(--mtv-brand-teal, #12a89a);
+  outline-offset: -1px;
+  background: #f0faf8;
+}
+
+.mtv-signin .mtv-type-card[data-on="true"]::after{
+  content: "✓";
+  position: absolute;
+  top: 0.4rem;
+  right: 0.55rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  display: grid;
+  place-items: center;
+  background: var(--mtv-brand-teal, #12a89a);
+  color: #ffffff;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+}

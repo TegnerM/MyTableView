@@ -45,6 +45,9 @@ export default async function SignUpPage({ searchParams }: PageProps) {
   } = await supabase.auth.getUser();
 
   let alreadySignedIn = false;
+  let initialVenueType: "restaurant" | "bar" = "restaurant";
+  let initialVenueName = "";
+  let initialDisplayName = "";
 
   if (user) {
     const resolved = await resolveStaff();
@@ -52,8 +55,20 @@ export default async function SignUpPage({ searchParams }: PageProps) {
       redirect("/staff/floor");
     }
     // Signed in but no restaurant yet: confirmed email or interrupted
-    // signup. The form skips the account step and just creates the venue.
+    // signup. The form skips the account step and just creates the
+    // venue — restored from the metadata the first form stamped on
+    // the auth user, so a bar signup comes back as a bar signup.
     alreadySignedIn = true;
+    const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
+    if (meta.venue_type === "bar") {
+      initialVenueType = "bar";
+    }
+    if (typeof meta.venue_name === "string") {
+      initialVenueName = meta.venue_name.slice(0, 80);
+    }
+    if (typeof meta.display_name === "string") {
+      initialDisplayName = meta.display_name.slice(0, 80);
+    }
   }
 
   return (
@@ -69,6 +84,9 @@ export default async function SignUpPage({ searchParams }: PageProps) {
         <SignUpForm
           alreadySignedIn={alreadySignedIn}
           inviteToken={invite ?? null}
+          initialVenueType={initialVenueType}
+          initialVenueName={initialVenueName}
+          initialDisplayName={initialDisplayName}
         />
 
         <p className="mtv-signin-alt">
