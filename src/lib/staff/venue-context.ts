@@ -27,6 +27,8 @@ export type StaffMembership = {
   venueName: string;
   displayName: string;
   role: "owner" | "manager" | "waiter";
+  /** The venue's edition — drives Rooms/Tables wording. */
+  edition: string;
 };
 
 type StaffRow = {
@@ -34,7 +36,7 @@ type StaffRow = {
   venue_id: string;
   display_name: string;
   role: "owner" | "manager" | "waiter";
-  venues: { name: string } | null;
+  venues: { name: string; edition: string | null } | null;
 };
 
 /** All active memberships for the signed-in user, name order. */
@@ -51,7 +53,7 @@ export async function listMemberships(): Promise<StaffMembership[]> {
 
   const { data, error } = await supabase
     .from("staff")
-    .select("id, venue_id, display_name, role, venues:venue_id ( name )")
+    .select("id, venue_id, display_name, role, venues:venue_id ( name, edition )")
     .eq("user_id", user.id)
     .eq("active", true)
     .returns<StaffRow[]>();
@@ -70,6 +72,7 @@ export async function listMemberships(): Promise<StaffMembership[]> {
       venueName: row.venues?.name ?? "",
       displayName: row.display_name,
       role: row.role,
+      edition: row.venues?.edition ?? "restaurant",
     }))
     .sort((a, b) => a.venueName.localeCompare(b.venueName));
 }

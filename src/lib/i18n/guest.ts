@@ -181,6 +181,21 @@ export type UiStrings = {
   statusOnTheWay: string;
   statusDelivered: string;
   statusOrderTitle: string;
+  room: string;
+  hotelRoomService: string;
+  hotelRoomServiceSub: string;
+  hotelHousekeeping: string;
+  hotelHousekeepingSub: string;
+  hotelHousekeepingPrompt: string;
+  hotelMaintenance: string;
+  hotelMaintenanceSub: string;
+  hotelMaintenancePrompt: string;
+  hotelMaintenanceNote: string;
+  hotelMaintenanceSend: string;
+  hotelConcierge: string;
+  hotelConciergeSub: string;
+  hotelStatusChip: string;
+  statusInProgress: string;
 };
 
 export const UI_STRINGS: Record<string, UiStrings> = {
@@ -266,6 +281,21 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     statusOnTheWay: "On the way",
     statusDelivered: "Delivered",
     statusOrderTitle: "Order status",
+    room: "Room",
+    hotelRoomService: "Room service",
+    hotelRoomServiceSub: "Breakfast, dinner & drinks to your door",
+    hotelHousekeeping: "Housekeeping",
+    hotelHousekeepingSub: "Towels, make up room, pillows",
+    hotelHousekeepingPrompt: "What can we bring or do?",
+    hotelMaintenance: "Maintenance",
+    hotelMaintenanceSub: "Something not working",
+    hotelMaintenancePrompt: "Tell us what's wrong and we'll fix it",
+    hotelMaintenanceNote: "e.g. the AC isn't cooling…",
+    hotelMaintenanceSend: "Send to maintenance",
+    hotelConcierge: "Concierge",
+    hotelConciergeSub: "We're at your service",
+    hotelStatusChip: "Your request:",
+    statusInProgress: "In progress",
   },
   es: {
     welcome: "¡Bienvenido!",
@@ -349,6 +379,21 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     statusOnTheWay: "En camino",
     statusDelivered: "Entregado",
     statusOrderTitle: "Estado del pedido",
+    room: "Habitación",
+    hotelRoomService: "Servicio de habitaciones",
+    hotelRoomServiceSub: "Desayuno, cena y bebidas a tu puerta",
+    hotelHousekeeping: "Limpieza",
+    hotelHousekeepingSub: "Toallas, arreglo de habitación, almohadas",
+    hotelHousekeepingPrompt: "¿Qué te llevamos o hacemos?",
+    hotelMaintenance: "Mantenimiento",
+    hotelMaintenanceSub: "Algo no funciona",
+    hotelMaintenancePrompt: "Cuéntanos qué pasa y lo arreglamos",
+    hotelMaintenanceNote: "p. ej., el aire acondicionado no enfría…",
+    hotelMaintenanceSend: "Enviar a mantenimiento",
+    hotelConcierge: "Conserjería",
+    hotelConciergeSub: "A tu servicio",
+    hotelStatusChip: "Tu petición:",
+    statusInProgress: "En curso",
   },
   da: {
     welcome: "Velkommen!",
@@ -432,6 +477,21 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     statusOnTheWay: "På vej",
     statusDelivered: "Leveret",
     statusOrderTitle: "Bestillingsstatus",
+    room: "Værelse",
+    hotelRoomService: "Roomservice",
+    hotelRoomServiceSub: "Morgenmad, aftensmad og drikke til døren",
+    hotelHousekeeping: "Housekeeping",
+    hotelHousekeepingSub: "Håndklæder, rengøring, puder",
+    hotelHousekeepingPrompt: "Hvad kan vi bringe eller gøre?",
+    hotelMaintenance: "Vedligehold",
+    hotelMaintenanceSub: "Noget virker ikke",
+    hotelMaintenancePrompt: "Fortæl os, hvad der er galt, så ordner vi det",
+    hotelMaintenanceNote: "f.eks. aircondition køler ikke…",
+    hotelMaintenanceSend: "Send til vedligehold",
+    hotelConcierge: "Concierge",
+    hotelConciergeSub: "Vi står til tjeneste",
+    hotelStatusChip: "Din anmodning:",
+    statusInProgress: "I gang",
   },
   sv: {
     welcome: "Välkommen!",
@@ -515,6 +575,21 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     statusOnTheWay: "På väg",
     statusDelivered: "Levererad",
     statusOrderTitle: "Beställningsstatus",
+    room: "Rum",
+    hotelRoomService: "Roomservice",
+    hotelRoomServiceSub: "Frukost, middag och drycker till dörren",
+    hotelHousekeeping: "Städning",
+    hotelHousekeepingSub: "Handdukar, städning, kuddar",
+    hotelHousekeepingPrompt: "Vad kan vi ordna?",
+    hotelMaintenance: "Underhåll",
+    hotelMaintenanceSub: "Något fungerar inte",
+    hotelMaintenancePrompt: "Berätta vad som är fel så fixar vi det",
+    hotelMaintenanceNote: "t.ex. AC:n kyler inte…",
+    hotelMaintenanceSend: "Skicka till underhåll",
+    hotelConcierge: "Concierge",
+    hotelConciergeSub: "Vi står till tjänst",
+    hotelStatusChip: "Din förfrågan:",
+    statusInProgress: "Pågår",
   },
   no: {
     welcome: "Velkommen!",
@@ -598,6 +673,21 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     statusOnTheWay: "På vei",
     statusDelivered: "Levert",
     statusOrderTitle: "Bestillingsstatus",
+    room: "Rom",
+    hotelRoomService: "Romservice",
+    hotelRoomServiceSub: "Frokost, middag og drikke til døren",
+    hotelHousekeeping: "Renhold",
+    hotelHousekeepingSub: "Håndklær, rengjøring, puter",
+    hotelHousekeepingPrompt: "Hva kan vi ordne?",
+    hotelMaintenance: "Vedlikehold",
+    hotelMaintenanceSub: "Noe virker ikke",
+    hotelMaintenancePrompt: "Fortell oss hva som er galt, så fikser vi det",
+    hotelMaintenanceNote: "f.eks. air-condition kjøler ikke…",
+    hotelMaintenanceSend: "Send til vedlikehold",
+    hotelConcierge: "Concierge",
+    hotelConciergeSub: "Vi står til tjeneste",
+    hotelStatusChip: "Din forespørsel:",
+    statusInProgress: "Pågår",
   },
   de: {
     welcome: "Willkommen!",
@@ -681,6 +771,21 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     statusOnTheWay: "Unterwegs",
     statusDelivered: "Geliefert",
     statusOrderTitle: "Bestellstatus",
+    room: "Zimmer",
+    hotelRoomService: "Zimmerservice",
+    hotelRoomServiceSub: "Frühstück, Abendessen & Getränke aufs Zimmer",
+    hotelHousekeeping: "Housekeeping",
+    hotelHousekeepingSub: "Handtücher, Zimmer, Kissen",
+    hotelHousekeepingPrompt: "Was können wir bringen oder tun?",
+    hotelMaintenance: "Technik",
+    hotelMaintenanceSub: "Etwas funktioniert nicht",
+    hotelMaintenancePrompt: "Sagen Sie uns, was los ist — wir kümmern uns",
+    hotelMaintenanceNote: "z. B. die Klimaanlage kühlt nicht…",
+    hotelMaintenanceSend: "An die Technik senden",
+    hotelConcierge: "Concierge",
+    hotelConciergeSub: "Wir sind für Sie da",
+    hotelStatusChip: "Ihre Anfrage:",
+    statusInProgress: "In Bearbeitung",
   },
   nl: {
     welcome: "Welkom!",
@@ -764,6 +869,21 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     statusOnTheWay: "Onderweg",
     statusDelivered: "Bezorgd",
     statusOrderTitle: "Bestelstatus",
+    room: "Kamer",
+    hotelRoomService: "Roomservice",
+    hotelRoomServiceSub: "Ontbijt, diner en drankjes aan je deur",
+    hotelHousekeeping: "Housekeeping",
+    hotelHousekeepingSub: "Handdoeken, kamer, kussens",
+    hotelHousekeepingPrompt: "Wat kunnen we brengen of doen?",
+    hotelMaintenance: "Storing",
+    hotelMaintenanceSub: "Er werkt iets niet",
+    hotelMaintenancePrompt: "Vertel wat er mis is, wij lossen het op",
+    hotelMaintenanceNote: "bijv. de airco koelt niet…",
+    hotelMaintenanceSend: "Verstuur naar storingsdienst",
+    hotelConcierge: "Concierge",
+    hotelConciergeSub: "We staan voor je klaar",
+    hotelStatusChip: "Je verzoek:",
+    statusInProgress: "Bezig",
   },
   fr: {
     welcome: "Bienvenue !",
@@ -847,6 +967,21 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     statusOnTheWay: "En route",
     statusDelivered: "Livrée",
     statusOrderTitle: "Statut de la commande",
+    room: "Chambre",
+    hotelRoomService: "Room service",
+    hotelRoomServiceSub: "Petit-déjeuner, dîner et boissons à votre porte",
+    hotelHousekeeping: "Ménage",
+    hotelHousekeepingSub: "Serviettes, chambre, oreillers",
+    hotelHousekeepingPrompt: "Que pouvons-nous faire ?",
+    hotelMaintenance: "Maintenance",
+    hotelMaintenanceSub: "Quelque chose ne marche pas",
+    hotelMaintenancePrompt: "Dites-nous ce qui ne va pas, nous nous en occupons",
+    hotelMaintenanceNote: "ex. la climatisation ne refroidit pas…",
+    hotelMaintenanceSend: "Envoyer à la maintenance",
+    hotelConcierge: "Conciergerie",
+    hotelConciergeSub: "À votre service",
+    hotelStatusChip: "Votre demande :",
+    statusInProgress: "En cours",
   },
 };
 

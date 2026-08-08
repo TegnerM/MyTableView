@@ -7,6 +7,10 @@ import { TurnSettingsForm } from "@/components/staff/TurnSettingsForm";
 import { BillingCard } from "@/components/staff/BillingCard";
 import { OrderingCard } from "@/components/staff/OrderingCard";
 import { EditionCard } from "@/components/staff/EditionCard";
+import {
+  GuestButtonsCard,
+  type GuestButtonRow,
+} from "@/components/staff/GuestButtonsCard";
 import { TagsCard, type TagRow } from "@/components/staff/TagsCard";
 import {
   TeamCard,
@@ -65,6 +69,7 @@ export default async function StaffSettingsPage() {
   if (billing.locked) {
     return (
       <TrialLocked
+        hasHotel={billing.hasHotel}
         venueName={identity.venueName}
         isOwner={identity.role === "owner"}
         reason={billing.lockReason}
@@ -78,7 +83,7 @@ export default async function StaffSettingsPage() {
   const { data } = await supabase
     .from("venues")
     .select(
-      "escalation_repeat_threshold, escalation_grace_seconds, turn_standard_minutes, turn_large_minutes, turn_large_party_size, edition"
+      "escalation_repeat_threshold, escalation_grace_seconds, turn_standard_minutes, turn_large_minutes, turn_large_party_size, edition, default_locale"
     )
     .eq("id", identity.venueId)
     .maybeSingle<{
@@ -88,6 +93,7 @@ export default async function StaffSettingsPage() {
       turn_large_minutes: number | null;
       turn_large_party_size: number | null;
       edition: string | null;
+      default_locale: string | null;
     }>();
 
   const current = {
@@ -111,7 +117,7 @@ export default async function StaffSettingsPage() {
   // Tag list (service client: tags aren't exposed to staff via RLS;
   // the owner/manager gate above is the authorization).
   const service = getServiceClient();
-  const [tagsResult, tablesResult, teamResult, invitesResult] =
+  const [tagsResult, tablesResult, teamResult, buttonsResult, invitesResult] =
     await Promise.all([
     service
       .from("tags")
@@ -138,6 +144,24 @@ export default async function StaffSettingsPage() {
       .eq("venue_id", identity.venueId)
       .eq("active", true)
       .returns<{ id: string; display_name: string; role: string }[]>(),
+    service
+      .from("request_types")
+      .select("id, code, kind, label, sublabel, closes_session, active, sort_order")
+      .eq("venue_id", identity.venueId)
+      .neq("kind", "order")
+      .order("sort_order", { ascending: true })
+      .returns<
+        {
+          id: string;
+          code: string;
+          kind: string;
+          label: Record<string, string> | null;
+          sublabel: Record<string, string> | null;
+          closes_session: boolean;
+          active: boolean;
+          sort_order: number;
+        }[]
+      >(),
     service
       .from("staff_invites")
       .select("id, email, role, token, expires_at")
@@ -171,6 +195,17 @@ export default async function StaffSettingsPage() {
         : null,
     }))
     .sort((a, b) => (a.tableLabel ?? "zz").localeCompare(b.tableLabel ?? "zz"));
+
+  const guestButtonRows: GuestButtonRow[] = (buttonsResult.data ?? []).map(
+    (row) => ({
+      id: row.id,
+      code: row.code,
+      label: row.label ?? {},
+      sublabel: row.sublabel ?? {},
+      closesSession: row.closes_session,
+      active: row.active,
+    })
+  );
 
   const roleRank = { owner: 0, manager: 1, waiter: 2 } as const;
   const teamMembers: TeamMemberRow[] = (teamResult.data ?? [])
@@ -221,6 +256,7 @@ export default async function StaffSettingsPage() {
         </header>
 
         <BillingCard
+          hasHotel={billing.hasHotel}
           accountStatus={billing.accountStatus}
           plan={billing.plan}
           trialDaysLeft={billing.trialDaysLeft}
@@ -243,16 +279,21 @@ export default async function StaffSettingsPage() {
           isOwner={identity.role === "owner"}
         />
 
+        <GuestButtonsCard
+          rows={guestButtonRows}
+          defaultLocale={data?.default_locale ?? "en"}
+        />
+
         <TeamCard
           members={teamMembers}
           invites={teamInvites}
           viewerRole={identity.role === "owner" ? "owner" : "manager"}
         />
 
-        <TagsCard rows={tagRows} />
+        <TagsCard rows={tagRows} edition={data?.edition ?? "restaurant"} />
 
         <EscalationSettingsForm current={current} />
-        <TurnSettingsForm current={currentTurns} />
+        <TurnSettingsForm current={currentTurns} edition={data?.edition ?? "restaurant"} />
       </main>
     </StaffShell>
   );

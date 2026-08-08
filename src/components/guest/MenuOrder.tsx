@@ -32,7 +32,7 @@ type Props = {
   menu: VenueMenu;
   strings: UiStringsShape;
   /** "gold" (restaurant, default) or "bar" — pure CSS reskin. */
-  theme?: "gold" | "bar";
+  theme?: "gold" | "bar" | "hotel";
   /** "card" renders the entry card (default); "none" hides it — the
    *  host (e.g. the bar home) opens the overlay via externalOpen. */
   entry?: "card" | "none";

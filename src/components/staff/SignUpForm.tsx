@@ -31,9 +31,11 @@ type Props = {
   /** Restored from the auth user's metadata after the email-confirm
    *  round trip, so a bar signup comes back as a bar signup — even
    *  when the confirmation link was opened on another device. */
-  initialVenueType?: "restaurant" | "bar";
+  initialVenueType?: "restaurant" | "bar" | "hotel";
   initialVenueName?: string;
   initialDisplayName?: string;
+  initialIncludeRestaurant?: boolean;
+  initialIncludeBar?: boolean;
 };
 
 export function SignUpForm({
@@ -42,12 +44,20 @@ export function SignUpForm({
   initialVenueType = "restaurant",
   initialVenueName = "",
   initialDisplayName = "",
+  initialIncludeRestaurant = true,
+  initialIncludeBar = true,
 }: Props) {
   // The type picker. Restaurant stays the default so existing links
   // and half-filled forms behave exactly as before.
-  const [venueType, setVenueType] = useState<"restaurant" | "bar">(
+  const [venueType, setVenueType] = useState<"restaurant" | "bar" | "hotel">(
     initialVenueType
   );
+  // The hotel package. Both ON by default — unticking creates just
+  // the hotel.
+  const [includeRestaurant, setIncludeRestaurant] = useState(
+    initialIncludeRestaurant
+  );
+  const [includeBar, setIncludeBar] = useState(initialIncludeBar);
   const [venueName, setVenueName] = useState(initialVenueName);
   const [displayName, setDisplayName] = useState(initialDisplayName);
   const [email, setEmail] = useState("");
@@ -86,6 +96,8 @@ export function SignUpForm({
               venue_type: venueType,
               venue_name: venueName.trim(),
               display_name: displayName.trim(),
+              include_restaurant: venueType === "hotel" && includeRestaurant,
+              include_bar: venueType === "hotel" && includeBar,
             },
           },
         });
@@ -114,6 +126,8 @@ export function SignUpForm({
           venueName: venueName.trim(),
           displayName: displayName.trim(),
           edition: venueType,
+          includeRestaurant: venueType === "hotel" && includeRestaurant,
+          includeBar: venueType === "hotel" && includeBar,
           timezone,
           ...(inviteToken ? { inviteToken } : {}),
           ...(referralCode.trim()
@@ -163,7 +177,6 @@ export function SignUpForm({
           >
             <span className="mtv-type-ic" aria-hidden="true">🍽️</span>
             <b>{t.auth.typeRestaurant}</b>
-            <i>{t.auth.typeRestaurantSub}</i>
           </button>
           <button
             type="button"
@@ -175,13 +188,58 @@ export function SignUpForm({
           >
             <span className="mtv-type-ic" aria-hidden="true">🍸</span>
             <b>{t.auth.typeBar}</b>
-            <i>{t.auth.typeBarSub}</i>
+          </button>
+          <button
+            type="button"
+            role="radio"
+            aria-checked={venueType === "hotel"}
+            className="mtv-type-card"
+            data-on={venueType === "hotel" ? "true" : "false"}
+            onClick={() => setVenueType("hotel")}
+          >
+            <span className="mtv-type-ic" aria-hidden="true">🏨</span>
+            <b>{t.auth.typeHotel}</b>
           </button>
         </div>
       </div>
 
+      {venueType === "hotel" ? (
+        <div className="mtv-hotel-pack">
+          <p className="mtv-hotel-pack-head">{t.auth.hotelPackageTitle}</p>
+          <label className="mtv-hotel-inc">
+            <input
+              type="checkbox"
+              checked={includeRestaurant}
+              onChange={(event) => setIncludeRestaurant(event.target.checked)}
+            />
+            <span className="mtv-hotel-inc-text">
+              <b>{t.auth.includeRestaurant}</b>
+              <i>{t.auth.includeRestaurantSub}</i>
+            </span>
+          </label>
+          <label className="mtv-hotel-inc">
+            <input
+              type="checkbox"
+              checked={includeBar}
+              onChange={(event) => setIncludeBar(event.target.checked)}
+            />
+            <span className="mtv-hotel-inc-text">
+              <b>{t.auth.includeBar}</b>
+              <i>{t.auth.includeBarSub}</i>
+            </span>
+          </label>
+          <p className="mtv-hotel-price">{t.auth.hotelPriceNote}</p>
+        </div>
+      ) : null}
+
       <label className="mtv-field">
-        <span>{venueType === "bar" ? t.auth.barName : t.auth.restaurantName}</span>
+        <span>
+          {venueType === "hotel"
+            ? t.auth.hotelName
+            : venueType === "bar"
+              ? t.auth.barName
+              : t.auth.restaurantName}
+        </span>
         <input
           type="text"
           value={venueName}

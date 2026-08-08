@@ -30,10 +30,16 @@ export function EditionCard({ edition, isOwner }: Props) {
   const options = [
     { key: "restaurant", label: t.edition.restaurant, note: t.edition.restaurantNote },
     { key: "bar", label: t.edition.bar, note: t.edition.barNote },
+    { key: "hotel", label: t.edition.hotel, note: t.edition.hotelNote },
   ];
 
   const switchTo = async (next: string) => {
-    const label = next === "bar" ? t.edition.bar : t.edition.restaurant;
+    const label =
+      next === "bar"
+        ? t.edition.bar
+        : next === "hotel"
+          ? t.edition.hotel
+          : t.edition.restaurant;
     if (!window.confirm(t.edition.confirm.replace("{name}", label))) {
       return;
     }

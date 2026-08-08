@@ -18,7 +18,9 @@ export type PlanKey =
   | "monthly-5"
   | "yearly-5"
   | "monthly-10"
-  | "yearly-10";
+  | "yearly-10"
+  | "hotel-monthly"
+  | "hotel-yearly";
 
 export type Plan = {
   key: PlanKey;
@@ -30,6 +32,10 @@ export type Plan = {
   priceLabel: string;
   envVar: string;
   sandboxPriceId: string;
+  /** The hotel bundle — Ordering included, resolved via lookup_key
+   *  (auto-created on first checkout, like the Ordering add-on). */
+  hotel?: boolean;
+  lookupKey?: string;
 };
 
 export const PLANS: Plan[] = [
@@ -81,6 +87,20 @@ export const PLANS: Plan[] = [
     envVar: "STRIPE_PRICE_YEARLY_10",
     sandboxPriceId: "price_1TzBsALz7mdUWO9StD8ry1mf",
   },
+  {
+    key: "hotel-monthly", interval: "monthly", maxVenues: 3, amount: 149,
+    label: "Hotel + restaurant + bar", priceLabel: "€149 / month",
+    envVar: "STRIPE_PRICE_HOTEL_MONTHLY",
+    sandboxPriceId: "",
+    hotel: true, lookupKey: "mtv_hotel_monthly",
+  },
+  {
+    key: "hotel-yearly", interval: "yearly", maxVenues: 3, amount: 1490,
+    label: "Hotel + restaurant + bar", priceLabel: "€1,490 / year",
+    envVar: "STRIPE_PRICE_HOTEL_YEARLY",
+    sandboxPriceId: "",
+    hotel: true, lookupKey: "mtv_hotel_yearly",
+  },
 ];
 
 /**
@@ -123,5 +143,25 @@ export function isPlanKey(value: unknown): value is PlanKey {
 
 /** Plans big enough for an account that already runs `venueCount` venues. */
 export function plansForVenueCount(venueCount: number): Plan[] {
-  return PLANS.filter((plan) => plan.maxVenues >= Math.max(1, venueCount));
+  return PLANS.filter(
+    (plan) => !plan.hotel && plan.maxVenues >= Math.max(1, venueCount)
+  );
+}
+
+/**
+ * The plans an account may pick. A hotel account sees the bundle
+ * (hotel + restaurant + bar, Ordering included); everyone else sees
+ * the restaurant ladder. A hotel account that somehow exceeds the
+ * bundle's 3 venues falls back to the big restaurant tiers.
+ */
+export function plansForAccount(venueCount: number, hasHotel: boolean): Plan[] {
+  if (hasHotel) {
+    const bundles = PLANS.filter(
+      (plan) => plan.hotel && plan.maxVenues >= Math.max(1, venueCount)
+    );
+    if (bundles.length > 0) {
+      return bundles;
+    }
+  }
+  return plansForVenueCount(venueCount);
 }

@@ -67,9 +67,13 @@ export async function syncOrderingQuantity(
     return { ok: false, reason: "error" };
   }
 
-  const payable = (venues ?? []).filter(
+  const activeCount = (venues ?? []).filter(
     (venue) => venue.ordering_active && !isTrialRunning(venue.trial_ends_at)
   ).length;
+
+  // The hotel bundle includes Ordering — nothing extra to bill,
+  // whatever the switches say.
+  const payable = getPlan(account.plan)?.hotel ? 0 : activeCount;
 
   const subscribed =
     account.billing_status === "active" || account.billing_status === "past_due";

@@ -33,6 +33,7 @@ export default async function StaffFloorPage() {
   if (billing.locked) {
     return (
       <TrialLocked
+        hasHotel={billing.hasHotel}
         venueName={identity.venueName}
         isOwner={identity.role === "owner"}
         reason={billing.lockReason}

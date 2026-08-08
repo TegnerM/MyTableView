@@ -37,18 +37,19 @@ type TagRow = { id: string; table_id: string | null; status: string };
 export default async function QrPrintPage() {
   const store = await cookies();
   const localeHeaders = await headers();
-  const t = getStaffStrings(
-    resolveStaffLocale(
-      store.get(STAFF_LANG_COOKIE)?.value,
-      localeHeaders.get("accept-language")
-    )
-  );
-
   const identity = await getStaffIdentity();
 
   if (!identity) {
     redirect("/staff/sign-in");
   }
+
+  const t = getStaffStrings(
+    resolveStaffLocale(
+      store.get(STAFF_LANG_COOKIE)?.value,
+      localeHeaders.get("accept-language")
+    ),
+    identity.edition
+  );
 
   if (identity.role !== "owner" && identity.role !== "manager") {
     redirect("/staff/floor");

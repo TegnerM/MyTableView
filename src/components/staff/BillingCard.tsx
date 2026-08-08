@@ -21,6 +21,8 @@ type Props = {
   venueCount: number;
   maxVenues: number;
   isOwner: boolean;
+  /** Account runs a hotel → show the bundle plans. */
+  hasHotel?: boolean;
 };
 
 export function BillingCard({
@@ -30,6 +32,7 @@ export function BillingCard({
   venueCount,
   maxVenues,
   isOwner,
+  hasHotel = false,
 }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -96,7 +99,7 @@ export function BillingCard({
             </button>
           </div>
         ) : (
-          <PlanPicker venueCount={venueCount} />
+          <PlanPicker venueCount={venueCount} hasHotel={hasHotel} />
         )
       ) : (
         <p className="mtv-settings-help">{t.billing.onlyOwner}</p>

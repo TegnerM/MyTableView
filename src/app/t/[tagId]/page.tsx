@@ -6,6 +6,7 @@ import { getServiceClient } from "@/lib/supabase/service";
 import { RequestPanel } from "@/components/guest/RequestPanel";
 import { MenuOrder } from "@/components/guest/MenuOrder";
 import { BarGuest } from "@/components/guest/BarGuest";
+import { HotelGuest } from "@/components/guest/HotelGuest";
 import { SessionStatusBar } from "@/components/guest/SessionStatusBar";
 import { loadGuestMenu } from "@/lib/guest/menu";
 import { TagAssignPanel } from "@/components/staff/TagAssignPanel";
@@ -20,6 +21,7 @@ import "./guest.css";
 import "./tag-assign.css";
 import "./menu.css";
 import "./bar-guest.css";
+import "./hotel-guest.css";
 
 /**
  * The guest page — Beach Club Luxury theme (external redesign,
@@ -112,6 +114,32 @@ export default async function GuestTagPage({ params }: PageProps) {
   const visibleRequestTypes = menuLive
     ? context.requestTypes.filter((type) => !type.orderable)
     : context.requestTypes;
+
+  // Hotel edition: the light-navy in-room surface. Same data, same
+  // APIs — the QR's "table" is a room, the zone is its floor/wing.
+  if (context.venue.edition === "hotel") {
+    return (
+      <HotelGuest
+        tagId={context.tagId}
+        locale={locale}
+        venueDefaultLocale={context.venue.defaultLocale}
+        venueName={context.venue.name}
+        roomLabel={`${strings.room} ${context.table.label}`}
+        zoneName={zoneName}
+        serviceChargePct={context.venue.serviceChargePct}
+        menu={menuLive && menu ? menu : { categories: [] }}
+        orderingLive={menuLive}
+        requestTypes={visibleRequestTypes.map((type) => ({
+          id: type.id,
+          code: type.code,
+          label: type.label,
+          sublabel: type.sublabel,
+          closesSession: type.closesSession,
+        }))}
+        strings={strings}
+      />
+    );
+  }
 
   // Bar edition: the dark five-action home replaces the restaurant
   // layout wholesale. Same data, same APIs — different surface.

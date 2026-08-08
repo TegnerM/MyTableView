@@ -77,7 +77,7 @@ export function LayoutEditor({ initialState, locale }: Props) {
   useEffect(() => {
     setStaffLocale(readStaffLocale());
   }, []);
-  const t = getStaffStrings(staffLocale);
+  const t = getStaffStrings(staffLocale, initialState.identity.edition);
 
   const [activeZoneId, setActiveZoneId] = useState<string | null>(
     () => initialState.areas[0]?.id ?? null
@@ -745,6 +745,7 @@ export function LayoutEditor({ initialState, locale }: Props) {
 
           <section className="mtv-col mtv-col-canvas">
             <FloorPlan
+                edition={initialState.identity.edition}
               zone={{
                 id: activeZone.id,
                 widthM: activeZone.widthM,

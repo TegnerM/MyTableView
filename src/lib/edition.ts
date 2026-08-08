@@ -2,6 +2,7 @@ import { getServiceClient } from "@/lib/supabase/service";
 import {
   BAR_EDITION_STATION_NAMES,
   DEFAULT_STATIONS,
+  HOUSEKEEPING_STATION,
   loadVenueStations,
 } from "@/lib/stations";
 import type { LocaleMap } from "@/lib/menu/types";
@@ -18,7 +19,7 @@ import type { LocaleMap } from "@/lib/menu/types";
  *     never removed on switch-back — the owner may have customized)
  */
 
-export const EDITIONS = new Set(["restaurant", "bar"]);
+export const EDITIONS = new Set(["restaurant", "bar", "hotel"]);
 
 /** The bar's guest buttons. Codes are stable; inserts skip any code the
  *  venue already has, so re-applying never duplicates a button. */
@@ -96,6 +97,138 @@ export const BAR_REQUEST_TYPES: {
   },
 ];
 
+/** The hotel's guest buttons — housekeeping codes carry the hotel_hk_
+ *  prefix so the guest page can group them onto one sheet. */
+export const HOTEL_REQUEST_TYPES: {
+  code: string;
+  label: LocaleMap;
+  sublabel: LocaleMap;
+  icon: string;
+  closesSession: boolean;
+  sortOrder: number;
+}[] = [
+  {
+    code: "hotel_hk_towels",
+    icon: "towel",
+    closesSession: false,
+    sortOrder: 61,
+    label: {
+      en: "Fresh towels", es: "Toallas limpias", da: "Friske håndklæder",
+      sv: "Rena handdukar", no: "Rene håndklær", de: "Frische Handtücher",
+      nl: "Verse handdoeken", fr: "Serviettes propres",
+    },
+    sublabel: {},
+  },
+  {
+    code: "hotel_hk_makeup",
+    icon: "bed",
+    closesSession: false,
+    sortOrder: 62,
+    label: {
+      en: "Make up my room", es: "Arreglar mi habitación",
+      da: "Gør mit værelse rent", sv: "Städa mitt rum",
+      no: "Gjør i stand rommet mitt", de: "Zimmer aufräumen",
+      nl: "Kamer opmaken", fr: "Faire ma chambre",
+    },
+    sublabel: {
+      en: "We'll come while you're out", es: "Iremos mientras estás fuera",
+      da: "Vi kommer, mens du er ude", sv: "Vi kommer medan du är ute",
+      no: "Vi kommer mens du er ute",
+      de: "Wir kommen, während Sie unterwegs sind",
+      nl: "We komen terwijl je weg bent",
+      fr: "Nous passons pendant votre absence",
+    },
+  },
+  {
+    code: "hotel_hk_pillows",
+    icon: "pillow",
+    closesSession: false,
+    sortOrder: 63,
+    label: {
+      en: "Extra pillows & blanket", es: "Almohadas y manta extra",
+      da: "Ekstra puder og tæppe", sv: "Extra kuddar och filt",
+      no: "Ekstra puter og teppe", de: "Extra Kissen & Decke",
+      nl: "Extra kussens en deken", fr: "Oreillers et couverture en plus",
+    },
+    sublabel: {},
+  },
+  {
+    code: "hotel_hk_amenities",
+    icon: "soap",
+    closesSession: false,
+    sortOrder: 64,
+    label: {
+      en: "Amenities refill", es: "Reponer amenities",
+      da: "Genopfyld amenities", sv: "Påfyllning av amenities",
+      no: "Etterfyll amenities", de: "Amenities auffüllen",
+      nl: "Toiletartikelen aanvullen", fr: "Recharge d'articles de toilette",
+    },
+    sublabel: {
+      en: "Soap, shampoo, coffee & tea", es: "Jabón, champú, café y té",
+      da: "Sæbe, shampoo, kaffe og te", sv: "Tvål, schampo, kaffe och te",
+      no: "Såpe, sjampo, kaffe og te", de: "Seife, Shampoo, Kaffee & Tee",
+      nl: "Zeep, shampoo, koffie en thee", fr: "Savon, shampoing, café et thé",
+    },
+  },
+  {
+    code: "hotel_maintenance",
+    icon: "wrench",
+    closesSession: false,
+    sortOrder: 65,
+    label: {
+      en: "Maintenance issue", es: "Avería / mantenimiento",
+      da: "Noget virker ikke", sv: "Något är trasigt",
+      no: "Noe virker ikke", de: "Technisches Problem",
+      nl: "Storing / defect", fr: "Problème technique",
+    },
+    sublabel: {
+      en: "Tell us what's not working", es: "Cuéntanos qué no funciona",
+      da: "Fortæl os, hvad der ikke virker", sv: "Berätta vad som inte fungerar",
+      no: "Fortell oss hva som ikke virker",
+      de: "Sagen Sie uns, was nicht funktioniert",
+      nl: "Vertel ons wat er niet werkt",
+      fr: "Dites-nous ce qui ne fonctionne pas",
+    },
+  },
+  {
+    code: "hotel_concierge",
+    icon: "bell",
+    closesSession: false,
+    sortOrder: 66,
+    label: {
+      en: "Concierge", es: "Conserjería", da: "Concierge", sv: "Concierge",
+      no: "Concierge", de: "Concierge", nl: "Concierge", fr: "Conciergerie",
+    },
+    sublabel: {
+      en: "Recommendations, taxis, anything",
+      es: "Recomendaciones, taxis, lo que necesites",
+      da: "Anbefalinger, taxa, hvad som helst",
+      sv: "Tips, taxi, vad som helst",
+      no: "Anbefalinger, taxi, hva som helst",
+      de: "Empfehlungen, Taxis, alles Weitere",
+      nl: "Tips, taxi's, van alles",
+      fr: "Conseils, taxis, tout ce qu'il vous faut",
+    },
+  },
+  {
+    code: "hotel_late_checkout",
+    icon: "clock",
+    closesSession: false,
+    sortOrder: 67,
+    label: {
+      en: "Late check-out", es: "Salida tardía", da: "Sen check-ud",
+      sv: "Sen utcheckning", no: "Sen utsjekk", de: "Später Check-out",
+      nl: "Late check-out", fr: "Départ tardif",
+    },
+    sublabel: {
+      en: "We'll check availability", es: "Comprobaremos disponibilidad",
+      da: "Vi tjekker, om det er muligt", sv: "Vi kollar om det går",
+      no: "Vi sjekker om det er mulig", de: "Wir prüfen die Verfügbarkeit",
+      nl: "We kijken of het kan", fr: "Nous vérifions la disponibilité",
+    },
+  },
+];
+
 /**
  * Set a venue's edition and apply its defaults. Returns false only
  * when the edition value itself is invalid or the venue update fails;
@@ -142,8 +275,54 @@ export async function applyEdition(
     }
   }
 
-  // Bar request buttons — seed the missing ones only.
-  if (edition === "bar") {
+  // The housekeeping station exists (and is active) only on hotels.
+  if (edition === "hotel") {
+    const { error: hkError } = await service
+      .from("stations")
+      .upsert(
+        {
+          venue_id: venueId,
+          slug: HOUSEKEEPING_STATION.slug,
+          name: HOUSEKEEPING_STATION.name,
+          sort_order: HOUSEKEEPING_STATION.sortOrder,
+          active: true,
+        },
+        { onConflict: "venue_id,slug" }
+      );
+    if (hkError) {
+      console.error("applyEdition: housekeeping station failed", hkError.message);
+    }
+  } else {
+    const { error: hkError } = await service
+      .from("stations")
+      .update({ active: false })
+      .eq("venue_id", venueId)
+      .eq("slug", HOUSEKEEPING_STATION.slug);
+    if (hkError) {
+      console.error("applyEdition: housekeeping retire failed", hkError.message);
+    }
+    // Categories still routed to the retired station would create
+    // tickets no board can see — re-route them to the kitchen.
+    const { error: rerouteError } = await service
+      .from("menu_categories")
+      .update({ station: "kitchen" })
+      .eq("venue_id", venueId)
+      .eq("station", HOUSEKEEPING_STATION.slug);
+    if (rerouteError) {
+      console.error("applyEdition: category re-route failed", rerouteError.message);
+    }
+  }
+
+  // Edition guest buttons — seed the missing ones only (by code, so
+  // re-applying never duplicates and owner customizations survive).
+  const seeds =
+    edition === "bar"
+      ? BAR_REQUEST_TYPES
+      : edition === "hotel"
+        ? HOTEL_REQUEST_TYPES
+        : [];
+
+  if (seeds.length > 0) {
     const { data: existing, error: existingError } = await service
       .from("request_types")
       .select("code")
@@ -157,7 +336,7 @@ export async function applyEdition(
       );
     } else {
       const have = new Set((existing ?? []).map((row) => row.code));
-      const missing = BAR_REQUEST_TYPES.filter((type) => !have.has(type.code));
+      const missing = seeds.filter((type) => !have.has(type.code));
       if (missing.length > 0) {
         const { error: seedError } = await service.from("request_types").insert(
           missing.map((type) => ({

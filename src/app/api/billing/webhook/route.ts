@@ -4,7 +4,7 @@ import { getServiceClient } from "@/lib/supabase/service";
 import { getPlan } from "@/lib/billing/plans";
 import {
   getStripe,
-  planKeyFromPriceId,
+  planKeyFromPrice,
   isOrderingPrice,
 } from "@/lib/billing/stripe";
 
@@ -171,7 +171,7 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   // and read the add-on quantity while we're at it.
   let plan = null;
   for (const item of subscription.items.data) {
-    const matched = getPlan(planKeyFromPriceId(item.price?.id ?? null));
+    const matched = getPlan(planKeyFromPrice(item.price));
     if (matched) {
       plan = matched;
       break;

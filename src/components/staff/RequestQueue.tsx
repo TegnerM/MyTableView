@@ -42,6 +42,7 @@ export type TableGroup = {
 
 type Props = {
   tables: FloorTable[];
+  edition?: string;
   locale: string;
   now: number;
   busy: boolean;
@@ -51,6 +52,7 @@ type Props = {
 
 export function RequestQueue({
   tables,
+  edition,
   locale,
   now,
   busy,
@@ -65,8 +67,8 @@ export function RequestQueue({
   useEffect(() => {
     setStaffLocale(readStaffLocale());
   }, []);
-  const t = getStaffStrings(staffLocale);
-  const ot = getOrderingStrings(staffLocale);
+  const t = getStaffStrings(staffLocale, edition);
+  const ot = getOrderingStrings(staffLocale, edition);
 
   const groups = useMemo<TableGroup[]>(() => {
     const result: TableGroup[] = [];

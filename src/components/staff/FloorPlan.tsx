@@ -46,6 +46,7 @@ export type ZoneDimensions = {
 type Props = {
   zone: ZoneDimensions;
   tables: FloorTable[];
+  edition?: string;
   now: number;
   settings: EscalationSettings;
   editable?: boolean;
@@ -93,6 +94,7 @@ type DragState = {
 export function FloorPlan({
   zone,
   tables,
+  edition,
   now,
   settings,
   editable = false,
@@ -114,7 +116,7 @@ export function FloorPlan({
   useEffect(() => {
     setStaffLocale(readStaffLocale());
   }, []);
-  const t = getStaffStrings(staffLocale);
+  const t = getStaffStrings(staffLocale, edition);
 
   // Whether a pointer actually moved. A tap that never moves is a
   // selection; anything else is a drag, and must not also select.

@@ -1,4 +1,5 @@
 import { getServerClient } from "@/lib/supabase/server";
+import { getServiceClient } from "@/lib/supabase/service";
 import {
   isVenueLocked,
   isOrderingLive,
@@ -38,6 +39,8 @@ export type VenueBilling = {
   orderingLive: boolean;
   /** Cart service line, 0–20 %. */
   serviceChargePct: number;
+  /** The account runs at least one hotel venue → hotel bundle plans. */
+  hasHotel: boolean;
 };
 
 const OPEN_FALLBACK: VenueBilling = {
@@ -52,9 +55,11 @@ const OPEN_FALLBACK: VenueBilling = {
   orderingActive: false,
   orderingLive: false,
   serviceChargePct: 0,
+  hasHotel: false,
 };
 
 type Row = {
+  account_id: string | null;
   trial_ends_at: string | null;
   ordering_active: boolean | null;
   service_charge_pct: number | string | null;
@@ -72,7 +77,7 @@ export async function getVenueBilling(venueId: string): Promise<VenueBilling> {
   const { data, error } = await supabase
     .from("venues")
     .select(
-      "trial_ends_at, ordering_active, service_charge_pct, accounts:account_id ( billing_status, plan, max_venues, stripe_customer_id )"
+      "account_id, trial_ends_at, ordering_active, service_charge_pct, accounts:account_id ( billing_status, plan, max_venues, stripe_customer_id )"
     )
     .eq("id", venueId)
     .maybeSingle<Row>();
@@ -86,6 +91,24 @@ export async function getVenueBilling(venueId: string): Promise<VenueBilling> {
 
   const account = data.accounts;
   const accountStatus = (account?.billing_status ?? "none") as AccountBillingStatus;
+
+  // Any hotel venue on the account → the bundle plans apply. Service
+  // client: RLS may hide sibling venues from this staff member, and
+  // the caller has already been authorized for this venue.
+  let hasHotel = false;
+  if (data.account_id) {
+    try {
+      const service = getServiceClient();
+      const { data: editions } = await service
+        .from("venues")
+        .select("edition")
+        .eq("account_id", data.account_id)
+        .returns<{ edition: string | null }[]>();
+      hasHotel = (editions ?? []).some((row) => row.edition === "hotel");
+    } catch (hotelError) {
+      console.error("getVenueBilling: hotel check failed", hotelError);
+    }
+  }
 
   return {
     accountStatus,
@@ -103,5 +126,6 @@ export async function getVenueBilling(venueId: string): Promise<VenueBilling> {
       accountStatus
     ),
     serviceChargePct: Number(data.service_charge_pct ?? 0) || 0,
+    hasHotel,
   };
 }

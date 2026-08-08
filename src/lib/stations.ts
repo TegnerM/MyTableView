@@ -35,6 +35,18 @@ export const DEFAULT_STATIONS: VenueStation[] = [
   },
 ];
 
+/** The hotel edition's extra station. Requests still reach the floor;
+ *  this board carries order tickets for categories a hotel routes to
+ *  housekeeping (minibar restock, pillow menu, ...). */
+export const HOUSEKEEPING_STATION: VenueStation = {
+  slug: "housekeeping",
+  sortOrder: 3,
+  name: {
+    en: "Housekeeping", es: "Limpieza", da: "Housekeeping", sv: "Städning",
+    no: "Renhold", de: "Housekeeping", nl: "Housekeeping", fr: "Ménage",
+  },
+};
+
 /** Bar-edition display names for the same two slugs — the snack
  *  kitchen is still the 'kitchen' station underneath. */
 export const BAR_EDITION_STATION_NAMES: Record<string, LocaleMap> = {

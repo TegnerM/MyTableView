@@ -164,8 +164,8 @@
 
 .mtv-signin .mtv-type-grid{
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 0.6rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.5rem;
 }
 
 .mtv-signin .mtv-type-card{
@@ -222,4 +222,66 @@
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 800;
+}
+
+/* ---------------------------------------------- hotel package box */
+
+.mtv-signin .mtv-hotel-pack{
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.85rem 0.9rem;
+  background: #f0faf8;
+  border: 1px solid #bfe4d8;
+  border-radius: 0.65rem;
+}
+
+.mtv-signin .mtv-hotel-pack-head{
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--mtv-brand-teal-deep, #0b5f56);
+}
+
+.mtv-signin .mtv-hotel-inc{
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+
+.mtv-signin .mtv-hotel-inc input{
+  margin-top: 0.15rem;
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--mtv-brand-teal, #12a89a);
+}
+
+.mtv-signin .mtv-hotel-inc-text{
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+.mtv-signin .mtv-hotel-inc-text b{
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.mtv-signin .mtv-hotel-inc-text i{
+  font-style: normal;
+  font-size: 0.75rem;
+  color: var(--mtv-brand-muted, #5c6b7a);
+}
+
+.mtv-signin .mtv-hotel-price{
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--mtv-brand-muted, #5c6b7a);
+  line-height: 1.45;
+}
+
+.mtv-signin .mtv-hotel-price b{
+  color: var(--mtv-brand-teal-deep, #0b5f56);
 }

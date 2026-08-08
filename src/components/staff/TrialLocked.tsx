@@ -23,9 +23,11 @@ type Props = {
   reason: "trial" | "canceled";
   /** Venues on the account — filters which tiers make sense. */
   venueCount: number;
+  /** Account runs a hotel → show the bundle plans. */
+  hasHotel?: boolean;
 };
 
-export function TrialLocked({ venueName, isOwner, reason, venueCount }: Props) {
+export function TrialLocked({ venueName, isOwner, reason, venueCount, hasHotel = false }: Props) {
   // SSR renders English; the cookie (or browser language) takes over
   // after hydration — same pattern as StaffShell.
   const [locale, setLocale] = useState("en");
@@ -59,7 +61,7 @@ export function TrialLocked({ venueName, isOwner, reason, venueCount }: Props) {
 
         {isOwner ? (
           <>
-            <PlanPicker venueCount={venueCount} />
+            <PlanPicker venueCount={venueCount} hasHotel={hasHotel} />
             <p className="mtv-locked-note">{t.trial.note}</p>
           </>
         ) : null}

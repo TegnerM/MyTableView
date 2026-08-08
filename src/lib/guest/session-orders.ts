@@ -31,6 +31,13 @@ export type GuestOrderStatus = {
   phase: "received" | "preparing" | "on_the_way" | "delivered";
 };
 
+export type GuestOpenRequest = {
+  id: string;
+  label: LocaleMap;
+  state: "open" | "acknowledged";
+  createdAt: string;
+};
+
 export type SessionOrdersResult =
   | {
       ok: true;
@@ -40,6 +47,8 @@ export type SessionOrdersResult =
       lastOrderLines: { menuItemId: string; quantity: number }[];
       /** Session's most-ordered items, for quick-add. */
       favorites: { menuItemId: string; name: LocaleMap; quantity: number }[];
+      /** The guest's own open (non-order) requests — the hotel chip. */
+      openRequests: GuestOpenRequest[];
     }
   | { ok: false; reason: "invalid_input" | "unknown_tag" | "no_session" | "error" };
 
@@ -136,28 +145,71 @@ export async function loadSessionOrders(
   )?.session_id;
 
   if (!sessionId) {
-    return { ok: true, activeOrder: null, lastOrderLines: [], favorites: [] };
+    return {
+      ok: true,
+      activeOrder: null,
+      lastOrderLines: [],
+      favorites: [],
+      openRequests: [],
+    };
   }
 
-  const { data: orders, error: ordersError } = await supabase
-    .from("orders")
-    .select(
-      `
-        id, state, created_at, total_cents,
-        order_items ( menu_item_id, name, quantity, position ),
-        order_tickets ( station, state, created_at, started_at, ready_at, delivered_at )
-      `
-    )
-    .eq("session_id", sessionId)
-    .neq("state", "cancelled")
-    .order("created_at", { ascending: false })
-    .limit(10)
-    .returns<OrderRow[]>();
+  const [ordersResult, requestsResult] = await Promise.all([
+    supabase
+      .from("orders")
+      .select(
+        `
+          id, state, created_at, total_cents,
+          order_items ( menu_item_id, name, quantity, position ),
+          order_tickets ( station, state, created_at, started_at, ready_at, delivered_at )
+        `
+      )
+      .eq("session_id", sessionId)
+      .neq("state", "cancelled")
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .returns<OrderRow[]>(),
+    supabase
+      .from("requests")
+      .select("id, state, created_at, request_types:request_type_id ( kind, label )")
+      .eq("session_id", sessionId)
+      .in("state", ["open", "acknowledged"])
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .returns<
+        {
+          id: string;
+          state: string;
+          created_at: string;
+          request_types: { kind: string; label: LocaleMap | null } | null;
+        }[]
+      >(),
+  ]);
+
+  const { data: orders, error: ordersError } = ordersResult;
 
   if (ordersError) {
     console.error("loadSessionOrders: orders failed", ordersError.message);
     return { ok: false, reason: "error" };
   }
+
+  if (requestsResult.error) {
+    console.error(
+      "loadSessionOrders: requests failed",
+      requestsResult.error.message
+    );
+  }
+
+  // Orders travel as their own timeline; the open-requests list is the
+  // "we've seen it" signal for towels, maintenance and the like.
+  const openRequests: GuestOpenRequest[] = (requestsResult.data ?? [])
+    .filter((row) => row.request_types && row.request_types.kind !== "order")
+    .map((row) => ({
+      id: row.id,
+      label: row.request_types?.label ?? {},
+      state: row.state === "acknowledged" ? "acknowledged" : "open",
+      createdAt: row.created_at,
+    }));
 
   const shaped: GuestOrderStatus[] = (orders ?? []).map((order) => {
     const tickets: GuestTicketStatus[] = (order.order_tickets ?? []).map((t) => ({
@@ -216,5 +268,5 @@ export async function loadSessionOrders(
       quantity: entry.quantity,
     }));
 
-  return { ok: true, activeOrder, lastOrderLines, favorites };
+  return { ok: true, activeOrder, lastOrderLines, favorites, openRequests };
 }

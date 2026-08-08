@@ -160,3 +160,48 @@ What changes when you switch:
 
 Switching back to Restaurant restores names and the warm guest page;
 nothing is deleted either way.
+
+---
+
+# Hotel edition — setup steps (added 2026-08-10)
+
+## 1. No new migration 🎉
+
+The bar-edition migration (2026-08-09) already created everything the
+hotel needs (`venues.edition` accepts 'hotel'; stations are venue
+data). If you ran it, you're done.
+
+## 2. Deploy the code
+
+Push to main as usual.
+
+## 3. What Hotel gives you
+
+- **Signup**: the third card. Selecting Hotel shows the package box —
+  "Include a restaurant" / "Include a bar" (both optional). Ticked
+  boxes create sibling venues on the same account ("{Hotel} —
+  Restaurant" / "{Hotel} — Bar"), each born with its own edition.
+- **Billing**: hotel accounts see the bundle plans instead of the
+  restaurant ladder — €149/month (€1,490/year) for hotel + restaurant
+  + bar together, Ordering INCLUDED (no €19 add-on lines). The Stripe
+  price is auto-created via lookup keys (`mtv_hotel_monthly` /
+  `mtv_hotel_yearly`) on first checkout — zero manual setup, same as
+  the ordering add-on. To hand-manage instead, set
+  `STRIPE_PRICE_HOTEL_MONTHLY` / `STRIPE_PRICE_HOTEL_YEARLY`.
+- **Guest page**: light-navy in-room surface — Room service (full
+  ordering, hotel-skinned), Housekeeping (towels / make up room /
+  pillows / amenities), Maintenance (with a note), Concierge, and the
+  live status chip + timeline (orders AND requests, real timestamps).
+- **Settings → Guest buttons** (all editions): every guest button
+  with an on/off switch. Off hides it instantly; nothing is deleted.
+- **Rooms everywhere**: for hotel venues, staff screens say
+  "Room 204" — floor, tickets, ready banners, tag list, QR page,
+  turn settings — in all 8 languages. Zones work as floors/wings
+  (name them "Floor 1", "Pool", ...).
+- **Stations**: hotels get a third station, Housekeeping, on the
+  Orders board and menu editor (route categories like "Pillow menu"
+  or minibar restocks to it). Switching a venue away from hotel
+  retires the station; switching back revives it.
+- Switching editions in Settings → Venue type seeds the hotel's
+  request buttons once (codes `hotel_*`) — re-switching never
+  duplicates them.

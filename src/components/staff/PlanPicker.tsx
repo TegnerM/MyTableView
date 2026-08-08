@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { plansForVenueCount, type Plan, type PlanKey } from "@/lib/billing/plans";
+import { plansForAccount, type Plan, type PlanKey } from "@/lib/billing/plans";
 import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 /**
@@ -13,9 +13,11 @@ import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 type Props = {
   venueCount: number;
+  /** Account runs a hotel → show the bundle plans. */
+  hasHotel?: boolean;
 };
 
-export function PlanPicker({ venueCount }: Props) {
+export function PlanPicker({ venueCount, hasHotel = false }: Props) {
   const [interval, setInterval] = useState<"monthly" | "yearly">("monthly");
   const [busy, setBusy] = useState<PlanKey | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +30,7 @@ export function PlanPicker({ venueCount }: Props) {
   }, []);
   const t = getStaffStrings(locale);
 
-  const plans = plansForVenueCount(venueCount).filter(
+  const plans = plansForAccount(venueCount, hasHotel).filter(
     (plan) => plan.interval === interval
   );
 

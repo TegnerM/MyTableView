@@ -102,6 +102,8 @@ export type StaffIdentity = {
   venueName: string;
   displayName: string;
   role: "owner" | "manager" | "waiter";
+  /** The venue's edition — drives Rooms/Tables wording. */
+  edition: string;
   /** Every venue this account belongs to; drives the venue switcher. */
   venues?: { venueId: string; venueName: string }[];
 };
@@ -113,7 +115,7 @@ export type FloorRequestOrder = {
   totalCents: number;
   note: string | null;
   items: { name: LocaleMap; quantity: number }[];
-  stations: { station: "kitchen" | "bar"; state: string }[];
+  stations: { station: string; state: string }[];
   /** At least one station ticket is ready and waiting for pickup. */
   anyReady: boolean;
 };

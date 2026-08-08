@@ -92,6 +92,7 @@ const EN = {
     confirmCancel: "Cancel this ticket? The waiter's floor entry updates too.",
     empty: "No open orders.",
     tableN: "Table {label}",
+    roomN: "Room {label}",
     itemsCount: "{count} items",
     actionFailed: "Couldn't reach the server — please try again.",
   },
@@ -100,6 +101,7 @@ const EN = {
     orderBadge: "Order",
     orderReady: "Order ready — {station}",
     readyBanner: "{station} · Table {label} ready",
+    readyBannerRoom: "{station} · Room {label} ready",
     kitchen: "Kitchen",
     bar: "Bar",
     total: "Total {amount}",
@@ -135,8 +137,19 @@ const EN = {
     bar: "Bar",
     restaurantNote: "Restaurant — the classic warm guest page: menu, requests, bill.",
     barNote: "Bar — dark guest page with Order drinks, Another round and live order status. Adds bar request buttons.",
+    hotel: "Hotel",
+    hotelNote: "Hotel — the in-room guest page: room service, housekeeping, maintenance, concierge. Rooms instead of tables.",
     confirm: "Switch this venue to {name}? The guest page changes immediately.",
     onlyOwner: "Only the owner can change the venue type.",
+  },
+
+  guestButtons: {
+    title: "Guest buttons",
+    desc: "Choose what guests can ask for from their table or room. Switching a button off hides it instantly — nothing is deleted.",
+    ordering: "Ordering",
+    housekeeping: "Housekeeping",
+    service: "Service",
+    bill: "Bill",
   },
 
   insights: {
@@ -245,6 +258,7 @@ const DICTS: Record<string, OrderingStrings> = {
       confirmCancel: "¿Cancelar este ticket? La entrada del camarero también se actualiza.",
       empty: "No hay pedidos abiertos.",
       tableN: "Mesa {label}",
+      roomN: "Habitación {label}",
       itemsCount: "{count} artículos",
       actionFailed: "No se pudo conectar — inténtalo de nuevo.",
     },
@@ -252,6 +266,7 @@ const DICTS: Record<string, OrderingStrings> = {
       orderBadge: "Pedido",
       orderReady: "Pedido listo — {station}",
       readyBanner: "{station} · Mesa {label} listo",
+      readyBannerRoom: "{station} · Habitación {label} lista",
       kitchen: "Cocina",
       bar: "Barra",
       total: "Total {amount}",
@@ -285,8 +300,19 @@ const DICTS: Record<string, OrderingStrings> = {
       bar: "Bar",
       restaurantNote: "Restaurante — la página clásica y cálida: carta, peticiones, cuenta.",
       barNote: "Bar — página oscura con Pedir bebidas, Otra ronda y estado del pedido en directo. Añade botones de bar.",
+      hotel: "Hotel",
+      hotelNote: "Hotel — la página del huésped en la habitación: servicio de habitaciones, limpieza, mantenimiento, conserjería. Habitaciones en vez de mesas.",
       confirm: "¿Cambiar este local a {name}? La página del cliente cambia al instante.",
       onlyOwner: "Solo el propietario puede cambiar el tipo de local.",
+    },
+
+    guestButtons: {
+      title: "Botones del cliente",
+      desc: "Elige qué pueden pedir los clientes desde su mesa o habitación. Apagar un botón lo oculta al instante — no se borra nada.",
+      ordering: "Pedidos",
+      housekeeping: "Limpieza",
+      service: "Servicio",
+      bill: "Cuenta",
     },
 
     insights: {
@@ -390,6 +416,7 @@ const DICTS: Record<string, OrderingStrings> = {
       confirmCancel: "Annullér denne bon? Tjenerens gulv-post opdateres også.",
       empty: "Ingen åbne bestillinger.",
       tableN: "Bord {label}",
+      roomN: "Værelse {label}",
       itemsCount: "{count} varer",
       actionFailed: "Kunne ikke nå serveren — prøv igen.",
     },
@@ -397,6 +424,7 @@ const DICTS: Record<string, OrderingStrings> = {
       orderBadge: "Bestilling",
       orderReady: "Bestilling klar — {station}",
       readyBanner: "{station} · Bord {label} klar",
+      readyBannerRoom: "{station} · Værelse {label} klar",
       kitchen: "Køkken",
       bar: "Bar",
       total: "I alt {amount}",
@@ -430,8 +458,19 @@ const DICTS: Record<string, OrderingStrings> = {
       bar: "Bar",
       restaurantNote: "Restaurant — den klassiske varme gæsteside: menu, anmodninger, regning.",
       barNote: "Bar — mørk gæsteside med Bestil drinks, En runde til og live ordrestatus. Tilføjer bar-knapper.",
+      hotel: "Hotel",
+      hotelNote: "Hotel — gæstesiden på værelset: roomservice, housekeeping, vedligehold, concierge. Værelser i stedet for borde.",
       confirm: "Skift dette sted til {name}? Gæstesiden ændres med det samme.",
       onlyOwner: "Kun ejeren kan ændre stedets type.",
+    },
+
+    guestButtons: {
+      title: "Gæsteknapper",
+      desc: "Vælg, hvad gæster kan bede om fra deres bord eller værelse. Slukkes en knap, skjules den med det samme — intet slettes.",
+      ordering: "Bestilling",
+      housekeeping: "Housekeeping",
+      service: "Service",
+      bill: "Regning",
     },
 
     insights: {
@@ -535,6 +574,7 @@ const DICTS: Record<string, OrderingStrings> = {
       confirmCancel: "Avbryt denna bong? Servitörens golvpost uppdateras också.",
       empty: "Inga öppna beställningar.",
       tableN: "Bord {label}",
+      roomN: "Rum {label}",
       itemsCount: "{count} varor",
       actionFailed: "Kunde inte nå servern — försök igen.",
     },
@@ -542,6 +582,7 @@ const DICTS: Record<string, OrderingStrings> = {
       orderBadge: "Beställning",
       orderReady: "Beställning klar — {station}",
       readyBanner: "{station} · Bord {label} klar",
+      readyBannerRoom: "{station} · Rum {label} klart",
       kitchen: "Kök",
       bar: "Bar",
       total: "Totalt {amount}",
@@ -575,8 +616,19 @@ const DICTS: Record<string, OrderingStrings> = {
       bar: "Bar",
       restaurantNote: "Restaurang — den klassiska varma gästsidan: meny, önskemål, nota.",
       barNote: "Bar — mörk gästsida med Beställ drycker, En runda till och orderstatus live. Lägger till bar-knappar.",
+      hotel: "Hotell",
+      hotelNote: "Hotell — gästsidan på rummet: roomservice, städning, underhåll, concierge. Rum i stället för bord.",
       confirm: "Byta detta ställe till {name}? Gästsidan ändras direkt.",
       onlyOwner: "Endast ägaren kan ändra typ av ställe.",
+    },
+
+    guestButtons: {
+      title: "Gästknappar",
+      desc: "Välj vad gäster kan be om från sitt bord eller rum. Stängs en knapp av döljs den direkt — inget raderas.",
+      ordering: "Beställning",
+      housekeeping: "Städning",
+      service: "Service",
+      bill: "Nota",
     },
 
     insights: {
@@ -680,6 +732,7 @@ const DICTS: Record<string, OrderingStrings> = {
       confirmCancel: "Avbryte denne bongen? Servitørens gulvpost oppdateres også.",
       empty: "Ingen åpne bestillinger.",
       tableN: "Bord {label}",
+      roomN: "Rom {label}",
       itemsCount: "{count} varer",
       actionFailed: "Fikk ikke kontakt med serveren — prøv igjen.",
     },
@@ -687,6 +740,7 @@ const DICTS: Record<string, OrderingStrings> = {
       orderBadge: "Bestilling",
       orderReady: "Bestilling klar — {station}",
       readyBanner: "{station} · Bord {label} klar",
+      readyBannerRoom: "{station} · Rom {label} klart",
       kitchen: "Kjøkken",
       bar: "Bar",
       total: "Totalt {amount}",
@@ -720,8 +774,19 @@ const DICTS: Record<string, OrderingStrings> = {
       bar: "Bar",
       restaurantNote: "Restaurant — den klassiske varme gjestesiden: meny, forespørsler, regning.",
       barNote: "Bar — mørk gjesteside med Bestill drikke, En runde til og live ordrestatus. Legger til bar-knapper.",
+      hotel: "Hotell",
+      hotelNote: "Hotell — gjestesiden på rommet: romservice, renhold, vedlikehold, concierge. Rom i stedet for bord.",
       confirm: "Bytte dette stedet til {name}? Gjestesiden endres umiddelbart.",
       onlyOwner: "Bare eieren kan endre type sted.",
+    },
+
+    guestButtons: {
+      title: "Gjesteknapper",
+      desc: "Velg hva gjester kan be om fra bordet eller rommet sitt. Slår du av en knapp, skjules den umiddelbart — ingenting slettes.",
+      ordering: "Bestilling",
+      housekeeping: "Renhold",
+      service: "Service",
+      bill: "Regning",
     },
 
     insights: {
@@ -825,6 +890,7 @@ const DICTS: Record<string, OrderingStrings> = {
       confirmCancel: "Diesen Bon stornieren? Der Eintrag des Kellners wird ebenfalls aktualisiert.",
       empty: "Keine offenen Bestellungen.",
       tableN: "Tisch {label}",
+      roomN: "Zimmer {label}",
       itemsCount: "{count} Artikel",
       actionFailed: "Server nicht erreichbar — bitte erneut versuchen.",
     },
@@ -832,6 +898,7 @@ const DICTS: Record<string, OrderingStrings> = {
       orderBadge: "Bestellung",
       orderReady: "Bestellung fertig — {station}",
       readyBanner: "{station} · Tisch {label} fertig",
+      readyBannerRoom: "{station} · Zimmer {label} fertig",
       kitchen: "Küche",
       bar: "Bar",
       total: "Gesamt {amount}",
@@ -865,8 +932,19 @@ const DICTS: Record<string, OrderingStrings> = {
       bar: "Bar",
       restaurantNote: "Restaurant — die klassische warme Gästeseite: Karte, Anfragen, Rechnung.",
       barNote: "Bar — dunkle Gästeseite mit Getränke bestellen, Noch eine Runde und Live-Bestellstatus. Fügt Bar-Buttons hinzu.",
+      hotel: "Hotel",
+      hotelNote: "Hotel — die Gästeseite im Zimmer: Zimmerservice, Housekeeping, Technik, Concierge. Zimmer statt Tische.",
       confirm: "Diesen Betrieb auf {name} umstellen? Die Gästeseite ändert sich sofort.",
       onlyOwner: "Nur der Inhaber kann die Betriebsart ändern.",
+    },
+
+    guestButtons: {
+      title: "Gäste-Buttons",
+      desc: "Wählen Sie, was Gäste vom Tisch oder Zimmer aus anfragen können. Ein ausgeschalteter Button verschwindet sofort — nichts wird gelöscht.",
+      ordering: "Bestellung",
+      housekeeping: "Housekeeping",
+      service: "Service",
+      bill: "Rechnung",
     },
 
     insights: {
@@ -970,6 +1048,7 @@ const DICTS: Record<string, OrderingStrings> = {
       confirmCancel: "Deze bon annuleren? De vloerpost van de ober wordt ook bijgewerkt.",
       empty: "Geen open bestellingen.",
       tableN: "Tafel {label}",
+      roomN: "Kamer {label}",
       itemsCount: "{count} artikelen",
       actionFailed: "Server niet bereikbaar — probeer het opnieuw.",
     },
@@ -977,6 +1056,7 @@ const DICTS: Record<string, OrderingStrings> = {
       orderBadge: "Bestelling",
       orderReady: "Bestelling klaar — {station}",
       readyBanner: "{station} · Tafel {label} klaar",
+      readyBannerRoom: "{station} · Kamer {label} klaar",
       kitchen: "Keuken",
       bar: "Bar",
       total: "Totaal {amount}",
@@ -1010,8 +1090,19 @@ const DICTS: Record<string, OrderingStrings> = {
       bar: "Bar",
       restaurantNote: "Restaurant — de klassieke warme gastenpagina: menukaart, verzoeken, rekening.",
       barNote: "Bar — donkere gastenpagina met Drankjes bestellen, Nog een rondje en live bestelstatus. Voegt barknoppen toe.",
+      hotel: "Hotel",
+      hotelNote: "Hotel — de gastenpagina op de kamer: roomservice, housekeeping, storingen, concierge. Kamers in plaats van tafels.",
       confirm: "Deze zaak omzetten naar {name}? De gastenpagina verandert direct.",
       onlyOwner: "Alleen de eigenaar kan het type zaak wijzigen.",
+    },
+
+    guestButtons: {
+      title: "Gastknoppen",
+      desc: "Kies wat gasten vanaf hun tafel of kamer kunnen vragen. Een uitgeschakelde knop verdwijnt direct — er wordt niets verwijderd.",
+      ordering: "Bestellen",
+      housekeeping: "Housekeeping",
+      service: "Service",
+      bill: "Rekening",
     },
 
     insights: {
@@ -1115,6 +1206,7 @@ const DICTS: Record<string, OrderingStrings> = {
       confirmCancel: "Annuler ce ticket ? L'entrée du serveur est aussi mise à jour.",
       empty: "Aucune commande ouverte.",
       tableN: "Table {label}",
+      roomN: "Chambre {label}",
       itemsCount: "{count} articles",
       actionFailed: "Serveur injoignable — veuillez réessayer.",
     },
@@ -1122,6 +1214,7 @@ const DICTS: Record<string, OrderingStrings> = {
       orderBadge: "Commande",
       orderReady: "Commande prête — {station}",
       readyBanner: "{station} · Table {label} prête",
+      readyBannerRoom: "{station} · Chambre {label} prête",
       kitchen: "Cuisine",
       bar: "Bar",
       total: "Total {amount}",
@@ -1155,8 +1248,19 @@ const DICTS: Record<string, OrderingStrings> = {
       bar: "Bar",
       restaurantNote: "Restaurant — la page client classique et chaleureuse : carte, demandes, addition.",
       barNote: "Bar — page sombre avec Commander des boissons, Une autre tournée et le suivi de commande en direct. Ajoute des boutons bar.",
+      hotel: "Hôtel",
+      hotelNote: "Hôtel — la page client en chambre : room service, ménage, maintenance, conciergerie. Des chambres au lieu de tables.",
       confirm: "Passer cet établissement en {name} ? La page client change immédiatement.",
       onlyOwner: "Seul le propriétaire peut changer le type d'établissement.",
+    },
+
+    guestButtons: {
+      title: "Boutons client",
+      desc: "Choisissez ce que les clients peuvent demander depuis leur table ou leur chambre. Un bouton désactivé disparaît immédiatement — rien n'est supprimé.",
+      ordering: "Commande",
+      housekeeping: "Ménage",
+      service: "Service",
+      bill: "Addition",
     },
 
     insights: {
@@ -1178,6 +1282,18 @@ const DICTS: Record<string, OrderingStrings> = {
   },
 };
 
-export function getOrderingStrings(locale: string): OrderingStrings {
-  return DICTS[locale] ?? DICTS[locale.split("-")[0]] ?? EN;
+export function getOrderingStrings(
+  locale: string,
+  edition?: string
+): OrderingStrings {
+  const dict = DICTS[locale] ?? DICTS[locale.split("-")[0]] ?? EN;
+  if (edition !== "hotel") {
+    return dict;
+  }
+  // Hotel wording overlay — tickets say "Room 204", not "Table 204".
+  return {
+    ...dict,
+    board: { ...dict.board, tableN: dict.board.roomN },
+    floor: { ...dict.floor, readyBanner: dict.floor.readyBannerRoom },
+  };
 }

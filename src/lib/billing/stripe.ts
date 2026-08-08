@@ -41,6 +41,59 @@ export function getPriceId(planKey: PlanKey): string {
   return process.env[plan.envVar] ?? plan.sandboxPriceId;
 }
 
+/**
+ * Resolves ANY plan's price id, including the hotel bundle. Regular
+ * tiers come from env/sandbox ids synchronously; hotel bundle prices
+ * are found by lookup_key and created on first use (product + price),
+ * exactly like the Ordering add-on — zero manual Stripe setup.
+ */
+export async function resolvePlanPriceId(planKey: PlanKey): Promise<string> {
+  const plan = getPlan(planKey);
+
+  if (!plan) {
+    throw new Error(`Unknown plan: ${planKey}`);
+  }
+
+  const fromEnv = process.env[plan.envVar];
+  if (fromEnv) {
+    return fromEnv;
+  }
+
+  if (!plan.hotel || !plan.lookupKey) {
+    return plan.sandboxPriceId;
+  }
+
+  const stripe = getStripe();
+
+  const existing = await stripe.prices.list({
+    lookup_keys: [plan.lookupKey],
+    active: true,
+    limit: 1,
+  });
+
+  if (existing.data[0]) {
+    return existing.data[0].id;
+  }
+
+  const product = await stripe.products.create({
+    name: "MyTableView Hotel",
+    description:
+      "The hotel bundle: hotel, restaurant and bar on one plan — room service & ordering included.",
+    metadata: { mtv_kind: "hotel_plan" },
+  });
+
+  const price = await stripe.prices.create({
+    product: product.id,
+    currency: "eur",
+    unit_amount: plan.amount * 100,
+    recurring: { interval: plan.interval === "yearly" ? "year" : "month" },
+    lookup_key: plan.lookupKey,
+    metadata: { mtv_kind: "hotel_plan", mtv_plan: plan.key },
+  });
+
+  return price.id;
+}
+
 /** Reverse lookup for webhooks: which plan does this price id mean? */
 export function planKeyFromPriceId(
   priceId: string | null | undefined
@@ -61,6 +114,34 @@ export function planKeyFromPriceId(
   }
 
   return null;
+}
+
+/**
+ * Reverse lookup from a full price OBJECT — needed for the hotel
+ * bundle, whose ids are minted at runtime: lookup_key and metadata
+ * identify it where a bare id can't.
+ */
+export function planKeyFromPrice(
+  price: Stripe.Price | null | undefined
+): PlanKey | null {
+  if (!price) {
+    return null;
+  }
+
+  if (price.lookup_key === "mtv_hotel_monthly" || price.metadata?.mtv_plan === "hotel-monthly") {
+    return "hotel-monthly";
+  }
+  if (price.lookup_key === "mtv_hotel_yearly" || price.metadata?.mtv_plan === "hotel-yearly") {
+    return "hotel-yearly";
+  }
+  if (price.id === process.env.STRIPE_PRICE_HOTEL_MONTHLY) {
+    return "hotel-monthly";
+  }
+  if (price.id === process.env.STRIPE_PRICE_HOTEL_YEARLY) {
+    return "hotel-yearly";
+  }
+
+  return planKeyFromPriceId(price.id);
 }
 
 /**

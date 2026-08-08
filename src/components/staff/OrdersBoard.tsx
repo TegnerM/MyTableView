@@ -44,7 +44,7 @@ export function OrdersBoard({ identity, stations, initialTickets, initialNow }: 
   useEffect(() => {
     setLocale(readStaffLocale());
   }, []);
-  const t = getOrderingStrings(locale);
+  const t = getOrderingStrings(locale, identity.edition);
 
   // Station display names come from the venue (Bar edition renames
   // 'kitchen' to "Snack kitchen" without touching a single ticket).

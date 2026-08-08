@@ -17,7 +17,7 @@ export type TagRow = {
   tableLabel: string | null;
 };
 
-export function TagsCard({ rows }: { rows: TagRow[] }) {
+export function TagsCard({ rows, edition }: { rows: TagRow[]; edition?: string }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,7 +27,7 @@ export function TagsCard({ rows }: { rows: TagRow[] }) {
   useEffect(() => {
     setLocale(readStaffLocale());
   }, []);
-  const t = getStaffStrings(locale);
+  const t = getStaffStrings(locale, edition);
 
   const unassign = async (tagId: string) => {
     if (!window.confirm(t.tags.confirmUnassign)) {

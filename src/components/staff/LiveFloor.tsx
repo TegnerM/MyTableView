@@ -73,7 +73,7 @@ export function LiveFloor({
   useEffect(() => {
     setStaffLocale(readStaffLocale());
   }, []);
-  const t = getStaffStrings(staffLocale);
+  const t = getStaffStrings(staffLocale, initialState.identity.edition);
 
   // The floor renders straight from props — a state snapshot here would
   // freeze the mount-time data and discard every refresh.
@@ -358,7 +358,7 @@ export function LiveFloor({
   // banner shows without it) and rings the chime.
   const announceReady = useCallback(
     async (station: string, orderId: string | null) => {
-      const ot = getOrderingStrings(readStaffLocale());
+      const ot = getOrderingStrings(readStaffLocale(), initialState.identity.edition);
       const stationName = station === "bar" ? ot.floor.bar : ot.floor.kitchen;
 
       let label = "";
@@ -385,7 +385,7 @@ export function LiveFloor({
       );
       playReadyChime();
     },
-    []
+    [initialState.identity.edition]
   );
 
   const act = useCallback(
@@ -606,6 +606,7 @@ export function LiveFloor({
         ) : null}
 
         <EscalationAlerts
+          edition={state.identity.edition}
           tables={state.tables}
           now={now}
           canSeeAlerts={isManager}
@@ -768,6 +769,7 @@ export function LiveFloor({
               />
             ) : activeZone ? (
               <FloorPlan
+                edition={state.identity.edition}
                 zone={{
                   id: activeZone.id,
                   widthM: activeZone.widthM,
@@ -796,6 +798,7 @@ export function LiveFloor({
           <aside className="mtv-side-panel">
             <RequestQueue
               tables={state.tables}
+              edition={state.identity.edition}
               locale={locale}
               now={now}
               busy={busy}

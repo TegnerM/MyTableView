@@ -35,6 +35,7 @@ import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 type Props = {
   tables: FloorTable[];
+  edition?: string;
   now: number;
   /** Managers get the alert. Waiters see the red table but no banner. */
   canSeeAlerts: boolean;
@@ -44,6 +45,7 @@ type Props = {
 
 export function EscalationAlerts({
   tables,
+  edition,
   now,
   canSeeAlerts,
   settings,
@@ -55,7 +57,7 @@ export function EscalationAlerts({
   useEffect(() => {
     setStaffLocale(readStaffLocale());
   }, []);
-  const t = getStaffStrings(staffLocale);
+  const t = getStaffStrings(staffLocale, edition);
 
   // Recomputed on the tick, because a table crosses the grace period on
   // the clock rather than on any event.

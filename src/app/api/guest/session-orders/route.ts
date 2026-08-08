@@ -14,9 +14,10 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  // Polled every 8s per guest — generous cap, same shield as the
-  // request endpoint.
-  if (!allowHit(`sord:${clientIpKey(request)}`, 30, 60_000)) {
+  // Polled every 8s per guest (~7.5/min). Hotels put MANY guest pages
+  // behind one Wi-Fi NAT IP, so the cap leaves room for ~30 concurrent
+  // rooms per IP while still stopping abuse.
+  if (!allowHit(`sord:${clientIpKey(request)}`, 240, 60_000)) {
     return NextResponse.json(
       { ok: false, reason: "rate_limited" },
       { status: 429 }

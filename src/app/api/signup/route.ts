@@ -27,8 +27,11 @@ type Body = {
   timezone?: unknown;
   inviteToken?: unknown;
   referralCode?: unknown;
-  /** "restaurant" (default) or "bar" — the signup type picker. */
+  /** "restaurant" (default), "bar" or "hotel" — the signup type picker. */
   edition?: unknown;
+  /** Hotel package: create sibling venues alongside the hotel. */
+  includeRestaurant?: unknown;
+  includeBar?: unknown;
 };
 
 export async function POST(request: Request) {
@@ -159,8 +162,8 @@ export async function POST(request: Request) {
     );
   }
 
-  // Born with the right edition: bar venues get their station names
-  // and request buttons before the owner's first page load.
+  // Born with the right edition: bar/hotel venues get their station
+  // names and request buttons before the owner's first page load.
   // Best-effort — the venue exists either way, and Settings → Venue
   // type can re-apply if anything here hiccuped.
   if (edition !== "restaurant") {
@@ -168,6 +171,61 @@ export async function POST(request: Request) {
       await applyEdition(String(venueId), edition);
     } catch (editionError) {
       console.error("signup: apply edition failed", editionError);
+    }
+  }
+
+  // The hotel package: sibling venues on the same account, each its
+  // own edition. Metadata is the backstop for the confirm-email path,
+  // same as the edition itself. Best-effort — a failure here leaves a
+  // working hotel, and Add venue in Settings covers the gap.
+  if (edition === "hotel") {
+    const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
+    const wantRestaurant =
+      typeof body.includeRestaurant === "boolean"
+        ? body.includeRestaurant
+        : meta.include_restaurant === true;
+    const wantBar =
+      typeof body.includeBar === "boolean"
+        ? body.includeBar
+        : meta.include_bar === true;
+
+    const siblings: { name: string; edition: string }[] = [];
+    if (wantRestaurant) {
+      siblings.push({
+        name: `${venueName} — Restaurant`.slice(0, 80),
+        edition: "restaurant",
+      });
+    }
+    if (wantBar) {
+      siblings.push({ name: `${venueName} — Bar`.slice(0, 80), edition: "bar" });
+    }
+
+    for (const sibling of siblings) {
+      try {
+        const { data: siblingId, error: siblingError } = await service.rpc(
+          "add_venue_for_owner",
+          {
+            p_user_id: user.id,
+            p_venue_name: sibling.name,
+            p_display_name: displayName,
+            p_timezone: timezone || "Europe/Madrid",
+            p_locale: "en",
+          }
+        );
+        if (siblingError || !siblingId) {
+          console.error(
+            "signup: hotel sibling venue failed",
+            sibling.edition,
+            siblingError?.message
+          );
+          continue;
+        }
+        if (sibling.edition !== "restaurant") {
+          await applyEdition(String(siblingId), sibling.edition);
+        }
+      } catch (siblingError) {
+        console.error("signup: hotel sibling venue failed", siblingError);
+      }
     }
   }
 

@@ -5,7 +5,7 @@ import { getServiceClient } from "@/lib/supabase/service";
 import { getPlan, isPlanKey } from "@/lib/billing/plans";
 import {
   getStripe,
-  getPriceId,
+  resolvePlanPriceId,
   getOrderingPriceId,
   resolveOrigin,
 } from "@/lib/billing/stripe";
@@ -138,10 +138,11 @@ export async function POST(request: Request) {
     const origin = resolveOrigin(request);
 
     const lineItems: { price: string; quantity: number }[] = [
-      { price: getPriceId(planKey), quantity: 1 },
+      { price: await resolvePlanPriceId(planKey), quantity: 1 },
     ];
 
-    if (orderingQuantity > 0 && plan) {
+    // The hotel bundle includes Ordering — no add-on line.
+    if (orderingQuantity > 0 && plan && !plan.hotel) {
       lineItems.push({
         price: await getOrderingPriceId(plan.interval),
         quantity: orderingQuantity,

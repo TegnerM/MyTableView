@@ -45,9 +45,11 @@ export default async function SignUpPage({ searchParams }: PageProps) {
   } = await supabase.auth.getUser();
 
   let alreadySignedIn = false;
-  let initialVenueType: "restaurant" | "bar" = "restaurant";
+  let initialVenueType: "restaurant" | "bar" | "hotel" = "restaurant";
   let initialVenueName = "";
   let initialDisplayName = "";
+  let initialIncludeRestaurant = true;
+  let initialIncludeBar = true;
 
   if (user) {
     const resolved = await resolveStaff();
@@ -60,14 +62,20 @@ export default async function SignUpPage({ searchParams }: PageProps) {
     // the auth user, so a bar signup comes back as a bar signup.
     alreadySignedIn = true;
     const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
-    if (meta.venue_type === "bar") {
-      initialVenueType = "bar";
+    if (meta.venue_type === "bar" || meta.venue_type === "hotel") {
+      initialVenueType = meta.venue_type;
     }
     if (typeof meta.venue_name === "string") {
       initialVenueName = meta.venue_name.slice(0, 80);
     }
     if (typeof meta.display_name === "string") {
       initialDisplayName = meta.display_name.slice(0, 80);
+    }
+    if (typeof meta.include_restaurant === "boolean") {
+      initialIncludeRestaurant = meta.include_restaurant;
+    }
+    if (typeof meta.include_bar === "boolean") {
+      initialIncludeBar = meta.include_bar;
     }
   }
 
@@ -87,6 +95,8 @@ export default async function SignUpPage({ searchParams }: PageProps) {
           initialVenueType={initialVenueType}
           initialVenueName={initialVenueName}
           initialDisplayName={initialDisplayName}
+          initialIncludeRestaurant={initialIncludeRestaurant}
+          initialIncludeBar={initialIncludeBar}
         />
 
         <p className="mtv-signin-alt">

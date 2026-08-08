@@ -15,13 +15,14 @@ import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 
 type Props = {
   current: TurnSettings;
+  edition?: string;
 };
 
 const STANDARD_OPTIONS = [75, 90, 105, 120, 150];
 const LARGE_OPTIONS = [150, 180, 210, 240, 300];
 const SIZE_OPTIONS = [4, 5, 6, 8, 10];
 
-export function TurnSettingsForm({ current }: Props) {
+export function TurnSettingsForm({ current, edition }: Props) {
   const router = useRouter();
   const [standardMinutes, setStandardMinutes] = useState(
     current.standardMinutes
@@ -38,7 +39,7 @@ export function TurnSettingsForm({ current }: Props) {
   useEffect(() => {
     setLocale(readStaffLocale());
   }, []);
-  const t = getStaffStrings(locale);
+  const t = getStaffStrings(locale, edition);
 
   const save = async () => {
     setStatus("saving");
