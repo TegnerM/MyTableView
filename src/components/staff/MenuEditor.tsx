@@ -38,6 +38,20 @@ type Props = {
 
 type SaveState = "idle" | "saving" | "saved" | "failed";
 
+/** Downloadable starter spreadsheets shipped in /public/menu-templates. */
+const MENU_TEMPLATES = [
+  "01_Tapas_and_Small_Plates.xlsx",
+  "02_Starters_and_Salads.xlsx",
+  "03_Rice_Paella_and_Fideua.xlsx",
+  "04_Fish_and_Seafood_Mains.xlsx",
+  "05_Meat_Mains.xlsx",
+  "06_Regional_Spanish_Dishes.xlsx",
+  "07_Burgers_Casual_and_International.xlsx",
+  "08_Childrens_Menu.xlsx",
+  "09_Desserts.xlsx",
+  "10_Drinks.xlsx",
+];
+
 async function post(payload: Record<string, unknown>): Promise<{
   ok: boolean;
   id?: string;
@@ -80,6 +94,7 @@ export function MenuEditor({
 
   const [toggleBusy, setToggleBusy] = useState(false);
   const [importBusy, setImportBusy] = useState(false);
+  const [templatesOpen, setTemplatesOpen] = useState(false);
   const [importNotice, setImportNotice] = useState<string | null>(null);
   const [importError, setImportError] = useState(false);
 
@@ -210,6 +225,15 @@ export function MenuEditor({
           {t.editor.addCategory}
         </button>
 
+        <button
+          type="button"
+          className="mtv-menued-import mtv-menued-templates-btn"
+          aria-expanded={templatesOpen}
+          onClick={() => setTemplatesOpen((open) => !open)}
+        >
+          {t.editor.templatesBtn} {templatesOpen ? "▴" : "▾"}
+        </button>
+
         <label className="mtv-menued-import" data-busy={importBusy ? "true" : "false"}>
           <input
             type="file"
@@ -226,6 +250,30 @@ export function MenuEditor({
           {importBusy ? t.editor.importing : t.editor.importBtn}
         </label>
       </div>
+
+      {templatesOpen ? (
+        <div className="mtv-menued-templates">
+          <p className="mtv-menued-help">{t.editor.templatesHint}</p>
+          <div className="mtv-menued-templates-grid">
+            <a href="/menu-templates.zip" download className="mtv-menued-template-link" data-all="true">
+              ⬇ {t.editor.templatesAll}
+            </a>
+            {MENU_TEMPLATES.map((file) => (
+              <a
+                key={file}
+                href={`/menu-templates/${file}`}
+                download
+                className="mtv-menued-template-link"
+              >
+                {file
+                  .replace(/^\d+_/, "")
+                  .replace(/\.xlsx$/, "")
+                  .replace(/_/g, " ")}
+              </a>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       {importNotice ? (
         <p
@@ -357,6 +405,7 @@ function CategoryForm({
     if (result.ok) {
       setState("saved");
       onDone(result.id);
+      window.setTimeout(() => setState("idle"), 1400);
     } else {
       setState("failed");
     }
@@ -436,10 +485,15 @@ function CategoryForm({
         <button
           type="button"
           className="mtv-btn mtv-btn-primary"
+          data-saved={state === "saved" ? "true" : "false"}
           disabled={state === "saving"}
           onClick={() => void save()}
         >
-          {state === "saving" ? t.editor.saving : t.editor.save}
+          {state === "saving"
+            ? t.editor.saving
+            : state === "saved"
+              ? `✓ ${t.editor.saved}`
+              : t.editor.save}
         </button>
         {onCancel ? (
           <button type="button" className="mtv-btn" onClick={onCancel}>
@@ -469,7 +523,7 @@ function CategoryForm({
               className="mtv-btn mtv-btn-danger mtv-menued-right"
               onClick={() => void remove()}
             >
-              {t.editor.delete}
+              {t.editor.deleteCategory}
             </button>
           </>
         ) : null}
@@ -622,8 +676,14 @@ function ItemForm({
       allergens,
     });
     if (result.ok) {
+      // Green tick, breathe, then collapse back to the list.
       setState("saved");
-      onDone();
+      window.setTimeout(() => {
+        if (item) {
+          onCancel(); // collapse the expanded card
+        }
+        onDone(); // refresh (and close the "new dish" form)
+      }, 900);
     } else {
       setState("failed");
     }
@@ -768,10 +828,15 @@ function ItemForm({
         <button
           type="button"
           className="mtv-btn mtv-btn-primary"
-          disabled={state === "saving"}
+          data-saved={state === "saved" ? "true" : "false"}
+          disabled={state === "saving" || state === "saved"}
           onClick={() => void save()}
         >
-          {state === "saving" ? t.editor.saving : t.editor.save}
+          {state === "saving"
+            ? t.editor.saving
+            : state === "saved"
+              ? `✓ ${t.editor.saved}`
+              : t.editor.save}
         </button>
         <button type="button" className="mtv-btn" onClick={onCancel}>
           {t.editor.close}

@@ -9,6 +9,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&display=swap');
 
 .mtv-guest {
+  /* Fill the phone screen: hero on top, the sheet stretches to the
+     bottom edge, and flexible gaps settle the request block lower so
+     no dead cream void hangs under the footer. */
+  display: flex;
+  flex-direction: column;
+
   /* Design Tokens */
   --mtv-bg: #F8F6F0;
   --mtv-card: #FFFFFF;
@@ -37,6 +43,7 @@
 
 .mtv-guest-hero {
   position: relative;
+  flex: 0 0 auto;
   min-height: min(19.5rem, 37dvh);
   padding: 1.1rem 1.25rem 2.9rem;
   background-size: cover;
@@ -139,6 +146,22 @@
   background: var(--mtv-bg);
   border-radius: 2rem 2rem 0 0;
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.05);
+  /* Grow to the bottom of the viewport. */
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Flexible spacers: surplus height splits between the space above the
+   "Make a request" divider and the space above the footer, so short
+   content sits balanced instead of leaving a void at the bottom. */
+.mtv-guest-body .mtv-section-divider {
+  margin-top: auto;
+}
+
+.mtv-guest-footer-note {
+  margin-top: auto !important;
+  padding-top: 0.9rem;
 }
 
 .mtv-section-divider {
@@ -336,6 +359,7 @@
   display: flex;
   justify-content: center;
   margin-top: 0.6rem;
+  padding-bottom: calc(0.4rem + env(safe-area-inset-bottom));
 }
 
 .mtv-guest-brand {

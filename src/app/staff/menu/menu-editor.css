@@ -595,3 +595,57 @@
   border-color: #e5b9b9;
   color: #c03338;
 }
+
+/* ------------------------------------------------ saved feedback */
+
+.mtv-menued-actions .mtv-btn-primary[data-saved="true"] {
+  background: #2e8b57 !important;
+  border-color: #2e8b57 !important;
+  color: #fff !important;
+  transition: background 150ms ease;
+}
+
+/* ------------------------------------------------ template downloads */
+
+.mtv-menued-templates-btn {
+  margin-left: auto;
+}
+
+.mtv-menued-templates-btn + .mtv-menued-import {
+  margin-left: 0;
+}
+
+.mtv-menued-templates {
+  margin-top: 0.7rem;
+  padding: 0.8rem 0.9rem;
+  background: var(--mtv-panel, #fff);
+  border: 1px solid var(--mtv-line, #e3e6ea);
+  border-radius: 0.85rem;
+}
+
+.mtv-menued-templates-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.mtv-menued-template-link {
+  padding: 0.4rem 0.75rem;
+  border-radius: 99px;
+  border: 1px solid var(--mtv-line, #e3e6ea);
+  background: var(--mtv-bg, #fafafa);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: inherit;
+}
+
+.mtv-menued-template-link:hover {
+  border-color: #c5a059;
+}
+
+.mtv-menued-template-link[data-all="true"] {
+  border-color: #c5a059;
+  color: #8a6d33;
+  font-weight: 800;
+}

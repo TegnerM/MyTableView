@@ -11,21 +11,22 @@ import { formatElapsed, type StaffIdentity } from "@/lib/staff/floor-types";
 import type { BoardTicket, Station, TicketState } from "@/lib/menu/types";
 
 /**
- * The Orders board — the kitchen's and the bar's screen.
+ * The Orders board — three separate views, one per job:
  *
- * Each device picks its station ONCE (remembered per device, like the
- * floor's theme) and then only sees its own tickets: the kitchen iPad
- * never shows a round of drinks, the bar never shows a steak.
+ *   Kitchen — only kitchen tickets: New → In progress → Ready.
+ *   Bar     — only bar tickets, same columns.
+ *   Waiters — only what needs carrying: Ready tickets from BOTH
+ *             stations (with the Delivered button) and the last hour
+ *             of delivered ones. No kitchen noise, no bar noise.
  *
- * Live the same way the floor is live: realtime on order_tickets plus
- * a steady poll, refresh on wake. Columns: New → In progress → Ready.
- * Ready rings the WAITERS' devices (the floor bell); this screen just
- * moves the ticket across and waits for the pickup.
+ * Each device picks its view ONCE (remembered per device, like the
+ * floor's theme). Live like the floor: realtime on order_tickets plus
+ * a steady poll, refresh on wake.
  */
 
 const STATION_KEY = "mtv-orders-station";
 
-type StationFilter = Station | "all";
+type BoardView = Station | "waiter";
 
 type Props = {
   identity: StaffIdentity;
@@ -42,20 +43,21 @@ export function OrdersBoard({ identity, initialTickets, initialNow }: Props) {
   }, []);
   const t = getOrderingStrings(locale);
 
-  const [station, setStation] = useState<StationFilter>("all");
+  const [view, setView] = useState<BoardView>("waiter");
   useEffect(() => {
     try {
       const stored = window.localStorage.getItem(STATION_KEY);
-      if (stored === "kitchen" || stored === "bar" || stored === "all") {
-        setStation(stored);
+      if (stored === "kitchen" || stored === "bar" || stored === "waiter") {
+        setView(stored);
       }
+      // Devices that stored the old "all" mode become waiter view.
     } catch {
-      // Private browsing: show all.
+      // Private browsing: waiter view.
     }
   }, []);
 
-  const pickStation = useCallback((next: StationFilter) => {
-    setStation(next);
+  const pickView = useCallback((next: BoardView) => {
+    setView(next);
     try {
       window.localStorage.setItem(STATION_KEY, next);
     } catch {
@@ -176,42 +178,49 @@ export function OrdersBoard({ identity, initialTickets, initialNow }: Props) {
     [router]
   );
 
-  const visible = useMemo(
-    () =>
-      initialTickets.filter(
-        (ticket) => station === "all" || ticket.station === station
-      ),
-    [initialTickets, station]
-  );
-
+  // Stations see ONLY their own tickets and never the delivered pile;
+  // waiters see ONLY what's ready to carry (both stations) + the last
+  // hour of delivered for "did table 3 get its food?" disputes.
   const columns: { key: TicketState; title: string; tickets: BoardTicket[] }[] =
-    useMemo(
-      () => [
+    useMemo(() => {
+      if (view === "waiter") {
+        const ready = initialTickets.filter(
+          (ticket) => ticket.state === "ready"
+        );
+        const delivered = initialTickets.filter(
+          (ticket) => ticket.state === "delivered"
+        );
+        return [
+          { key: "ready", title: t.board.colToDeliver, tickets: ready },
+          { key: "delivered", title: t.board.colDelivered, tickets: delivered },
+        ];
+      }
+
+      const mine = initialTickets.filter((ticket) => ticket.station === view);
+      return [
         {
           key: "new",
           title: t.board.colNew,
-          tickets: visible.filter((ticket) => ticket.state === "new"),
+          tickets: mine.filter((ticket) => ticket.state === "new"),
         },
         {
           key: "preparing",
           title: t.board.colPreparing,
-          tickets: visible.filter((ticket) => ticket.state === "preparing"),
+          tickets: mine.filter((ticket) => ticket.state === "preparing"),
         },
         {
           key: "ready",
           title: t.board.colReady,
-          tickets: visible.filter((ticket) => ticket.state === "ready"),
+          tickets: mine.filter((ticket) => ticket.state === "ready"),
         },
-        {
-          key: "delivered",
-          title: t.board.colDelivered,
-          tickets: visible.filter((ticket) => ticket.state === "delivered"),
-        },
-      ],
-      [visible, t]
-    );
+      ];
+    }, [initialTickets, view, t]);
 
-  const openCount = visible.filter((ticket) => ticket.state !== "delivered").length;
+  const openCount = columns.reduce(
+    (sum, column) =>
+      column.key === "delivered" ? sum : sum + column.tickets.length,
+    0
+  );
 
   return (
     <StaffShell
@@ -229,20 +238,20 @@ export function OrdersBoard({ identity, initialTickets, initialNow }: Props) {
             role="tablist"
             aria-label={t.board.stationAria}
           >
-            {(["kitchen", "bar", "all"] as StationFilter[]).map((option) => (
+            {(["kitchen", "bar", "waiter"] as BoardView[]).map((option) => (
               <button
                 key={option}
                 type="button"
                 role="tab"
-                aria-selected={station === option}
-                data-active={station === option ? "true" : "false"}
-                onClick={() => pickStation(option)}
+                aria-selected={view === option}
+                data-active={view === option ? "true" : "false"}
+                onClick={() => pickView(option)}
               >
                 {option === "kitchen"
                   ? t.board.kitchen
                   : option === "bar"
                     ? t.board.bar
-                    : t.board.all}
+                    : t.board.waiters}
               </button>
             ))}
           </div>
@@ -265,7 +274,7 @@ export function OrdersBoard({ identity, initialTickets, initialNow }: Props) {
           <p className="mtv-board-empty">{t.board.empty}</p>
         ) : null}
 
-        <div className="mtv-board-cols">
+        <div className="mtv-board-cols" data-count={columns.length}>
           {columns.map((column) => (
             <section key={column.key} className="mtv-board-col" data-state={column.key}>
               <h2>
@@ -281,6 +290,7 @@ export function OrdersBoard({ identity, initialTickets, initialNow }: Props) {
                     ticket={ticket}
                     now={now}
                     busy={busy === ticket.id}
+                    view={view}
                     onAct={act}
                   />
                 ))}
@@ -299,6 +309,7 @@ function Ticket({
   ticket,
   now,
   busy,
+  view,
   onAct,
 }: {
   t: ReturnType<typeof getOrderingStrings>;
@@ -306,6 +317,7 @@ function Ticket({
   ticket: BoardTicket;
   now: number;
   busy: boolean;
+  view: BoardView;
   onAct: (ticketId: string, action: "start" | "ready" | "delivered" | "cancel") => Promise<void>;
 }) {
   // The clock a station cares about: how long since the ORDER was
@@ -403,16 +415,21 @@ function Ticket({
 
       {ticket.state === "ready" ? (
         <div className="mtv-ticket-actions">
-          <p className="mtv-ticket-waiting">{t.board.waitingPickup}</p>
-          <button
-            type="button"
-            className="mtv-ticket-btn mtv-ticket-btn-delivered"
-            disabled={busy}
-            onClick={() => void onAct(ticket.id, "delivered")}
-          >
-            {t.board.markDelivered}
-          </button>
-          <p className="mtv-ticket-hint">{t.board.pickupHint}</p>
+          {view === "waiter" ? (
+            <button
+              type="button"
+              className="mtv-ticket-btn mtv-ticket-btn-delivered"
+              disabled={busy}
+              onClick={() => void onAct(ticket.id, "delivered")}
+            >
+              {t.board.markDelivered}
+            </button>
+          ) : (
+            <>
+              <p className="mtv-ticket-waiting">{t.board.waitingPickup}</p>
+              <p className="mtv-ticket-hint">{t.board.pickupHint}</p>
+            </>
+          )}
         </div>
       ) : null}
     </article>
