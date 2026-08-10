@@ -120,30 +120,3 @@ function BenefitIcon({ kind }: { kind: "heart" | "spark" | "clock" | "chart" }) 
   );
 }
 
-/** The "try it live" box — links to the simulator's own page. */
-export function DemoLiveBox({
-  title,
-  sub,
-  btn,
-  href,
-}: {
-  title: string;
-  sub: string;
-  btn: string;
-  href: string;
-}) {
-  return (
-    <div className="dx-wrap">
-      <div className="dx-livebox">
-        <span className="dx-livebox-icon" aria-hidden="true">▶</span>
-        <div>
-          <b>{title}</b>
-          <p>{sub}</p>
-        </div>
-        <Link href={href} className="dx-btn dx-btn-orange">
-          {btn}
-        </Link>
-      </div>
-    </div>
-  );
-}

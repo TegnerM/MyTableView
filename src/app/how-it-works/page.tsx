@@ -198,13 +198,13 @@ export default async function HowItWorksPage({ searchParams }: PageProps) {
             <p>{s.demosSub}</p>
           </div>
           <span className="dx-demolinks">
-            <Link href="/demo/live" className="dx-btn dx-btn-ghost">
+            <Link href="/demo" className="dx-btn dx-btn-ghost">
               {t.nav.restaurant}
             </Link>
-            <Link href="/demo/ordering/live" className="dx-btn dx-btn-ghost">
+            <Link href="/demo/ordering" className="dx-btn dx-btn-ghost">
               {t.nav.bar}
             </Link>
-            <Link href="/demo/hotel/live" className="dx-btn dx-btn-orange">
+            <Link href="/demo/hotel" className="dx-btn dx-btn-orange">
               {t.nav.hotel}
             </Link>
           </span>
