@@ -118,8 +118,8 @@ export default async function HomePage({ searchParams }: PageProps) {
         </nav>
 
         <div className="lp-header-cta">
-          <Link href="/demo" className="lp-btn lp-btn-ghost">
-            {t.nav.bookDemo}
+          <Link href="/staff/sign-in" className="lp-btn lp-btn-ghost">
+            {t.nav.login}
           </Link>
           <Link href="/staff/sign-up" className="lp-btn lp-btn-orange">
             {t.nav.tryFree}

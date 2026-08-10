@@ -755,14 +755,11 @@
     border-width: 2.5px;
   }
 
-  /* One clear action on small phones. */
-  .lp-header-cta .lp-btn-ghost {
-    display: none;
-  }
-
+  /* Log in must stay reachable on phones — both buttons shrink
+     instead of the ghost hiding. */
   .lp-header-cta .lp-btn {
-    padding: 0.5rem 0.85rem;
-    font-size: 0.84rem;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.8rem;
   }
 
   .lp-price-grid {

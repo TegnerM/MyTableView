@@ -11,7 +11,7 @@ const EN = {
     features: "Features",
     pricing: "Pricing",
     contact: "Contact",
-    bookDemo: "Book a Demo",
+    login: "Log in",
     tryFree: "Try It Free",
   },
   hero: {
@@ -114,7 +114,7 @@ const ES: LandingStrings = {
     features: "Funciones",
     pricing: "Precios",
     contact: "Contacto",
-    bookDemo: "Reserva una demo",
+    login: "Iniciar sesión",
     tryFree: "Pruébalo gratis",
   },
   hero: {
@@ -215,7 +215,7 @@ const DA: LandingStrings = {
     features: "Funktioner",
     pricing: "Priser",
     contact: "Kontakt",
-    bookDemo: "Book en demo",
+    login: "Log ind",
     tryFree: "Prøv gratis",
   },
   hero: {
@@ -316,7 +316,7 @@ const SV: LandingStrings = {
     features: "Funktioner",
     pricing: "Priser",
     contact: "Kontakt",
-    bookDemo: "Boka en demo",
+    login: "Logga in",
     tryFree: "Prova gratis",
   },
   hero: {
@@ -417,7 +417,7 @@ const NO: LandingStrings = {
     features: "Funksjoner",
     pricing: "Priser",
     contact: "Kontakt",
-    bookDemo: "Book en demo",
+    login: "Logg inn",
     tryFree: "Prøv gratis",
   },
   hero: {
@@ -518,7 +518,7 @@ const DE: LandingStrings = {
     features: "Funktionen",
     pricing: "Preise",
     contact: "Kontakt",
-    bookDemo: "Demo buchen",
+    login: "Anmelden",
     tryFree: "Kostenlos testen",
   },
   hero: {
@@ -619,7 +619,7 @@ const NL: LandingStrings = {
     features: "Functies",
     pricing: "Prijzen",
     contact: "Contact",
-    bookDemo: "Boek een demo",
+    login: "Inloggen",
     tryFree: "Probeer gratis",
   },
   hero: {
@@ -720,7 +720,7 @@ const FR: LandingStrings = {
     features: "Fonctionnalités",
     pricing: "Tarifs",
     contact: "Contact",
-    bookDemo: "Réserver une démo",
+    login: "Se connecter",
     tryFree: "Essai gratuit",
   },
   hero: {
