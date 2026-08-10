@@ -1,0 +1,835 @@
+/* ============================================================
+   Live demo panels — the reference designs, replicated and ALIVE.
+   Guest phone (light) → overview screen (dark / dark-sidebar) →
+   staff phone (dark), exactly as the approved reference images.
+   Scoped under .dl-*; shared by all three demo pages.
+   ============================================================ */
+
+.dl-visuals {
+  display: grid;
+  grid-template-columns: 1fr 22px 1fr 22px 1.55fr 22px 1fr;
+  gap: 0.6rem;
+  align-items: center;
+  max-width: 90rem;
+  margin: 1.2rem auto 0;
+  padding: 0 2.5rem 1.6rem;
+}
+
+.dl-arrow {
+  color: #e8850c;
+  text-align: center;
+  font-size: 1rem;
+  letter-spacing: -2px;
+}
+
+.dl-shot {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  height: 470px;
+  box-shadow: 0 14px 30px rgba(31, 44, 56, 0.16);
+}
+
+.dl-shot img {
+  object-fit: cover;
+}
+
+/* ------------------------------------------------ phone frames */
+
+.dl-gphone,
+.dl-sphone {
+  width: 226px;
+  height: 470px;
+  margin: 0 auto;
+  border: 7px solid #23262b;
+  border-radius: 2rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 16px 34px rgba(31, 44, 56, 0.2);
+}
+
+.dl-gphone {
+  background: #fdfcf9;
+  color: #1f2c38;
+}
+
+.dl-sphone {
+  background: #12161f;
+  color: #e6e9ee;
+  box-shadow: 0 16px 34px rgba(31, 44, 56, 0.25);
+}
+
+.dl-status {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0.8rem 0.15rem;
+  font-size: 0.56rem;
+  font-weight: 600;
+  color: #6b7480;
+}
+
+.dl-sphone .dl-status {
+  color: #9aa3af;
+}
+
+/* ------------------------------------------------ guest phone */
+
+.dl-ghead {
+  text-align: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #4a5568;
+  padding: 0.2rem 0 0.1rem;
+}
+
+.dl-ghead em {
+  font-style: normal;
+  color: #e8850c;
+}
+
+.dl-groom {
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.05rem;
+  margin-top: 0.25rem;
+}
+
+.dl-gsub {
+  text-align: center;
+  font-size: 0.66rem;
+  color: #5b6570;
+  margin: 0.1rem 0 0.35rem;
+}
+
+.dl-gact {
+  margin: 0.3rem 0.55rem 0;
+  padding: 0.5rem 0.55rem;
+  background: #f6efe3;
+  border: 1px solid #eadfcb;
+  border-radius: 0.65rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.dl-gact:hover {
+  border-color: #e8850c;
+}
+
+.dl-gact:active {
+  box-shadow: 0 0 0 3px rgba(232, 133, 12, 0.2);
+}
+
+.dl-gact i {
+  font-style: normal;
+  font-size: 0.9rem;
+}
+
+.dl-gact b {
+  display: block;
+  font-size: 0.7rem;
+}
+
+.dl-gact span {
+  display: block;
+  font-size: 0.56rem;
+  color: #5b6570;
+}
+
+/* venue photo at the phone's foot, like the reference */
+.dl-gphoto {
+  position: relative;
+  margin-top: auto;
+  height: 96px;
+}
+
+.dl-gphoto img {
+  object-fit: cover;
+}
+
+.dl-gchip {
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  padding: 0.35rem;
+  text-align: center;
+  font-size: 0.6rem;
+  background: rgba(253, 249, 243, 0.95);
+  border: 1px solid #f0ddba;
+  border-radius: 0.5rem;
+}
+
+.dl-gchip b {
+  color: #c47a24;
+}
+
+.dl-gchip b.dl-ok {
+  color: #27824a;
+}
+
+/* guest bottom nav (hotel reference) */
+.dl-gnav {
+  margin-top: auto;
+  display: flex;
+  border-top: 1px solid #eee6d8;
+  background: #ffffff;
+}
+
+.dl-gnav span {
+  flex: 1;
+  text-align: center;
+  padding: 0.45rem 0 0.55rem;
+  font-size: 0.5rem;
+  color: #8a94a0;
+}
+
+.dl-gnav span i {
+  display: block;
+  font-style: normal;
+  font-size: 0.8rem;
+}
+
+.dl-gnav .dl-on {
+  color: #e8850c;
+  font-weight: 700;
+}
+
+.dl-gchip-inline {
+  margin: 0.5rem 0.55rem 0;
+  padding: 0.4rem;
+  text-align: center;
+  font-size: 0.62rem;
+  background: #fdf3e2;
+  border: 1px solid #f0ddba;
+  border-radius: 0.5rem;
+}
+
+.dl-gchip-inline b {
+  color: #c47a24;
+}
+
+.dl-gchip-inline b.dl-ok {
+  color: #27824a;
+}
+
+/* ------------------------------------------------ dark tablets */
+
+.dl-tab-dark {
+  height: 470px;
+  background: #171e2c;
+  border: 7px solid #23262b;
+  border-radius: 1.1rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  color: #e6e9ee;
+  box-shadow: 0 16px 34px rgba(31, 44, 56, 0.2);
+}
+
+.dl-tab-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.9rem;
+  font-weight: 800;
+  font-size: 0.82rem;
+  border-bottom: 1px solid #232a37;
+}
+
+.dl-tab-top i {
+  font-style: normal;
+  color: #9aa3af;
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+/* restaurant floor */
+.dl-floor {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+  padding: 1rem 1.1rem 0.6rem;
+  align-content: start;
+}
+
+.dl-rtbl {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #232b3a;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #cbd5e0;
+}
+
+.dl-rtbl::after {
+  content: "";
+  position: absolute;
+  top: 6%;
+  right: 8%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34a35c;
+}
+
+.dl-rtbl-late {
+  box-shadow: 0 0 0 2px #c0333a;
+}
+
+.dl-rtbl-late::after {
+  background: #e5484d;
+}
+
+.dl-rtbl-hot {
+  border-radius: 0.8rem;
+  background: #e8850c;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(232, 133, 12, 0.3);
+}
+
+.dl-rtbl-hot::after {
+  background: #ffffff;
+}
+
+.dl-rtbl-timer {
+  position: absolute;
+  bottom: -1.05rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.58rem;
+  font-weight: 800;
+  color: #f4a83f;
+}
+
+.dl-legend {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+  padding: 0.8rem 0 0.7rem;
+  font-size: 0.62rem;
+  color: #cbd5e0;
+  border-top: 1px solid #232a37;
+}
+
+.dl-leg-ok { color: #34a35c; }
+.dl-leg-warn { color: #f4a83f; }
+.dl-leg-late { color: #e5484d; }
+
+/* bar overview */
+.dl-btabs {
+  display: flex;
+  gap: 1rem;
+  padding: 0.45rem 0.9rem 0;
+  font-size: 0.66rem;
+  color: #9aa3af;
+  border-bottom: 1px solid #232a37;
+}
+
+.dl-btabs .dl-on {
+  color: #f4a83f;
+  font-weight: 800;
+  border-bottom: 2px solid #e8850c;
+  padding-bottom: 0.35rem;
+}
+
+.dl-bargrid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  align-content: start;
+}
+
+.dl-bcard {
+  position: relative;
+  background: #1c2230;
+  border: 1px solid #2a3347;
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.6rem;
+  color: #aab4c4;
+}
+
+.dl-bcard b {
+  display: block;
+  font-size: 0.68rem;
+  color: #e6e9ee;
+}
+
+.dl-bcard .dl-btime {
+  font-weight: 800;
+  color: #f4a83f;
+}
+
+.dl-bcard .dl-btime-late {
+  color: #ef6b6f;
+}
+
+.dl-bcard-hot {
+  border-color: #e8850c;
+  box-shadow: 0 0 0 1px #e8850c;
+}
+
+.dl-bcard::after {
+  content: "";
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f4a83f;
+}
+
+.dl-tab-foot {
+  padding: 0.45rem;
+  text-align: center;
+  font-size: 0.58rem;
+  color: #77808d;
+  border-top: 1px solid #232a37;
+}
+
+/* hotel overview: dark sidebar + light main */
+.dl-tab-hotel {
+  height: 470px;
+  background: #ffffff;
+  border: 7px solid #23262b;
+  border-radius: 1.1rem;
+  overflow: hidden;
+  display: flex;
+  box-shadow: 0 16px 34px rgba(31, 44, 56, 0.2);
+}
+
+.dl-hside {
+  width: 118px;
+  flex: 0 0 auto;
+  background: #171e2c;
+  color: #aab4c4;
+  padding: 0.6rem 0.5rem;
+  font-size: 0.62rem;
+}
+
+.dl-hside .dl-burger {
+  font-size: 0.8rem;
+  margin: 0.1rem 0 0.7rem 0.3rem;
+  color: #e8edf3;
+}
+
+.dl-hitem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.45rem;
+  border-radius: 0.45rem;
+  margin-bottom: 0.15rem;
+}
+
+.dl-hitem i {
+  font-style: normal;
+  font-size: 0.7rem;
+}
+
+.dl-hitem-on {
+  background: #2a3347;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.dl-hitem-on i {
+  color: #e8850c;
+}
+
+.dl-hmain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: #f8f9fb;
+  color: #1f2c38;
+}
+
+.dl-htop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.8rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e8ebf0;
+}
+
+.dl-htop b {
+  font-size: 0.85rem;
+}
+
+.dl-hfloors {
+  font-size: 0.6rem;
+  border: 1px solid #dfe4ea;
+  border-radius: 0.4rem;
+  padding: 0.25rem 0.5rem;
+  color: #4a5568;
+  background: #ffffff;
+}
+
+.dl-hcols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.55rem;
+  padding: 0.6rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.dl-hcol {
+  background: #ffffff;
+  border: 1px solid #e8ebf0;
+  border-radius: 0.6rem;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dl-hcol-h {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.54rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.dl-hcol-h i {
+  font-style: normal;
+  font-size: 0.68rem;
+}
+
+.dl-hcol-sub {
+  font-size: 0.52rem;
+  color: #8a94a0;
+  margin: 0.15rem 0 0.4rem;
+}
+
+.dl-hcard {
+  position: relative;
+  background: #fbfbfc;
+  border: 1px solid #edf0f4;
+  border-left: 3px solid #d9dee5;
+  border-radius: 0.45rem;
+  padding: 0.4rem 0.45rem 0.4rem 0.55rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.56rem;
+  color: #5b6570;
+}
+
+.dl-hcard b {
+  display: block;
+  font-size: 0.64rem;
+  color: #1f2c38;
+}
+
+.dl-hcard .dl-bell {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.35rem;
+  font-size: 0.6rem;
+}
+
+.dl-hcol-rest .dl-hcol-h { color: #c05621; }
+.dl-hcol-rest .dl-hcard { border-left-color: #ed8936; }
+.dl-hcol-bar .dl-hcol-h { color: #97266d; }
+.dl-hcol-bar .dl-hcard { border-left-color: #b83280; }
+.dl-hcol-rooms .dl-hcol-h { color: #2b6cb0; }
+.dl-hcol-rooms .dl-hcard { border-left-color: #4299e1; }
+.dl-hcol-rooms .dl-hcard-hot {
+  background: #ebf4fe;
+  border-color: #bee3f8;
+  border-left-color: #3182ce;
+}
+
+.dl-viewall {
+  margin-top: auto;
+  text-align: center;
+  font-size: 0.56rem;
+  color: #4a5568;
+  padding-top: 0.3rem;
+}
+
+/* ------------------------------------------------ staff phones */
+
+.dl-shead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.3rem 0.7rem 0.35rem;
+  font-weight: 800;
+  font-size: 0.78rem;
+}
+
+.dl-shead i {
+  font-style: normal;
+  color: #9aa3af;
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+
+.dl-stabs {
+  display: flex;
+  gap: 0.55rem;
+  padding: 0 0.7rem 0.35rem;
+  font-size: 0.55rem;
+  color: #9aa3af;
+  border-bottom: 1px solid #232a37;
+}
+
+.dl-stabs .dl-on {
+  color: #f4a83f;
+  font-weight: 800;
+  border-bottom: 2px solid #e8850c;
+  padding-bottom: 0.25rem;
+}
+
+.dl-snewest {
+  font-size: 0.48rem;
+  letter-spacing: 0.1em;
+  color: #77808d;
+  padding: 0.4rem 0.7rem 0.2rem;
+}
+
+.dl-scard {
+  margin: 0.2rem 0.55rem 0.4rem;
+  background: #f7f8fa;
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.55rem;
+  color: #1a202c;
+  font-size: 0.58rem;
+}
+
+.dl-scard-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dl-scard-top b {
+  font-size: 0.72rem;
+}
+
+.dl-chip {
+  font-size: 0.46rem;
+  font-weight: 800;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.3rem;
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.dl-sname {
+  font-weight: 700;
+  font-size: 0.66rem;
+  margin-top: 0.1rem;
+}
+
+.dl-srow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.1rem;
+  color: #718096;
+}
+
+.dl-srow .dl-hp {
+  color: #e8850c;
+  font-weight: 800;
+}
+
+.dl-swhat {
+  border-top: 1px solid #e2e8f0;
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+  color: #4a5568;
+}
+
+.dl-swhat b {
+  font-size: 0.56rem;
+  color: #1a202c;
+}
+
+.dl-sbtn {
+  display: block;
+  width: 100%;
+  margin-top: 0.4rem;
+  background: #2563eb;
+  color: #ffffff;
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.6rem;
+  padding: 0.45rem;
+  border-radius: 0.45rem;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.dl-sbtn:hover {
+  background: #1d4ed8;
+}
+
+.dl-sbtn-orange {
+  background: #e8850c;
+}
+
+.dl-sbtn-orange:hover {
+  background: #c47a24;
+}
+
+.dl-sbtn-dark {
+  background: #262e40;
+  color: #e6e9ee;
+  font-weight: 700;
+}
+
+.dl-sbtn-dark:hover {
+  background: #2f3950;
+}
+
+.dl-scard-dark {
+  margin: 0.2rem 0.55rem 0.4rem;
+  background: #1c2230;
+  border: 1px solid #2a3347;
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.55rem;
+  color: #cbd5e0;
+  font-size: 0.58rem;
+}
+
+.dl-scard-dark b {
+  color: #e6e9ee;
+}
+
+.dl-scard-dark-hot {
+  border-color: #e8850c;
+  box-shadow: 0 0 0 1px #e8850c;
+}
+
+.dl-stime {
+  font-weight: 800;
+  color: #f4a83f;
+  font-size: 0.72rem;
+}
+
+.dl-snav {
+  margin-top: auto;
+  display: flex;
+  border-top: 1px solid #232a37;
+}
+
+.dl-snav span {
+  flex: 1;
+  text-align: center;
+  padding: 0.4rem 0 0.5rem;
+  font-size: 0.48rem;
+  color: #77808d;
+  position: relative;
+}
+
+.dl-snav span i {
+  display: block;
+  font-style: normal;
+  font-size: 0.75rem;
+}
+
+.dl-snav .dl-on {
+  color: #e8850c;
+  font-weight: 700;
+}
+
+.dl-badge {
+  position: absolute;
+  top: 0.1rem;
+  right: 0.7rem;
+  background: #e8850c;
+  color: #ffffff;
+  font-size: 0.4rem;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 0 0.22rem;
+}
+
+/* ------------------------------------------------ mini benefits */
+
+.dl-minis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 90rem;
+  margin: 0 auto 1.6rem;
+  padding: 0 2.5rem;
+}
+
+.dl-mini {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  background: #fdf6ea;
+  border: 1px solid #f0e3cb;
+  border-radius: 0.8rem;
+  padding: 0.85rem 1rem;
+}
+
+.dl-mini i {
+  font-style: normal;
+  color: #e8850c;
+  font-size: 1.1rem;
+}
+
+.dl-mini b {
+  display: block;
+  font-size: 0.85rem;
+  color: #c05621;
+}
+
+.dl-mini p {
+  margin: 0.15rem 0 0;
+  font-size: 0.76rem;
+  color: #5b6570;
+  line-height: 1.35;
+}
+
+/* ------------------------------------------------ mobile */
+
+@media (max-width: 1120px) {
+  .dl-visuals {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.1rem;
+    padding: 0 1.2rem 1.4rem;
+  }
+
+  .dl-arrow {
+    transform: rotate(90deg);
+  }
+
+  .dl-shot,
+  .dl-tab-dark,
+  .dl-tab-hotel {
+    max-width: 27rem;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .dl-minis {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0 1.2rem;
+  }
+}
