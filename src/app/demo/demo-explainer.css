@@ -1,0 +1,717 @@
+/* ============================================================
+   Demo pages — the warm explainer (approved mockups).
+   Ivory ground, orange accent, real phone frames, one landscape
+   wall-tablet. Shared by /demo, /demo/ordering and /demo/hotel;
+   the interactive simulator renders below in its own styles.
+   ============================================================ */
+
+.dx {
+  background: #fdfaf5;
+  color: #1f2c38;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.45;
+}
+
+.dx a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ------------------------------------------------------------ header */
+
+.dx-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0.85rem 3rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e8e0d2;
+}
+
+.dx-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.dx-logo em {
+  font-style: normal;
+  color: #d5872e;
+}
+
+.dx-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 3px solid #1f2c38;
+  display: grid;
+  place-items: center;
+}
+
+.dx-mark i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 3px solid #d5872e;
+  display: block;
+}
+
+.dx-nav {
+  display: flex;
+  gap: 1.6rem;
+  margin: 0 auto;
+  font-size: 0.95rem;
+  color: #3c4854;
+}
+
+.dx-nav a {
+  padding-bottom: 0.3rem;
+  border-bottom: 2.5px solid transparent;
+}
+
+.dx-nav a[data-on="true"] {
+  color: #d5872e;
+  font-weight: 700;
+  border-bottom-color: #d5872e;
+}
+
+.dx-header-cta {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.dx-btn {
+  display: inline-block;
+  padding: 0.55rem 1rem;
+  border-radius: 0.55rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.dx-btn-ghost {
+  border: 1.5px solid #d9d2c4;
+  background: #ffffff;
+}
+
+.dx .dx-btn-orange {
+  background: #d5872e;
+  color: #ffffff;
+}
+
+.dx .dx-btn-orange:hover {
+  background: #c47a24;
+}
+
+/* ------------------------------------------------------------ intro */
+
+.dx-eyebrow {
+  margin-top: 1.7rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #c47a24;
+}
+
+.dx-title {
+  margin: 0.4rem auto 0.3rem;
+  max-width: 60rem;
+  padding: 0 1.5rem;
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.dx-sub {
+  text-align: center;
+  color: #5b6570;
+  font-size: 1.05rem;
+  padding: 0 1.5rem;
+}
+
+/* ------------------------------------------------------------ steps */
+
+.dx-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.4rem;
+  max-width: 88rem;
+  margin: 1.7rem auto 0;
+  padding: 0 3rem;
+}
+
+.dx-step {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.dx-step-n {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #d5872e;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.dx-step b {
+  display: block;
+  font-size: 1rem;
+}
+
+.dx-step p {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+  color: #5b6570;
+  line-height: 1.35;
+}
+
+/* ------------------------------------------------------------ visuals */
+
+.dx-visuals {
+  display: grid;
+  grid-template-columns: 1fr 24px 1fr 24px 1fr 24px 1fr;
+  gap: 0.6rem;
+  align-items: center;
+  max-width: 88rem;
+  margin: 1.2rem auto 0;
+  padding: 0 3rem;
+}
+
+.dx-arrow {
+  color: #d5872e;
+  text-align: center;
+  font-size: 1.1rem;
+  letter-spacing: -2px;
+}
+
+.dx-shot {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  height: 430px;
+  box-shadow: 0 14px 30px rgba(31, 44, 56, 0.14);
+}
+
+.dx-shot img {
+  object-fit: cover;
+}
+
+/* Real phone frame — narrow and tall, like the thing in your hand. */
+.dx-phone {
+  background: #ffffff;
+  border: 7px solid #2b3038;
+  border-radius: 1.9rem;
+  overflow: hidden;
+  width: 214px;
+  height: 430px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 16px 34px rgba(31, 44, 56, 0.18);
+}
+
+.dx-ptop {
+  text-align: center;
+  padding: 0.5rem 0 0.2rem;
+  font-size: 0.6rem;
+  color: #98a2ad;
+}
+
+.dx-pvenue {
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.dx-pline {
+  text-align: center;
+  font-size: 0.72rem;
+  color: #5b6570;
+  margin: 0.1rem 0 0.35rem;
+}
+
+.dx-pact {
+  margin: 0.28rem 0.55rem 0;
+  padding: 0.5rem 0.6rem;
+  background: #f7f2ea;
+  border: 1px solid #e8e0d2;
+  border-radius: 0.6rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.dx-pact i {
+  font-style: normal;
+  font-size: 0.95rem;
+}
+
+.dx-pact b {
+  display: block;
+  font-size: 0.74rem;
+}
+
+.dx-pact span {
+  display: block;
+  font-size: 0.6rem;
+  color: #5b6570;
+}
+
+.dx-pcta {
+  margin: 0.35rem 0.55rem 0;
+  padding: 0.5rem;
+  border-radius: 0.6rem;
+  background: #d5872e;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.dx-pghost {
+  margin: 0.35rem 0.55rem 0;
+  padding: 0.5rem;
+  border-radius: 0.6rem;
+  background: #f7f2ea;
+  border: 1px solid #e8e0d2;
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+/* The landscape wall/counter tablet. */
+.dx-tab {
+  background: #ffffff;
+  border: 7px solid #2b3038;
+  border-radius: 1.2rem;
+  overflow: hidden;
+  height: 430px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dx-tabbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  border-bottom: 1px solid #e8e0d2;
+  background: #fdfaf5;
+}
+
+.dx-tabbar .dx-live-dot {
+  color: #27824a;
+}
+
+.dx-tabbar .dx-active-count {
+  color: #c47a24;
+}
+
+/* Screen cards shared by tablet + staff phone. */
+.dx-card {
+  margin: 0.3rem 0.5rem 0;
+  padding: 0.45rem 0.55rem;
+  background: #f7f2ea;
+  border: 1px solid #e8e0d2;
+  border-radius: 0.55rem;
+  font-size: 0.68rem;
+}
+
+.dx-card b {
+  font-size: 0.72rem;
+}
+
+.dx-card span {
+  color: #5b6570;
+}
+
+.dx-card-hot {
+  background: #f9efdd;
+  border-color: #d5872e;
+}
+
+.dx-tag {
+  font-weight: 800;
+}
+
+.dx-tag-now { color: #c47a24; }
+.dx-tag-warn { color: #b57c0b; }
+.dx-tag-late { color: #c03338; }
+.dx-tag-ok { color: #27824a; }
+
+/* Restaurant floor grid inside the tablet. */
+.dx-floorgrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+  padding: 0.8rem;
+}
+
+.dx-tbl {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #f7f2ea;
+  border: 2px solid #e8e0d2;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+
+.dx-tbl-hot {
+  background: #d5872e;
+  border-color: #d5872e;
+  color: #ffffff;
+  box-shadow: 0 0 0 5px rgba(213, 135, 46, 0.25);
+}
+
+.dx-tbl-late {
+  border-color: #c03338;
+  color: #c03338;
+}
+
+.dx-legend {
+  display: flex;
+  gap: 1.1rem;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #5b6570;
+}
+
+.dx-tabfoot {
+  margin-top: auto;
+  padding: 0.5rem 0.7rem 0.6rem;
+  text-align: center;
+  font-size: 0.7rem;
+  color: #5b6570;
+}
+
+/* Hotel overview columns inside the tablet. */
+.dx-ovcols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  padding: 0.6rem;
+  font-size: 0.6rem;
+}
+
+.dx-ovcol {
+  background: #fdfaf5;
+  border: 1px solid #e8e0d2;
+  border-radius: 0.6rem;
+  padding: 0.4rem;
+  min-width: 0;
+}
+
+.dx-ovcol > b {
+  display: block;
+  font-size: 0.56rem;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dx-ovcol .dx-card {
+  padding: 0.35rem 0.4rem;
+  font-size: 0.6rem;
+}
+
+.dx-ovcol .dx-card b {
+  font-size: 0.62rem;
+}
+
+.dx-ovcol .dx-card {
+  margin: 0.4rem 0 0;
+}
+
+.dx-ovcol-rest > b { color: #9c6212; }
+.dx-ovcol-bar > b { color: #c2185b; }
+.dx-ovcol-rooms > b { color: #24557c; }
+
+/* Bar order grid inside the tablet. */
+.dx-barorders {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+  padding: 0.8rem;
+  font-size: 0.74rem;
+}
+
+.dx-barorders .dx-card {
+  margin: 0;
+}
+
+.dx-pspacer {
+  margin-top: auto;
+}
+
+.dx-pfoot {
+  margin: 0.35rem 0.55rem 0.6rem;
+}
+
+/* ------------------------------------------------------------ areas */
+
+.dx-areas {
+  max-width: 88rem;
+  margin: 1.8rem auto 0;
+  padding: 0 3rem;
+}
+
+.dx-areas h2 {
+  margin: 0 0 1rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.dx-arow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.dx-area {
+  display: flex;
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid #e8e0d2;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.dx-area-img {
+  position: relative;
+  flex: 0 0 auto;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.dx-area-img img {
+  object-fit: cover;
+}
+
+.dx-area b {
+  display: block;
+  color: #c47a24;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.3rem;
+}
+
+.dx-area ul {
+  margin: 0;
+  padding: 0;
+}
+
+.dx-area li {
+  list-style: none;
+  font-size: 0.8rem;
+  padding: 0.12rem 0;
+  color: #3c4854;
+}
+
+.dx-area li::before {
+  content: "✓ ";
+  color: #d5872e;
+  font-weight: 800;
+}
+
+/* ------------------------------------------------------------ benefits */
+
+.dx-benefits {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 88rem;
+  margin: 1.8rem auto 2rem;
+  padding: 0.4rem 0;
+  background: #ffffff;
+  border: 1px solid #e8e0d2;
+  border-radius: 1rem;
+}
+
+.dx-ben {
+  display: flex;
+  gap: 0.7rem;
+  padding: 1rem 1.2rem;
+  border-right: 1px solid #e8e0d2;
+  align-items: flex-start;
+}
+
+.dx-ben:last-child {
+  border-right: none;
+}
+
+.dx-ben svg {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  color: #d5872e;
+  margin-top: 0.1rem;
+}
+
+.dx-ben b {
+  display: block;
+  font-size: 0.92rem;
+}
+
+.dx-ben p {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  color: #5b6570;
+  line-height: 1.35;
+}
+
+/* ------------------------------------------------------------ live box */
+
+.dx-livebox {
+  max-width: 88rem;
+  margin: 0 auto 2rem;
+  padding: 1.2rem 1.4rem;
+  background: #ffffff;
+  border: 1.5px dashed #d5872e;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dx-livebox-icon {
+  color: #d5872e;
+  font-size: 1.4rem;
+}
+
+.dx-livebox b {
+  font-size: 1.05rem;
+}
+
+.dx-livebox p {
+  margin: 0.1rem 0 0;
+  color: #5b6570;
+  font-size: 0.9rem;
+}
+
+.dx-livebox .dx-btn {
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+/* ------------------------------------------------------------ note */
+
+.dx-note {
+  max-width: 60rem;
+  margin: 0 auto 2rem;
+  padding: 0.7rem 1rem;
+  background: #f7f2ea;
+  border: 1px solid #e8e0d2;
+  border-radius: 0.7rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #5b6570;
+}
+
+.dx-note b {
+  color: #c47a24;
+}
+
+.dx-wrap {
+  padding: 0 3rem;
+}
+
+/* The interactive simulator nests inside the explainer: kill its
+   full-viewport minimum and let it sit on the same warm ground. */
+.dx .dm-page {
+  min-height: 0;
+  background: #fdfaf5;
+}
+
+.dx .hd-panes {
+  padding-top: 1.5rem;
+}
+
+/* ------------------------------------------------------------ mobile */
+
+@media (max-width: 1060px) {
+  .dx-header {
+    padding: 0.8rem 1.2rem;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .dx-nav {
+    display: none;
+  }
+
+  .dx-header-cta {
+    margin-left: auto;
+  }
+
+  .dx-steps,
+  .dx-visuals {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0 1.2rem;
+  }
+
+  .dx-visuals {
+    gap: 1rem;
+  }
+
+  .dx-arrow {
+    transform: rotate(90deg);
+  }
+
+  .dx-shot {
+    max-width: 26rem;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .dx-tab {
+    max-width: 26rem;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .dx-title {
+    font-size: 1.9rem;
+  }
+
+  .dx-arow,
+  .dx-benefits {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dx-ben {
+    border-right: none;
+    border-bottom: 1px solid #e8e0d2;
+  }
+
+  .dx-ben:last-child {
+    border-bottom: none;
+  }
+
+  .dx-wrap,
+  .dx-areas {
+    padding: 0 1.2rem;
+  }
+
+  .dx-livebox {
+    flex-wrap: wrap;
+  }
+
+  .dx-livebox .dx-btn {
+    margin-left: 0;
+  }
+}

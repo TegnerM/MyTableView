@@ -827,20 +827,25 @@ export function getLandingStrings(locale: string): LandingStrings {
 }
 
 /** ?lang= override wins; otherwise the browser's language; else EN. */
+/** Norwegian browsers send nb/nn — both mean our "no" dictionary. */
+function normalizeLocale(code: string): string {
+  return code === "nb" || code === "nn" ? "no" : code;
+}
+
 export function resolveLandingLocale(
   override: string | undefined,
   acceptLanguage: string | null
 ): string {
   if (override) {
-    const lower = override.toLowerCase();
+    const lower = normalizeLocale(override.toLowerCase());
     if (DICTIONARIES[lower]) return lower;
-    const base = lower.split("-")[0];
+    const base = normalizeLocale(lower.split("-")[0]);
     if (DICTIONARIES[base]) return base;
   }
   for (const part of (acceptLanguage ?? "").split(",")) {
-    const code = part.split(";")[0].trim().toLowerCase();
+    const code = normalizeLocale(part.split(";")[0].trim().toLowerCase());
     if (DICTIONARIES[code]) return code;
-    const base = code.split("-")[0];
+    const base = normalizeLocale(code.split("-")[0]);
     if (DICTIONARIES[base]) return base;
   }
   return DEFAULT_LANDING_LOCALE;
