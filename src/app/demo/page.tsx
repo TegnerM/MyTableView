@@ -44,7 +44,11 @@ export default function DemoPage() {
         </p>
         <p className="od-crosslink">
           <Link href="/demo/ordering">
-            See the ordering demo — kitchen, bar &amp; waiter screens →
+            Ordering demo — kitchen, bar &amp; waiter screens →
+          </Link>
+          {" · "}
+          <Link href="/demo/hotel">
+            Hotel demo — Room 412, housekeeping &amp; room service →
           </Link>
         </p>
       </section>

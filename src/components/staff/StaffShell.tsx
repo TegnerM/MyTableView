@@ -27,6 +27,7 @@ const THEME_KEY = "mtv-floor-theme";
 
 export type StaffShellSection =
   | "overview"
+  | "property"
   | "orders"
   | "menu"
   | "layout"
@@ -54,6 +55,7 @@ const NAV: {
   icon: () => ReactNode;
 }[] = [
   { key: "overview", href: "/staff/floor", managerOnly: false, icon: OverviewIcon },
+  { key: "property", href: "/staff/overview", managerOnly: true, icon: PropertyIcon },
   // Every role sees the Orders board — the bar's iPad signs in as a waiter.
   { key: "orders", href: "/staff/orders", managerOnly: false, icon: OrdersIcon },
   { key: "menu", href: "/staff/menu", managerOnly: true, icon: MenuBookIcon },
@@ -262,6 +264,22 @@ export function StaffShell({
 }
 
 /* ------------------------------------------------------------- icons */
+
+function PropertyIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="mtv-nav-icon" aria-hidden="true">
+      <path
+        d="M3 20V9l6-4 6 4v11M15 20V11h6v9M3 20h18"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M7 12h2M7 15h2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 function OverviewIcon() {
   return (

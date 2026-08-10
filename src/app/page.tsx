@@ -117,13 +117,18 @@ export default async function HomePage({ searchParams }: PageProps) {
       maximumFractionDigits: 0,
     }).format(amount);
 
+  const hotelMonthly = PLANS.find((plan) => plan.key === "hotel-monthly");
+  const hotelYearly = PLANS.find((plan) => plan.key === "hotel-yearly");
+
   const pricingTiers = [1, 3, 5, 10]
     .map((size) => {
       const monthly = PLANS.find(
-        (plan) => plan.maxVenues === size && plan.interval === "monthly"
+        (plan) =>
+          !plan.hotel && plan.maxVenues === size && plan.interval === "monthly"
       );
       const yearly = PLANS.find(
-        (plan) => plan.maxVenues === size && plan.interval === "yearly"
+        (plan) =>
+          !plan.hotel && plan.maxVenues === size && plan.interval === "yearly"
       );
       return monthly && yearly ? { size, monthly, yearly } : null;
     })
@@ -146,6 +151,7 @@ export default async function HomePage({ searchParams }: PageProps) {
 
         <nav className="lp-nav" aria-label="Main">
           <a href="#features">{t.nav.features}</a>
+          <a href="#editions">{t.nav.editions}</a>
           <a href="#how-it-works">{t.nav.howItWorks}</a>
           <a href="#pricing">{t.nav.pricing}</a>
         </nav>
@@ -353,6 +359,72 @@ export default async function HomePage({ searchParams }: PageProps) {
           </article>
         </section>
 
+        <section className="lp-editions" id="editions">
+          <div className="lp-editions-head">
+            <p className="lp-feature-eyebrow" data-tone="teal">
+              {t.editions.eyebrow}
+            </p>
+            <h2 className={fraunces.className}>{t.editions.title}</h2>
+            <p>{t.editions.sub}</p>
+          </div>
+
+          <div className="lp-editions-grid">
+            <article className="lp-edition-card">
+              <span className="lp-edition-tag" data-edition="restaurant">
+                {t.editions.restaurantTitle}
+              </span>
+              <div className="lp-mini-phone lp-mini-restaurant" aria-hidden="true">
+                <i className="lpm-hero" />
+                <i className="lpm-row" />
+                <i className="lpm-row" />
+                <i className="lpm-row lpm-row-gold" />
+              </div>
+              <h3 className={fraunces.className}>{t.editions.restaurantTitle}</h3>
+              <p>{t.editions.restaurantCopy}</p>
+              <Link href="/demo" className="lp-edition-cta">
+                {t.editions.restaurantCta}
+              </Link>
+            </article>
+
+            <article className="lp-edition-card">
+              <span className="lp-edition-tag" data-edition="bar">
+                {t.editions.barTitle}
+              </span>
+              <div className="lp-mini-phone lp-mini-bar" aria-hidden="true">
+                <i className="lpm-glow" />
+                <i className="lpm-row lpm-row-amber" />
+                <i className="lpm-row lpm-row-dark" />
+                <i className="lpm-row lpm-row-dark" />
+                <i className="lpm-chip" />
+              </div>
+              <h3 className={fraunces.className}>{t.editions.barTitle}</h3>
+              <p>{t.editions.barCopy}</p>
+              <Link href="/demo/ordering" className="lp-edition-cta">
+                {t.editions.barCta}
+              </Link>
+            </article>
+
+            <article className="lp-edition-card">
+              <span className="lp-edition-tag" data-edition="hotel">
+                {t.editions.hotelTitle}
+              </span>
+              <div className="lp-mini-phone lp-mini-hotel" aria-hidden="true">
+                <i className="lpm-row lpm-row-goldline" />
+                <i className="lpm-row" />
+                <span className="lpm-pair">
+                  <i className="lpm-half" />
+                  <i className="lpm-half" />
+                </span>
+              </div>
+              <h3 className={fraunces.className}>{t.editions.hotelTitle}</h3>
+              <p>{t.editions.hotelCopy}</p>
+              <Link href="/demo/hotel" className="lp-edition-cta">
+                {t.editions.hotelCta}
+              </Link>
+            </article>
+          </div>
+        </section>
+
         <section className="lp-how" id="how-it-works">
           <div className="lp-how-head">
             <h2 className={fraunces.className}>{t.how.title}</h2>
@@ -419,6 +491,27 @@ export default async function HomePage({ searchParams }: PageProps) {
                 </Link>
               </article>
             ))}
+
+            {hotelMonthly && hotelYearly ? (
+              <article className="lp-price-card lp-price-hotel">
+                <span className="lp-price-badge">{t.pricing.hotelBadge}</span>
+                <p className="lp-price-tier">{t.pricing.hotelTier}</p>
+                <p className="lp-price-main">
+                  <strong>{euro(hotelMonthly.amount)}</strong>
+                  <span>{t.pricing.perMonth}</span>
+                </p>
+                <p className="lp-price-year">
+                  {t.pricing.hotelIncluded} ·{" "}
+                  {t.pricing.yearlyLine.replace(
+                    "{price}",
+                    euro(hotelYearly.amount)
+                  )}
+                </p>
+                <Link href="/staff/sign-up" className="lp-btn lp-btn-ghost">
+                  {t.pricing.cta}
+                </Link>
+              </article>
+            ) : null}
           </div>
 
           <p className="lp-pricing-foot">{t.pricing.foot}</p>

@@ -205,3 +205,34 @@ Push to main as usual.
 - Switching editions in Settings → Venue type seeds the hotel's
   request buttons once (codes `hotel_*`) — re-switching never
   duplicates them.
+
+---
+
+# Property Overview dashboard (added 2026-08-10)
+
+## 1. Run the migration — ideally BEFORE deploying
+
+Supabase Dashboard → SQL Editor → run
+`src/sql/2026-08-10_overview.sql` (adds `staff.last_seen_at` for the
+"Staff active" stat).
+
+The code is deploy-order safe — if it ships first, staff sign-in
+still works and the stat simply reads 0 until the migration runs —
+but run the migration first anyway.
+
+## 2. What you get
+
+- Owners and managers now land on **/staff/overview** after signing
+  in: one card per venue (restaurant gold, bar pink, hotel navy) with
+  its live numbers, the property strip (active guests, unresolved
+  requests, avg response, staff active, order revenue — all real
+  service data, deltas vs yesterday), "Needs attention" (tables/rooms
+  past your escalation grace, orders sitting on the pass, guest notes
+  like maintenance), and the cross-venue activity feed.
+- The SAME layout for every account — one restaurant or a whole
+  property. Only the information varies.
+- Waiters keep landing on the floor. Every staff screen has an
+  "All venues" link back to the overview (owners/managers only).
+- "Staff active" = staff whose screen talked to the server in the
+  last 30 minutes (heartbeat stamped by the identity check, one write
+  per 5 minutes). Not a shift roster — a presence signal.

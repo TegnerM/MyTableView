@@ -10,6 +10,7 @@
 
 const EN = {
   nav: {
+    editions: "Editions",
     features: "Features",
     howItWorks: "How it works",
     pricing: "Pricing",
@@ -108,7 +109,24 @@ const EN = {
     line2:
       "Nothing to replace, nothing to migrate — your POS keeps ringing up orders while we look after the people ordering them.",
   },
+  editions: {
+    eyebrow: "One platform. Three editions.",
+    title: "Restaurant, bar or hotel — same engine, made for your guests",
+    sub: "Every edition speaks your guests' language, times every request, and shows your team exactly who needs them. Pick yours at signup — or run all three on one account.",
+    restaurantTitle: "Restaurant",
+    restaurantCopy: "The warm table page: menu & ordering, requests, the bill — with kitchen and bar screens and the service clock behind it.",
+    restaurantCta: "Try the restaurant demo →",
+    barTitle: "Bar",
+    barCopy: "The dark, fast surface: order drinks, another round in two taps, live order status — built for high volume and loud rooms.",
+    barCta: "Try the bar & ordering demo →",
+    hotelTitle: "Hotel",
+    hotelCopy: "The in-room page: room service, housekeeping, maintenance with a note, concierge — every request timed to the minute, per floor.",
+    hotelCta: "Try the hotel demo →",
+  },
   pricing: {
+    hotelBadge: "Hotel bundle",
+    hotelTier: "Hotel + restaurant + bar",
+    hotelIncluded: "Room service & ordering included",
     title: "Simple pricing",
     sub: "Every plan includes everything — live floor, insights, unlimited staff. Pick the size that fits, switch or cancel anytime.",
     tier1: "1 restaurant",
@@ -130,6 +148,7 @@ export type LandingStrings = typeof EN;
 
 const ES: LandingStrings = {
   nav: {
+    editions: "Ediciones",
     features: "Funciones",
     howItWorks: "Cómo funciona",
     pricing: "Precios",
@@ -228,7 +247,24 @@ const ES: LandingStrings = {
     line2:
       "Nada que sustituir, nada que migrar — tu TPV sigue cobrando los pedidos mientras nosotros cuidamos de quienes los piden.",
   },
+  editions: {
+    eyebrow: "Una plataforma. Tres ediciones.",
+    title: "Restaurante, bar u hotel — el mismo motor, hecho para tus clientes",
+    sub: "Cada edición habla el idioma de tus clientes, cronometra cada petición y muestra a tu equipo exactamente quién los necesita. Elige la tuya al registrarte — o gestiona las tres con una cuenta.",
+    restaurantTitle: "Restaurante",
+    restaurantCopy: "La página cálida de mesa: carta y pedidos, peticiones, la cuenta — con pantallas de cocina y barra y el reloj de servicio detrás.",
+    restaurantCta: "Prueba la demo de restaurante →",
+    barTitle: "Bar",
+    barCopy: "La superficie oscura y rápida: pedir bebidas, otra ronda en dos toques, estado del pedido en directo — para locales con mucho volumen.",
+    barCta: "Prueba la demo de bar y pedidos →",
+    hotelTitle: "Hotel",
+    hotelCopy: "La página en la habitación: servicio de habitaciones, limpieza, mantenimiento con nota, conserjería — cada petición cronometrada, por planta.",
+    hotelCta: "Prueba la demo de hotel →",
+  },
   pricing: {
+    hotelBadge: "Pack hotel",
+    hotelTier: "Hotel + restaurante + bar",
+    hotelIncluded: "Servicio de habitaciones y pedidos incluidos",
     title: "Precios sencillos",
     sub: "Todos los planes lo incluyen todo — sala en vivo, estadísticas y personal ilimitado. Elige el tamaño que encaje, cambia o cancela cuando quieras.",
     tier1: "1 restaurante",
@@ -248,7 +284,7 @@ const ES: LandingStrings = {
 
 
 const DA: LandingStrings = {
-  nav: { features: "Funktioner", howItWorks: "Sådan virker det", pricing: "Priser", logIn: "Log ind" },
+  nav: { features: "Funktioner", howItWorks: "Sådan virker det", pricing: "Priser", logIn: "Log ind", editions: "Udgaver" },
   hero: {
     titleLine1: "Se alle borde",
     titleLine2: "med ét blik.",
@@ -309,7 +345,24 @@ const DA: LandingStrings = {
     line1: "MyTableView kører ved siden af det, du har på disken i dag.",
     line2: "Intet at udskifte, intet at flytte — dit kassesystem slår stadig ordrer ind, mens vi tager os af dem, der bestiller.",
   },
+  editions: {
+    eyebrow: "Én platform. Tre udgaver.",
+    title: "Restaurant, bar eller hotel — samme motor, bygget til dine gæster",
+    sub: "Hver udgave taler dine gæsters sprog, tager tid på hver anmodning og viser dit team præcis, hvem der har brug for dem. Vælg din ved tilmelding — eller kør alle tre på én konto.",
+    restaurantTitle: "Restaurant",
+    restaurantCopy: "Den varme bordside: menu og bestilling, anmodninger, regningen — med køkken- og barskærme og serviceuret bagved.",
+    restaurantCta: "Prøv restaurant-demoen →",
+    barTitle: "Bar",
+    barCopy: "Den mørke, hurtige flade: bestil drinks, en runde til med to tryk, live ordrestatus — bygget til travle, højlydte steder.",
+    barCta: "Prøv bar- og bestillingsdemoen →",
+    hotelTitle: "Hotel",
+    hotelCopy: "Siden på værelset: roomservice, housekeeping, vedligehold med note, concierge — hver anmodning tidsmålt, pr. etage.",
+    hotelCta: "Prøv hotel-demoen →",
+  },
   pricing: {
+    hotelBadge: "Hotelpakke",
+    hotelTier: "Hotel + restaurant + bar",
+    hotelIncluded: "Roomservice og bestilling inkluderet",
     title: "Enkle priser",
     sub: "Alle planer indeholder alt — live bordplan, indsigt og ubegrænset personale. Vælg størrelsen der passer, skift eller opsig når som helst.",
     tier1: "1 restaurant",
@@ -328,7 +381,7 @@ const DA: LandingStrings = {
 };
 
 const SV: LandingStrings = {
-  nav: { features: "Funktioner", howItWorks: "Så funkar det", pricing: "Priser", logIn: "Logga in" },
+  nav: { features: "Funktioner", howItWorks: "Så funkar det", pricing: "Priser", logIn: "Logga in", editions: "Utgåvor" },
   hero: {
     titleLine1: "Se alla bord",
     titleLine2: "med en blick.",
@@ -389,7 +442,24 @@ const SV: LandingStrings = {
     line1: "MyTableView kör vid sidan av det du har på disken idag.",
     line2: "Inget att byta ut, inget att flytta — ditt kassasystem fortsätter slå in beställningar medan vi tar hand om dem som beställer.",
   },
+  editions: {
+    eyebrow: "En plattform. Tre utgåvor.",
+    title: "Restaurang, bar eller hotell — samma motor, byggd för dina gäster",
+    sub: "Varje utgåva talar dina gästers språk, tar tid på varje förfrågan och visar ditt team exakt vem som behöver dem. Välj din vid registreringen — eller kör alla tre på ett konto.",
+    restaurantTitle: "Restaurang",
+    restaurantCopy: "Den varma bordssidan: meny och beställning, önskemål, notan — med kök- och barskärmar och serviceklockan bakom.",
+    restaurantCta: "Prova restaurangdemon →",
+    barTitle: "Bar",
+    barCopy: "Den mörka, snabba ytan: beställ drycker, en runda till med två tryck, orderstatus live — byggd för högt tempo och hög ljudnivå.",
+    barCta: "Prova bar- och beställningsdemon →",
+    hotelTitle: "Hotell",
+    hotelCopy: "Sidan på rummet: roomservice, städning, underhåll med notering, concierge — varje förfrågan tidtagen, per våning.",
+    hotelCta: "Prova hotelldemon →",
+  },
   pricing: {
+    hotelBadge: "Hotellpaket",
+    hotelTier: "Hotell + restaurang + bar",
+    hotelIncluded: "Roomservice och beställning ingår",
     title: "Enkla priser",
     sub: "Alla planer innehåller allt — live bordskarta, insikter och obegränsad personal. Välj storleken som passar, byt eller avsluta när som helst.",
     tier1: "1 restaurang",
@@ -408,7 +478,7 @@ const SV: LandingStrings = {
 };
 
 const NO: LandingStrings = {
-  nav: { features: "Funksjoner", howItWorks: "Slik virker det", pricing: "Priser", logIn: "Logg inn" },
+  nav: { features: "Funksjoner", howItWorks: "Slik virker det", pricing: "Priser", logIn: "Logg inn", editions: "Utgaver" },
   hero: {
     titleLine1: "Se alle bord",
     titleLine2: "med ett blikk.",
@@ -469,7 +539,24 @@ const NO: LandingStrings = {
     line1: "MyTableView kjører ved siden av det du har på disken i dag.",
     line2: "Ingenting å bytte ut, ingenting å flytte — kassesystemet ditt slår fortsatt inn bestillinger mens vi tar oss av dem som bestiller.",
   },
+  editions: {
+    eyebrow: "Én plattform. Tre utgaver.",
+    title: "Restaurant, bar eller hotell — samme motor, bygget for gjestene dine",
+    sub: "Hver utgave snakker gjestenes språk, tar tiden på hver forespørsel og viser teamet ditt nøyaktig hvem som trenger dem. Velg din ved registrering — eller kjør alle tre på én konto.",
+    restaurantTitle: "Restaurant",
+    restaurantCopy: "Den varme bordsiden: meny og bestilling, forespørsler, regningen — med kjøkken- og barskjermer og serviceklokken bak.",
+    restaurantCta: "Prøv restaurantdemoen →",
+    barTitle: "Bar",
+    barCopy: "Den mørke, raske flaten: bestill drikke, en runde til med to trykk, live ordrestatus — bygget for høyt volum og høy lyd.",
+    barCta: "Prøv bar- og bestillingsdemoen →",
+    hotelTitle: "Hotell",
+    hotelCopy: "Siden på rommet: romservice, renhold, vedlikehold med notat, concierge — hver forespørsel tidsmålt, per etasje.",
+    hotelCta: "Prøv hotelldemoen →",
+  },
   pricing: {
+    hotelBadge: "Hotellpakke",
+    hotelTier: "Hotell + restaurant + bar",
+    hotelIncluded: "Romservice og bestilling inkludert",
     title: "Enkle priser",
     sub: "Alle planer inneholder alt — live bordkart, innsikt og ubegrenset personale. Velg størrelsen som passer, bytt eller avslutt når som helst.",
     tier1: "1 restaurant",
@@ -488,7 +575,7 @@ const NO: LandingStrings = {
 };
 
 const DE: LandingStrings = {
-  nav: { features: "Funktionen", howItWorks: "So funktioniert es", pricing: "Preise", logIn: "Anmelden" },
+  nav: { features: "Funktionen", howItWorks: "So funktioniert es", pricing: "Preise", logIn: "Anmelden", editions: "Editionen" },
   hero: {
     titleLine1: "Alle Tische",
     titleLine2: "auf einen Blick.",
@@ -549,7 +636,24 @@ const DE: LandingStrings = {
     line1: "MyTableView läuft neben dem, was heute auf Ihrer Theke steht.",
     line2: "Nichts zu ersetzen, nichts zu migrieren — Ihr Kassensystem bucht weiter Bestellungen, während wir uns um die kümmern, die bestellen.",
   },
+  editions: {
+    eyebrow: "Eine Plattform. Drei Editionen.",
+    title: "Restaurant, Bar oder Hotel — derselbe Motor, gemacht für Ihre Gäste",
+    sub: "Jede Edition spricht die Sprache Ihrer Gäste, stoppt die Zeit jeder Anfrage und zeigt Ihrem Team genau, wer sie braucht. Wählen Sie Ihre bei der Anmeldung — oder betreiben Sie alle drei auf einem Konto.",
+    restaurantTitle: "Restaurant",
+    restaurantCopy: "Die warme Tischseite: Karte und Bestellung, Anfragen, die Rechnung — mit Küchen- und Barbildschirmen und der Serviceuhr dahinter.",
+    restaurantCta: "Restaurant-Demo ausprobieren →",
+    barTitle: "Bar",
+    barCopy: "Die dunkle, schnelle Oberfläche: Getränke bestellen, noch eine Runde in zwei Tipps, Live-Bestellstatus — gebaut für volle, laute Räume.",
+    barCta: "Bar- & Bestell-Demo ausprobieren →",
+    hotelTitle: "Hotel",
+    hotelCopy: "Die Seite im Zimmer: Zimmerservice, Housekeeping, Technik mit Notiz, Concierge — jede Anfrage auf die Minute gemessen, pro Etage.",
+    hotelCta: "Hotel-Demo ausprobieren →",
+  },
   pricing: {
+    hotelBadge: "Hotel-Paket",
+    hotelTier: "Hotel + Restaurant + Bar",
+    hotelIncluded: "Zimmerservice & Bestellung inklusive",
     title: "Einfache Preise",
     sub: "Jeder Plan enthält alles — Live-Tischplan, Auswertung und unbegrenztes Personal. Wählen Sie die passende Größe, wechseln oder kündigen Sie jederzeit.",
     tier1: "1 Restaurant",
@@ -568,7 +672,7 @@ const DE: LandingStrings = {
 };
 
 const NL: LandingStrings = {
-  nav: { features: "Functies", howItWorks: "Hoe het werkt", pricing: "Prijzen", logIn: "Inloggen" },
+  nav: { features: "Functies", howItWorks: "Hoe het werkt", pricing: "Prijzen", logIn: "Inloggen", editions: "Edities" },
   hero: {
     titleLine1: "Zie alle tafels",
     titleLine2: "in één oogopslag.",
@@ -629,7 +733,24 @@ const NL: LandingStrings = {
     line1: "MyTableView draait naast wat er vandaag op je toonbank staat.",
     line2: "Niets te vervangen, niets te migreren — je kassasysteem blijft bestellingen aanslaan terwijl wij zorgen voor de mensen die bestellen.",
   },
+  editions: {
+    eyebrow: "Eén platform. Drie edities.",
+    title: "Restaurant, bar of hotel — dezelfde motor, gemaakt voor jouw gasten",
+    sub: "Elke editie spreekt de taal van je gasten, klokt elk verzoek en laat je team precies zien wie hen nodig heeft. Kies de jouwe bij aanmelding — of draai alle drie op één account.",
+    restaurantTitle: "Restaurant",
+    restaurantCopy: "De warme tafelpagina: menukaart en bestellen, verzoeken, de rekening — met keuken- en barschermen en de serviceklok erachter.",
+    restaurantCta: "Probeer de restaurantdemo →",
+    barTitle: "Bar",
+    barCopy: "Het donkere, snelle oppervlak: drankjes bestellen, nog een rondje in twee tikken, live bestelstatus — gebouwd voor drukte en lawaai.",
+    barCta: "Probeer de bar- en besteldemo →",
+    hotelTitle: "Hotel",
+    hotelCopy: "De pagina op de kamer: roomservice, housekeeping, storingen met notitie, concierge — elk verzoek geklokt, per verdieping.",
+    hotelCta: "Probeer de hoteldemo →",
+  },
   pricing: {
+    hotelBadge: "Hotelpakket",
+    hotelTier: "Hotel + restaurant + bar",
+    hotelIncluded: "Roomservice en bestellen inbegrepen",
     title: "Eenvoudige prijzen",
     sub: "Elk abonnement bevat alles — live plattegrond, inzichten en onbeperkt personeel. Kies de maat die past, wissel of zeg op wanneer je wilt.",
     tier1: "1 restaurant",
@@ -648,7 +769,7 @@ const NL: LandingStrings = {
 };
 
 const FR: LandingStrings = {
-  nav: { features: "Fonctionnalités", howItWorks: "Comment ça marche", pricing: "Tarifs", logIn: "Se connecter" },
+  nav: { features: "Fonctionnalités", howItWorks: "Comment ça marche", pricing: "Tarifs", logIn: "Se connecter", editions: "Éditions" },
   hero: {
     titleLine1: "Toutes vos tables",
     titleLine2: "d'un seul coup d'œil.",
@@ -709,7 +830,24 @@ const FR: LandingStrings = {
     line1: "MyTableView fonctionne à côté de ce qui est sur votre comptoir aujourd'hui.",
     line2: "Rien à remplacer, rien à migrer — votre caisse continue d'encaisser les commandes pendant que nous nous occupons de ceux qui les passent.",
   },
+  editions: {
+    eyebrow: "Une plateforme. Trois éditions.",
+    title: "Restaurant, bar ou hôtel — le même moteur, fait pour vos clients",
+    sub: "Chaque édition parle la langue de vos clients, chronomètre chaque demande et montre à votre équipe exactement qui a besoin d'elle. Choisissez la vôtre à l'inscription — ou gérez les trois sur un seul compte.",
+    restaurantTitle: "Restaurant",
+    restaurantCopy: "La page de table chaleureuse : carte et commande, demandes, l'addition — avec les écrans cuisine et bar et l'horloge de service derrière.",
+    restaurantCta: "Essayer la démo restaurant →",
+    barTitle: "Bar",
+    barCopy: "La surface sombre et rapide : commander des boissons, une autre tournée en deux gestes, suivi de commande en direct — faite pour les salles pleines et bruyantes.",
+    barCta: "Essayer la démo bar et commande →",
+    hotelTitle: "Hôtel",
+    hotelCopy: "La page en chambre : room service, ménage, maintenance avec note, conciergerie — chaque demande chronométrée, par étage.",
+    hotelCta: "Essayer la démo hôtel →",
+  },
   pricing: {
+    hotelBadge: "Formule hôtel",
+    hotelTier: "Hôtel + restaurant + bar",
+    hotelIncluded: "Room service et commande inclus",
     title: "Des tarifs simples",
     sub: "Chaque formule comprend tout — plan de salle en direct, statistiques et personnel illimité. Choisissez la taille qui convient, changez ou résiliez à tout moment.",
     tier1: "1 restaurant",

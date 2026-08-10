@@ -1,0 +1,469 @@
+/* ============================================================
+   /staff/overview — the Property Overview dashboard.
+   Approved design: dark navy sidebar, warm content, one card per
+   venue with its edition colour. The SAME layout for every account.
+   ============================================================ */
+
+.mtv-ov {
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr);
+  min-height: 100dvh;
+  background: #f6f4ef;
+  color: #16293d;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+@media (max-width: 860px) {
+  .mtv-ov {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .mtv-ov-side {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------- sidebar */
+
+.mtv-ov-side {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 1.1rem 0.9rem;
+  background: #101f30;
+  color: #e8edf3;
+}
+
+.mtv-ov-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.5rem 1.1rem;
+  font-weight: 800;
+  font-size: 1.02rem;
+}
+
+.mtv-ov-logo em {
+  font-style: normal;
+  color: #12a89a;
+}
+
+.mtv-ov-mk {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: 2.5px solid #e8edf3;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.mtv-ov-group {
+  margin: 0.9rem 0 0.35rem;
+  padding: 0 0.5rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7d8ea1;
+}
+
+.mtv-ov-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.55rem 0.6rem;
+  border: none;
+  border-radius: 0.55rem;
+  background: transparent;
+  color: #c5d0dc;
+  font: inherit;
+  font-size: 0.86rem;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.mtv-ov-nav:hover {
+  background: #182a3e;
+  color: #ffffff;
+}
+
+.mtv-ov-nav-on {
+  background: #1d3048;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: default;
+}
+
+.mtv-ov-nav i {
+  font-style: normal;
+  font-size: 0.9rem;
+}
+
+.mtv-ov-dot {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #7d8ea1;
+}
+
+.mtv-ov-dot[data-edition="restaurant"] { background: #c9963f; }
+.mtv-ov-dot[data-edition="bar"] { background: #e84393; }
+.mtv-ov-dot[data-edition="hotel"] { background: #7ba7d9; }
+
+.mtv-ov-foot {
+  margin-top: auto;
+  padding: 0.8rem 0.5rem 0.2rem;
+  border-top: 1px solid #1d3048;
+  font-size: 0.8rem;
+  color: #c5d0dc;
+}
+
+.mtv-ov-foot b {
+  display: block;
+  color: #ffffff;
+  font-size: 0.85rem;
+}
+
+/* ---------------------------------------------- main */
+
+.mtv-ov-main {
+  padding: 1.6rem 2rem 2.4rem;
+  max-width: 84rem;
+}
+
+.mtv-ov-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.3rem;
+}
+
+.mtv-ov-top h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+}
+
+.mtv-ov-top p {
+  margin-top: 0.2rem;
+  color: #5c6b7a;
+  font-size: 0.9rem;
+}
+
+.mtv-ov-when {
+  margin-left: auto;
+  padding-top: 0.4rem;
+  font-size: 0.85rem;
+  color: #5c6b7a;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------- venue cards */
+
+.mtv-ov-vgrid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.3rem;
+}
+
+.mtv-ov-vgrid[data-count="1"] { grid-template-columns: minmax(0, 32rem); }
+.mtv-ov-vgrid[data-count="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mtv-ov-vgrid[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+@media (max-width: 1100px) {
+  .mtv-ov-vgrid[data-count="3"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .mtv-ov-vgrid[data-count="2"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.mtv-ov-vcard {
+  background: #ffffff;
+  border: 1px solid #e0dace;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.mtv-ov-vhead {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.95rem 1.1rem;
+}
+
+.mtv-ov-vic {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 0.7rem;
+  font-size: 17px;
+}
+
+.mtv-ov-vcard[data-edition="restaurant"] .mtv-ov-vic { background: #f9efdd; }
+.mtv-ov-vcard[data-edition="bar"] .mtv-ov-vic { background: #fdeef5; }
+.mtv-ov-vcard[data-edition="hotel"] .mtv-ov-vic { background: #eaf0f8; }
+
+.mtv-ov-vtx {
+  min-width: 0;
+}
+
+.mtv-ov-vtx b {
+  display: block;
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mtv-ov-vtx i {
+  font-style: normal;
+  font-size: 0.75rem;
+  color: #5c6b7a;
+}
+
+.mtv-ov-vstats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid #f0ebe1;
+}
+
+.mtv-ov-vs {
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  border-right: 1px solid #f0ebe1;
+}
+
+.mtv-ov-vs:last-child {
+  border-right: none;
+}
+
+.mtv-ov-vs b {
+  display: block;
+  font-size: 1.15rem;
+}
+
+.mtv-ov-vcard[data-edition="restaurant"] .mtv-ov-vs b { color: #a8762a; }
+.mtv-ov-vcard[data-edition="bar"] .mtv-ov-vs b { color: #c92a76; }
+.mtv-ov-vcard[data-edition="hotel"] .mtv-ov-vs b { color: #24557c; }
+
+.mtv-ov-vs span {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.66rem;
+  color: #5c6b7a;
+  line-height: 1.25;
+}
+
+.mtv-ov-vbtn {
+  display: block;
+  width: calc(100% - 2.2rem);
+  margin: 0.9rem 1.1rem 1rem;
+  padding: 0.65rem;
+  border: none;
+  border-radius: 0.6rem;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+.mtv-ov-vbtn:disabled {
+  opacity: 0.6;
+}
+
+.mtv-ov-vcard[data-edition="restaurant"] .mtv-ov-vbtn { background: #b8892d; }
+.mtv-ov-vcard[data-edition="bar"] .mtv-ov-vbtn { background: #c2185b; }
+.mtv-ov-vcard[data-edition="hotel"] .mtv-ov-vbtn { background: #24557c; }
+
+/* ---------------------------------------------- property strip */
+
+.mtv-ov-sect {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8a6d1f;
+}
+
+.mtv-ov-pgrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.3rem;
+}
+
+@media (max-width: 1100px) {
+  .mtv-ov-pgrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.mtv-ov-pcard {
+  background: #ffffff;
+  border: 1px solid #e0dace;
+  border-radius: 0.9rem;
+  padding: 0.9rem 1rem;
+}
+
+.mtv-ov-pcard span {
+  display: block;
+  font-size: 0.72rem;
+  color: #5c6b7a;
+}
+
+.mtv-ov-pcard b {
+  font-size: 1.35rem;
+}
+
+.mtv-ov-pcard i {
+  display: block;
+  margin-top: 0.1rem;
+  font-style: normal;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1e9e63;
+}
+
+.mtv-ov-pcard i[data-up="false"] {
+  color: #c03338;
+}
+
+/* ---------------------------------------------- panels */
+
+.mtv-ov-row2 {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1rem;
+}
+
+@media (max-width: 1100px) {
+  .mtv-ov-row2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.mtv-ov-panel {
+  background: #ffffff;
+  border: 1px solid #e0dace;
+  border-radius: 1rem;
+  padding: 1rem 1.1rem;
+}
+
+.mtv-ov-panel h3 {
+  margin: 0 0 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5c6b7a;
+}
+
+.mtv-ov-empty {
+  margin: 0;
+  padding: 0.5rem 0;
+  font-size: 0.85rem;
+  color: #8a94a0;
+}
+
+.mtv-ov-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid #f0ebe1;
+  border-radius: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.mtv-ov-alert:last-child {
+  margin-bottom: 0;
+}
+
+.mtv-ov-warn {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #d4a017;
+}
+
+.mtv-ov-alert[data-kind="waiting"] .mtv-ov-warn {
+  background: #e5484d;
+}
+
+.mtv-ov-alert-tx {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.mtv-ov-alert-tx b {
+  display: block;
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mtv-ov-alert-tx i {
+  font-style: normal;
+  font-size: 0.72rem;
+  color: #5c6b7a;
+}
+
+.mtv-ov-chip {
+  flex: 0 0 auto;
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  max-width: 9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mtv-ov-chip[data-edition="restaurant"] { background: #f9efdd; color: #8a6d1f; }
+.mtv-ov-chip[data-edition="bar"] { background: #fdeef5; color: #c92a76; }
+.mtv-ov-chip[data-edition="hotel"] { background: #eaf0f8; color: #24557c; }
+
+.mtv-ov-act {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  padding: 0.42rem 0;
+  border-bottom: 1px solid #f5f1e8;
+  font-size: 0.84rem;
+}
+
+.mtv-ov-act:last-child {
+  border-bottom: none;
+}
+
+.mtv-ov-act-tm {
+  flex: 0 0 auto;
+  width: 3rem;
+  font-size: 0.72rem;
+  color: #8a94a0;
+  font-variant-numeric: tabular-nums;
+}
+
+.mtv-ov-act-tx {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

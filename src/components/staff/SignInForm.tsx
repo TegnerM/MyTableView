@@ -46,7 +46,7 @@ export function SignInForm() {
         return;
       }
 
-      router.replace("/staff/floor");
+      router.replace("/staff/overview");
       router.refresh();
     } catch {
       setError(t.auth.signInFailed);

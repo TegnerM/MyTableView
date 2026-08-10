@@ -941,8 +941,14 @@
 
 .lp-pricing-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1rem;
+}
+
+@media (max-width: 1080px) {
+  .lp-pricing-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .lp-price-card {
@@ -1293,4 +1299,254 @@
   .lp-feature-guest::before {
     mask-image: linear-gradient(#000 0%, rgba(0,0,0,.2) 60%, transparent 100%);
   }
+}
+
+/* ------------------------------------------------------------ editions */
+
+.lp-editions {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 4.5rem 2rem 1.5rem;
+}
+
+.lp-editions-head {
+  text-align: center;
+  max-width: 44rem;
+  margin: 0 auto 2.6rem;
+}
+
+.lp-editions-head h2 {
+  font-size: clamp(1.7rem, 3.4vw, 2.2rem);
+  line-height: 1.2;
+  margin: 0.5rem 0 0.8rem;
+}
+
+.lp-editions-head > p:last-child {
+  color: var(--lp-muted);
+  font-size: 1.02rem;
+}
+
+.lp-editions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.4rem;
+}
+
+@media (max-width: 900px) {
+  .lp-editions-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.lp-edition-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.6rem 1.4rem 1.5rem;
+  border: 1px solid var(--lp-line);
+  border-radius: 1.1rem;
+  background: var(--lp-cream);
+}
+
+.lp-edition-tag {
+  align-self: center;
+  margin-bottom: 0.9rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lp-edition-tag[data-edition="restaurant"] {
+  color: #8a6d1f;
+  background: var(--lp-gold-wash);
+  border: 1px solid #ecd9ae;
+}
+
+.lp-edition-tag[data-edition="bar"] {
+  color: #e84393;
+  background: #fdeef5;
+  border: 1px solid #f5c2da;
+}
+
+.lp-edition-tag[data-edition="hotel"] {
+  color: var(--lp-navy-soft);
+  background: #eaf0f8;
+  border: 1px solid #ccd9ea;
+}
+
+.lp-edition-card h3 {
+  text-align: center;
+  font-size: 1.25rem;
+  margin: 1.1rem 0 0.45rem;
+}
+
+.lp-edition-card > p {
+  flex: 1;
+  text-align: center;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--lp-muted);
+}
+
+.lp-edition-cta {
+  display: block;
+  margin-top: 1.1rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--lp-teal-deep);
+}
+
+.lp-edition-cta:hover {
+  color: var(--lp-teal-dark);
+}
+
+/* The mini phones — pure CSS sketches of each edition's guest home. */
+
+.lp-mini-phone {
+  position: relative;
+  width: 150px;
+  height: 220px;
+  margin: 0 auto;
+  border-radius: 20px;
+  border: 5px solid var(--lp-navy);
+  overflow: hidden;
+  box-shadow: 0 14px 30px rgba(22, 41, 61, 0.16);
+}
+
+.lp-mini-phone i,
+.lp-mini-phone span {
+  position: absolute;
+  display: block;
+}
+
+.lp-mini-restaurant {
+  background: linear-gradient(180deg, #d9c9a8 0 34%, var(--lp-cream) 34%);
+}
+
+.lp-mini-restaurant .lpm-row {
+  left: 10%;
+  right: 10%;
+  height: 14%;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid var(--lp-line);
+}
+
+.lp-mini-restaurant .lpm-row:nth-of-type(2) { top: 42%; }
+.lp-mini-restaurant .lpm-row:nth-of-type(3) { top: 60%; }
+.lp-mini-restaurant .lpm-row-gold {
+  top: 78%;
+  background: var(--lp-gold-wash);
+  border-color: #ecd9ae;
+}
+
+.lp-mini-bar {
+  background: #0e1015;
+}
+
+.lp-mini-bar .lpm-glow {
+  inset: 0;
+  background:
+    radial-gradient(90% 50% at 70% 0%, rgba(232, 67, 147, 0.35), transparent 60%),
+    radial-gradient(90% 50% at 20% 8%, rgba(245, 158, 11, 0.3), transparent 60%);
+}
+
+.lp-mini-bar .lpm-row {
+  left: 10%;
+  right: 10%;
+  border-radius: 8px;
+}
+
+.lp-mini-bar .lpm-row-amber {
+  top: 30%;
+  height: 16%;
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(245, 158, 11, 0.6);
+}
+
+.lp-mini-bar .lpm-row-dark {
+  height: 14%;
+  background: #171a21;
+  border: 1px solid #242833;
+}
+
+.lp-mini-bar .lpm-row-dark:nth-of-type(3) { top: 52%; }
+.lp-mini-bar .lpm-row-dark:nth-of-type(4) { top: 71%; }
+
+.lp-mini-bar .lpm-chip {
+  bottom: 5%;
+  left: 10%;
+  right: 10%;
+  height: 9%;
+  border-radius: 99px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.5);
+}
+
+.lp-mini-hotel {
+  background: linear-gradient(180deg, #eaf0f8 0 26%, #f5f7fb 26%);
+}
+
+.lp-mini-hotel .lpm-row {
+  left: 10%;
+  right: 10%;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #dfe6ef;
+}
+
+.lp-mini-hotel .lpm-row-goldline {
+  top: 32%;
+  height: 16%;
+  background: #fdfaf1;
+  border-color: #c9a227;
+}
+
+.lp-mini-hotel .lpm-row:nth-of-type(2) {
+  top: 54%;
+  height: 14%;
+}
+
+.lp-mini-hotel .lpm-pair {
+  top: 73%;
+  left: 10%;
+  right: 10%;
+  height: 14%;
+  display: flex;
+  gap: 7%;
+}
+
+.lp-mini-hotel .lpm-half {
+  position: relative;
+  flex: 1;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #dfe6ef;
+}
+
+/* ------------------------------------------------- hotel price card */
+
+.lp-price-hotel {
+  position: relative;
+  border: 2px solid var(--lp-teal);
+  background: #f0faf8;
+}
+
+.lp-price-badge {
+  position: absolute;
+  top: -0.72rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  background: var(--lp-teal);
+  color: #ffffff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }

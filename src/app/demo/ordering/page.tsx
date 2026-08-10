@@ -46,7 +46,9 @@ export default function OrderingDemoPage() {
           tap Delivered, done.
         </p>
         <p className="od-crosslink">
-          <Link href="/demo">← Try the service-requests demo too</Link>
+          <Link href="/demo">← Service-requests demo</Link>
+          {" · "}
+          <Link href="/demo/hotel">Hotel demo →</Link>
         </p>
       </section>
 
