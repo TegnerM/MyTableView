@@ -139,9 +139,9 @@ export default async function HomePage({ searchParams }: PageProps) {
               </h1>
               <p className="lp-hero-sub">{t.hero.sub}</p>
               <div className="lp-hero-btns">
-                <a href="#features" className="lp-btn lp-btn-orange">
+                <Link href="/how-it-works" className="lp-btn lp-btn-orange">
                   {t.hero.ctaHow}
-                </a>
+                </Link>
                 <a href="#solutions" className="lp-btn lp-btn-outline">
                   {t.hero.ctaProducts}
                 </a>

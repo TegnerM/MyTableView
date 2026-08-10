@@ -104,6 +104,21 @@ const EN = {
     note1: "This is just a demo.",
     note2: "In a real hotel, all requests and staff are working in real time.",
   },
+  hiw: {
+    eyebrow: "HOW IT WORKS",
+    title: "From a tap at the table to a happy guest.",
+    sub: "One simple flow, whether it's a table, a barstool or a hotel room.",
+    s1t: "Guest connects",
+    s1d: "The guest scans the QR code or taps the NFC tag at their table or in their room. No app, no sign-up.",
+    s2t: "Guest asks for something",
+    s2d: "The menu, a request, the bill — one tap on their own phone.",
+    s3t: "Staff sees it instantly",
+    s3d: "The request appears live on the floor screen and the staff phones — for the right team.",
+    s4t: "Handled and confirmed",
+    s4d: "Staff completes it and the guest sees the status update on their phone.",
+    demosTitle: "See it in action",
+    demosSub: "Three demos, one for each kind of venue — pick yours.",
+  },
 };
 
 export type DemoStrings = typeof EN;
@@ -158,6 +173,21 @@ const ES: DemoStrings = {
     liveSub: "Juega a ser el huésped de la habitación 412 y el personal a la vez, aquí en el navegador. Sin registro.",
     note1: "Esto es solo una demo.", note2: "En un hotel real, todas las peticiones y el personal funcionan en tiempo real.",
   },
+  hiw: {
+    eyebrow: "CÓMO FUNCIONA",
+    title: "De un toque en la mesa a un cliente contento.",
+    sub: "Un flujo sencillo, sea una mesa, una barra o una habitación de hotel.",
+    s1t: "El cliente se conecta",
+    s1d: "El cliente escanea el QR o toca la etiqueta NFC en su mesa o habitación. Sin app, sin registro.",
+    s2t: "El cliente pide algo",
+    s2d: "La carta, una petición, la cuenta — un toque en su propio móvil.",
+    s3t: "El personal lo ve al instante",
+    s3d: "La petición aparece en vivo en la pantalla de sala y en los móviles del personal — para el equipo correcto.",
+    s4t: "Resuelto y confirmado",
+    s4d: "El personal lo completa y el cliente ve el estado actualizado en su móvil.",
+    demosTitle: "Míralo en acción",
+    demosSub: "Tres demos, una por cada tipo de local — elige la tuya.",
+  },
 };
 
 const DA: DemoStrings = {
@@ -209,6 +239,21 @@ const DA: DemoStrings = {
     b4t: "Data til beslutninger", b4d: "Følg svartider, anmodningstyper og personalets præstation.",
     liveSub: "Spil gæsten på værelse 412 og personalet på samme tid, lige her i browseren. Ingen tilmelding.",
     note1: "Dette er kun en demo.", note2: "På et rigtigt hotel arbejder alle anmodninger og alt personale i realtid.",
+  },
+  hiw: {
+    eyebrow: "SÅDAN VIRKER DET",
+    title: "Fra et tryk ved bordet til en glad gæst.",
+    sub: "Ét enkelt flow, uanset om det er et bord, en barstol eller et hotelværelse.",
+    s1t: "Gæsten forbinder",
+    s1d: "Gæsten scanner QR-koden eller holder telefonen mod NFC-mærket ved bordet eller på værelset. Ingen app, ingen tilmelding.",
+    s2t: "Gæsten beder om noget",
+    s2d: "Menuen, en anmodning, regningen — ét tryk på deres egen telefon.",
+    s3t: "Personalet ser det med det samme",
+    s3d: "Anmodningen vises live på salsskærmen og personalets telefoner — hos det rette team.",
+    s4t: "Løst og bekræftet",
+    s4d: "Personalet fuldfører den, og gæsten ser status opdateret på sin telefon.",
+    demosTitle: "Se det i aktion",
+    demosSub: "Tre demoer, én for hver slags sted — vælg din.",
   },
 };
 
@@ -262,6 +307,21 @@ const SV: DemoStrings = {
     liveSub: "Spela gästen i rum 412 och personalen samtidigt, direkt i webbläsaren. Ingen registrering.",
     note1: "Det här är bara en demo.", note2: "På ett riktigt hotell arbetar alla förfrågningar och all personal i realtid.",
   },
+  hiw: {
+    eyebrow: "SÅ FUNKAR DET",
+    title: "Från ett tryck vid bordet till en nöjd gäst.",
+    sub: "Ett enkelt flöde, oavsett om det är ett bord, en barstol eller ett hotellrum.",
+    s1t: "Gästen ansluter",
+    s1d: "Gästen skannar QR-koden eller håller telefonen mot NFC-taggen vid bordet eller på rummet. Ingen app, ingen registrering.",
+    s2t: "Gästen ber om något",
+    s2d: "Menyn, en förfrågan, notan — ett tryck på deras egen telefon.",
+    s3t: "Personalen ser det direkt",
+    s3d: "Förfrågan visas live på golvskärmen och personalens telefoner — hos rätt team.",
+    s4t: "Löst och bekräftat",
+    s4d: "Personalen slutför den och gästen ser statusen uppdateras på sin telefon.",
+    demosTitle: "Se det i praktiken",
+    demosSub: "Tre demos, en för varje slags ställe — välj din.",
+  },
 };
 
 const NO: DemoStrings = {
@@ -313,6 +373,21 @@ const NO: DemoStrings = {
     b4t: "Data for beslutninger", b4d: "Følg svartider, forespørselstyper og personalets prestasjon.",
     liveSub: "Spill gjesten på rom 412 og personalet samtidig, rett i nettleseren. Ingen registrering.",
     note1: "Dette er bare en demo.", note2: "På et ekte hotell jobber alle forespørsler og alt personale i sanntid.",
+  },
+  hiw: {
+    eyebrow: "SLIK VIRKER DET",
+    title: "Fra et trykk ved bordet til en fornøyd gjest.",
+    sub: "Én enkel flyt, enten det er et bord, en barkrakk eller et hotellrom.",
+    s1t: "Gjesten kobler til",
+    s1d: "Gjesten skanner QR-koden eller holder telefonen mot NFC-brikken ved bordet eller på rommet. Ingen app, ingen registrering.",
+    s2t: "Gjesten ber om noe",
+    s2d: "Menyen, en forespørsel, regningen — ett trykk på deres egen telefon.",
+    s3t: "Personalet ser det med en gang",
+    s3d: "Forespørselen vises live på gulvskjermen og personalets telefoner — hos riktig team.",
+    s4t: "Løst og bekreftet",
+    s4d: "Personalet fullfører den, og gjesten ser statusen oppdatert på sin telefon.",
+    demosTitle: "Se det i aksjon",
+    demosSub: "Tre demoer, én for hver type sted — velg din.",
   },
 };
 
@@ -366,6 +441,21 @@ const DE: DemoStrings = {
     liveSub: "Spielen Sie den Gast in Zimmer 412 und das Personal gleichzeitig, direkt im Browser. Ohne Anmeldung.",
     note1: "Das ist nur eine Demo.", note2: "In einem echten Hotel laufen alle Anfragen und das gesamte Personal in Echtzeit.",
   },
+  hiw: {
+    eyebrow: "SO FUNKTIONIERT ES",
+    title: "Vom Tipp am Tisch zum zufriedenen Gast.",
+    sub: "Ein einfacher Ablauf — ob Tisch, Barhocker oder Hotelzimmer.",
+    s1t: "Gast verbindet sich",
+    s1d: "Der Gast scannt den QR-Code oder hält das Handy an den NFC-Tag am Tisch oder im Zimmer. Keine App, keine Anmeldung.",
+    s2t: "Gast wünscht etwas",
+    s2d: "Die Karte, eine Anfrage, die Rechnung — ein Tipp auf dem eigenen Handy.",
+    s3t: "Personal sieht es sofort",
+    s3d: "Die Anfrage erscheint live auf dem Saalbildschirm und den Personal-Handys — beim richtigen Team.",
+    s4t: "Erledigt und bestätigt",
+    s4d: "Das Personal erledigt sie und der Gast sieht den Status auf seinem Handy.",
+    demosTitle: "In Aktion erleben",
+    demosSub: "Drei Demos, eine für jede Art von Betrieb — wählen Sie Ihre.",
+  },
 };
 
 const NL: DemoStrings = {
@@ -418,6 +508,21 @@ const NL: DemoStrings = {
     liveSub: "Speel de gast in kamer 412 en het personeel tegelijk, hier in de browser. Geen registratie.",
     note1: "Dit is maar een demo.", note2: "In een echt hotel werken alle verzoeken en al het personeel in realtime.",
   },
+  hiw: {
+    eyebrow: "HOE HET WERKT",
+    title: "Van een tik aan tafel naar een blije gast.",
+    sub: "Eén eenvoudige flow — of het nu een tafel, een barkruk of een hotelkamer is.",
+    s1t: "Gast verbindt",
+    s1d: "De gast scant de QR-code of houdt de telefoon tegen de NFC-tag aan tafel of op de kamer. Geen app, geen registratie.",
+    s2t: "Gast vraagt iets",
+    s2d: "De menukaart, een verzoek, de rekening — één tik op de eigen telefoon.",
+    s3t: "Personeel ziet het direct",
+    s3d: "Het verzoek verschijnt live op het zaalscherm en de telefoons van het personeel — bij het juiste team.",
+    s4t: "Afgehandeld en bevestigd",
+    s4d: "Het personeel handelt het af en de gast ziet de status op de eigen telefoon.",
+    demosTitle: "Zie het in actie",
+    demosSub: "Drie demo's, één per soort zaak — kies de jouwe.",
+  },
 };
 
 const FR: DemoStrings = {
@@ -469,6 +574,21 @@ const FR: DemoStrings = {
     b4t: "Des données pour décider", b4d: "Suivez les temps de réponse, les types de demandes et la performance de l'équipe.",
     liveSub: "Jouez le client de la chambre 412 et le personnel en même temps, ici dans le navigateur. Sans inscription.",
     note1: "Ceci n'est qu'une démo.", note2: "Dans un vrai hôtel, toutes les demandes et tout le personnel fonctionnent en temps réel.",
+  },
+  hiw: {
+    eyebrow: "COMMENT ÇA MARCHE",
+    title: "D'un geste à table à un client heureux.",
+    sub: "Un flux simple — table, tabouret de bar ou chambre d'hôtel.",
+    s1t: "Le client se connecte",
+    s1d: "Le client scanne le QR code ou approche son téléphone du tag NFC à table ou dans la chambre. Pas d'appli, pas d'inscription.",
+    s2t: "Le client demande quelque chose",
+    s2d: "La carte, une demande, l'addition — un geste sur son propre téléphone.",
+    s3t: "Le personnel le voit instantanément",
+    s3d: "La demande apparaît en direct sur l'écran de salle et les téléphones du personnel — pour la bonne équipe.",
+    s4t: "Traité et confirmé",
+    s4d: "Le personnel s'en occupe et le client voit le statut mis à jour sur son téléphone.",
+    demosTitle: "Voyez-le en action",
+    demosSub: "Trois démos, une par type d'établissement — choisissez la vôtre.",
   },
 };
 

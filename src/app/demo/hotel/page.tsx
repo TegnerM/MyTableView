@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { headers } from "next/headers";
 import { TrackBeacon } from "@/components/TrackBeacon";
-import { HotelDemo } from "@/components/HotelDemo";
 import {
   DemoHeader,
   DemoSteps,
@@ -11,7 +10,6 @@ import {
 } from "@/components/demo/DemoHeader";
 import { getDemoStrings, resolveDemoLocale } from "@/lib/i18n/demo";
 import "../demo-explainer.css";
-import "../demo.css";
 import "./hotel-demo.css";
 
 /**
@@ -206,16 +204,12 @@ export default async function HotelDemoPage({ searchParams }: PageProps) {
         ]}
       />
 
-      <DemoLiveBox title={t.live.title} sub={s.liveSub} btn={t.live.btn} />
+      <DemoLiveBox title={t.live.title} sub={s.liveSub} btn={t.live.btn} href="/demo/hotel/live" />
 
       <div className="dx-note">
         <b>{s.note1}</b> {s.note2}
       </div>
 
-      {/* The original playable Room 412 simulator. */}
-      <div id="try" className="dm-page">
-        <HotelDemo />
-      </div>
     </div>
   );
 }

@@ -608,6 +608,17 @@
   flex: 0 0 auto;
 }
 
+.dx-demolinks {
+  margin-left: auto;
+  display: flex;
+  gap: 0.6rem;
+  flex: 0 0 auto;
+}
+
+.dx-demolinks .dx-btn {
+  margin-left: 0;
+}
+
 /* ------------------------------------------------------------ note */
 
 .dx-note {

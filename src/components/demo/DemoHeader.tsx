@@ -9,7 +9,7 @@ import type { DemoStrings } from "@/lib/i18n/demo";
  */
 
 type Props = {
-  active: "restaurant" | "bar" | "hotel";
+  active: "restaurant" | "bar" | "hotel" | "how";
   t: DemoStrings;
 };
 
@@ -33,7 +33,9 @@ export function DemoHeader({ active, t }: Props) {
         <Link href="/demo/hotel" data-on={active === "hotel" ? "true" : undefined}>
           {t.nav.hotel}
         </Link>
-        <Link href="/#features">{t.nav.how}</Link>
+        <Link href="/how-it-works" data-on={active === "how" ? "true" : undefined}>
+          {t.nav.how}
+        </Link>
         <Link href="/#pricing">{t.nav.pricing}</Link>
       </nav>
 
@@ -118,15 +120,17 @@ function BenefitIcon({ kind }: { kind: "heart" | "spark" | "clock" | "chart" }) 
   );
 }
 
-/** The "try it live" box that leads into the interactive simulator. */
+/** The "try it live" box — links to the simulator's own page. */
 export function DemoLiveBox({
   title,
   sub,
   btn,
+  href,
 }: {
   title: string;
   sub: string;
   btn: string;
+  href: string;
 }) {
   return (
     <div className="dx-wrap">
@@ -136,9 +140,9 @@ export function DemoLiveBox({
           <b>{title}</b>
           <p>{sub}</p>
         </div>
-        <a href="#try" className="dx-btn dx-btn-orange">
+        <Link href={href} className="dx-btn dx-btn-orange">
           {btn}
-        </a>
+        </Link>
       </div>
     </div>
   );

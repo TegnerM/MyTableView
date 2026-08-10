@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { headers } from "next/headers";
 import { TrackBeacon } from "@/components/TrackBeacon";
-import { OrderingDemo } from "@/components/OrderingDemo";
 import {
   DemoHeader,
   DemoSteps,
@@ -11,7 +10,6 @@ import {
 } from "@/components/demo/DemoHeader";
 import { getDemoStrings, resolveDemoLocale } from "@/lib/i18n/demo";
 import "../demo-explainer.css";
-import "../demo.css";
 import "./ordering-demo.css";
 
 /**
@@ -153,12 +151,8 @@ export default async function OrderingDemoPage({ searchParams }: PageProps) {
         ]}
       />
 
-      <DemoLiveBox title={t.live.title} sub={s.liveSub} btn={t.live.btn} />
+      <DemoLiveBox title={t.live.title} sub={s.liveSub} btn={t.live.btn} href="/demo/ordering/live" />
 
-      {/* The original playable ordering simulator. */}
-      <div id="try" className="dm-page">
-        <OrderingDemo />
-      </div>
     </div>
   );
 }
