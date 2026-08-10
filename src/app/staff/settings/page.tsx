@@ -146,7 +146,7 @@ export default async function StaffSettingsPage() {
       .returns<{ id: string; display_name: string; role: string }[]>(),
     service
       .from("request_types")
-      .select("id, code, kind, label, sublabel, closes_session, active, sort_order")
+      .select("id, code, kind, label, sublabel, closes_session, active, sort_order, meta")
       .eq("venue_id", identity.venueId)
       .neq("kind", "order")
       .order("sort_order", { ascending: true })
@@ -160,6 +160,7 @@ export default async function StaffSettingsPage() {
           closes_session: boolean;
           active: boolean;
           sort_order: number;
+          meta?: Record<string, unknown> | null;
         }[]
       >(),
     service
@@ -196,15 +197,34 @@ export default async function StaffSettingsPage() {
     }))
     .sort((a, b) => (a.tableLabel ?? "zz").localeCompare(b.tableLabel ?? "zz"));
 
-  const guestButtonRows: GuestButtonRow[] = (buttonsResult.data ?? []).map(
-    (row) => ({
-      id: row.id,
-      code: row.code,
-      label: row.label ?? {},
-      sublabel: row.sublabel ?? {},
-      closesSession: row.closes_session,
-      active: row.active,
-    })
+  // Pre-migration database (no meta column yet): retry without it so
+  // the switches keep working until the migration runs.
+  let buttonRowsData = buttonsResult.data;
+  if (buttonsResult.error) {
+    const { data: fallback } = await service
+      .from("request_types")
+      .select("id, code, kind, label, sublabel, closes_session, active, sort_order")
+      .eq("venue_id", identity.venueId)
+      .neq("kind", "order")
+      .order("sort_order", { ascending: true })
+      .returns<NonNullable<typeof buttonsResult.data>>();
+    buttonRowsData = fallback;
+  }
+
+  const guestButtonRows: GuestButtonRow[] = (buttonRowsData ?? []).map(
+    (row) => {
+      const eta = row.meta?.etaMinutes;
+      return {
+        id: row.id,
+        code: row.code,
+        label: row.label ?? {},
+        sublabel: row.sublabel ?? {},
+        closesSession: row.closes_session,
+        active: row.active,
+        etaMinutes:
+          typeof eta === "number" && Number.isFinite(eta) ? eta : null,
+      };
+    }
   );
 
   const roleRank = { owner: 0, manager: 1, waiter: 2 } as const;
@@ -282,6 +302,9 @@ export default async function StaffSettingsPage() {
         <GuestButtonsCard
           rows={guestButtonRows}
           defaultLocale={data?.default_locale ?? "en"}
+          edition={data?.edition ?? "restaurant"}
+          isOwner={identity.role === "owner"}
+          orderingActive={billing.orderingActive}
         />
 
         <TeamCard

@@ -424,3 +424,82 @@
 .mtv-gb-switch[data-on="true"] .mtv-gb-knob {
   transform: translateX(1.02rem);
 }
+
+/* Taxi: the suggested pickup time, shown to guests when they book. */
+.mtv-gb-eta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.15rem 0.1rem 0.6rem;
+  padding: 0.55rem 0.7rem;
+  background: #f6f9f8;
+  border: 1px solid #d8e8e4;
+  border-radius: 0.6rem;
+  font-size: 0.78rem;
+  color: #3c4854;
+}
+
+.mtv-gb-eta input {
+  width: 3.2rem;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid #cfd8e0;
+  border-radius: 0.45rem;
+  font: inherit;
+  text-align: center;
+  background: #ffffff;
+}
+
+/* Custom buttons: the delete cross. */
+.mtv-gb-del {
+  flex: 0 0 auto;
+  width: 1.7rem;
+  height: 1.7rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid #e6c9c9;
+  border-radius: 0.5rem;
+  background: #fdf3f3;
+  color: #b3474c;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mtv-gb-del:disabled {
+  opacity: 0.6;
+}
+
+/* The "add your own button" box. */
+.mtv-gb-add {
+  margin-top: 0.7rem;
+  padding: 0.8rem;
+  border: 1.5px dashed #cfc6b4;
+  border-radius: 0.7rem;
+}
+
+.mtv-gb-add > p:first-child {
+  margin: 0 0 0.55rem;
+  font-size: 0.78rem;
+  color: var(--mtv-muted, #5c6b7a);
+}
+
+.mtv-gb-addline {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mtv-gb-addline + .mtv-gb-addline {
+  margin-top: 0.45rem;
+}
+
+.mtv-gb-addline input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #cfd8e0;
+  border-radius: 0.55rem;
+  font: inherit;
+  font-size: 0.85rem;
+  background: #ffffff;
+}

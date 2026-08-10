@@ -38,6 +38,8 @@ export type GuestRequestType = {
   sortOrder: number;
   /** Redundant while the menu is live (Drinks/Coffee/... buttons). */
   orderable: boolean;
+  /** Per-button configuration (e.g. the taxi's suggested pickup time). */
+  etaMinutes: number | null;
 };
 
 export type GuestVenue = {
@@ -119,6 +121,7 @@ type RequestTypeRow = {
   closes_session: boolean;
   sort_order: number;
   orderable: boolean | null;
+  meta?: Record<string, unknown> | null;
 };
 
 type OpenRequestRow = {
@@ -305,30 +308,52 @@ async function openGuestSession(
 async function loadRequestTypes(venueId: string): Promise<GuestRequestType[]> {
   const supabase = getServiceClient();
 
+  let rows: RequestTypeRow[] | null = null;
+
   const { data, error } = await supabase
     .from("request_types")
-    .select("id, code, kind, label, sublabel, icon, closes_session, sort_order, orderable")
+    .select("id, code, kind, label, sublabel, icon, closes_session, sort_order, orderable, meta")
     .eq("venue_id", venueId)
     .eq("active", true)
     .order("sort_order", { ascending: true })
     .returns<RequestTypeRow[]>();
 
   if (error) {
-    console.error("loadRequestTypes: failed", error);
-    return [];
+    // Pre-migration database (no meta column yet): the guest page must
+    // keep working — retry without it.
+    const { data: fallback, error: fallbackError } = await supabase
+      .from("request_types")
+      .select("id, code, kind, label, sublabel, icon, closes_session, sort_order, orderable")
+      .eq("venue_id", venueId)
+      .eq("active", true)
+      .order("sort_order", { ascending: true })
+      .returns<RequestTypeRow[]>();
+
+    if (fallbackError) {
+      console.error("loadRequestTypes: failed", fallbackError);
+      return [];
+    }
+    rows = fallback;
+  } else {
+    rows = data;
   }
 
-  return (data ?? []).map((row) => ({
-    id: row.id,
-    code: row.code,
-    kind: row.kind as RequestKind,
-    label: (row.label ?? {}) as LocaleMap,
-    sublabel: (row.sublabel ?? {}) as LocaleMap,
-    icon: row.icon,
-    closesSession: row.closes_session,
-    sortOrder: row.sort_order,
-    orderable: Boolean(row.orderable),
-  }));
+  return (rows ?? []).map((row) => {
+    const eta = row.meta?.etaMinutes;
+    return {
+      id: row.id,
+      code: row.code,
+      kind: row.kind as RequestKind,
+      label: (row.label ?? {}) as LocaleMap,
+      sublabel: (row.sublabel ?? {}) as LocaleMap,
+      icon: row.icon,
+      closesSession: row.closes_session,
+      sortOrder: row.sort_order,
+      orderable: Boolean(row.orderable),
+      etaMinutes:
+        typeof eta === "number" && Number.isFinite(eta) ? eta : null,
+    };
+  });
 }
 
 /**

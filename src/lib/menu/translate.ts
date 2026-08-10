@@ -95,6 +95,19 @@ async function translateText(
   return result;
 }
 
+/**
+ * Generic best-effort translation of one text into a set of locales —
+ * used for owner-written guest-button labels and other short strings.
+ * Returns only the translations that succeeded; empty without a key.
+ */
+export async function translateToLocales(
+  text: string,
+  sourceLocale: string,
+  targetLocales: string[]
+): Promise<Record<string, string>> {
+  return translateText(text, sourceLocale, targetLocales);
+}
+
 type TranslatableField = "name" | "description";
 
 /**

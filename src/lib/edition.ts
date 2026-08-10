@@ -171,10 +171,28 @@ export const HOTEL_REQUEST_TYPES: {
     },
   },
   {
+    code: "hotel_hk_coffee",
+    icon: "coffee",
+    closesSession: false,
+    sortOrder: 65,
+    label: {
+      en: "Extra coffee, tea, sugar & milk", es: "Más café, té, azúcar y leche",
+      da: "Mere kaffe, te, sukker og mælk", sv: "Mer kaffe, te, socker och mjölk",
+      no: "Mer kaffe, te, sukker og melk", de: "Mehr Kaffee, Tee, Zucker & Milch",
+      nl: "Extra koffie, thee, suiker en melk", fr: "Plus de café, thé, sucre et lait",
+    },
+    sublabel: {
+      en: "Refill the room tray", es: "Reponer la bandeja de la habitación",
+      da: "Genopfyld bakken på værelset", sv: "Fyll på rummets bricka",
+      no: "Etterfyll brettet på rommet", de: "Das Zimmertablett auffüllen",
+      nl: "Het blad op de kamer aanvullen", fr: "Recharger le plateau de la chambre",
+    },
+  },
+  {
     code: "hotel_maintenance",
     icon: "wrench",
     closesSession: false,
-    sortOrder: 65,
+    sortOrder: 66,
     label: {
       en: "Maintenance issue", es: "Avería / mantenimiento",
       da: "Noget virker ikke", sv: "Något är trasigt",
@@ -191,10 +209,45 @@ export const HOTEL_REQUEST_TYPES: {
     },
   },
   {
+    code: "hotel_book_table",
+    icon: "wine",
+    closesSession: false,
+    sortOrder: 67,
+    label: {
+      en: "Book a table for dinner", es: "Reservar mesa para cenar",
+      da: "Book et bord til middag", sv: "Boka bord till middag",
+      no: "Bestill bord til middag", de: "Tisch zum Abendessen reservieren",
+      nl: "Tafel reserveren voor het diner", fr: "Réserver une table pour le dîner",
+    },
+    sublabel: {
+      en: "At the hotel restaurant", es: "En el restaurante del hotel",
+      da: "På hotellets restaurant", sv: "På hotellets restaurang",
+      no: "På hotellets restaurant", de: "Im Hotelrestaurant",
+      nl: "In het hotelrestaurant", fr: "Au restaurant de l'hôtel",
+    },
+  },
+  {
+    code: "hotel_taxi",
+    icon: "taxi",
+    closesSession: false,
+    sortOrder: 68,
+    label: {
+      en: "Book a taxi", es: "Pedir un taxi", da: "Bestil en taxa",
+      sv: "Boka en taxi", no: "Bestill en taxi", de: "Ein Taxi bestellen",
+      nl: "Een taxi boeken", fr: "Réserver un taxi",
+    },
+    sublabel: {
+      en: "We'll send one to the entrance", es: "Lo enviamos a la entrada",
+      da: "Vi sender en til indgangen", sv: "Vi skickar en till entrén",
+      no: "Vi sender en til inngangen", de: "Wir schicken eins zum Eingang",
+      nl: "We sturen er een naar de ingang", fr: "Nous l'envoyons à l'entrée",
+    },
+  },
+  {
     code: "hotel_concierge",
     icon: "bell",
     closesSession: false,
-    sortOrder: 66,
+    sortOrder: 69,
     label: {
       en: "Concierge", es: "Conserjería", da: "Concierge", sv: "Concierge",
       no: "Concierge", de: "Concierge", nl: "Concierge", fr: "Conciergerie",
@@ -214,7 +267,7 @@ export const HOTEL_REQUEST_TYPES: {
     code: "hotel_late_checkout",
     icon: "clock",
     closesSession: false,
-    sortOrder: 67,
+    sortOrder: 70,
     label: {
       en: "Late check-out", es: "Salida tardía", da: "Sen check-ud",
       sv: "Sen utcheckning", no: "Sen utsjekk", de: "Später Check-out",

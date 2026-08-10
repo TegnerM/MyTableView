@@ -8,8 +8,10 @@ import type { VenueMenu } from "@/lib/menu/types";
 /**
  * The Hotel edition guest experience — the approved light-navy flow:
  * Room service (the money button), Housekeeping, Maintenance (with a
- * note), Concierge, plus the live status chip for the guest's own
- * requests and room-service order.
+ * note), and one tile per remaining button the hotel switched on —
+ * concierge, book a table, book a taxi (with the hotel's suggested
+ * pickup time), the hotel's own custom buttons — plus the live status
+ * chip for the guest's own requests and room-service order.
  *
  * Ordering reuses MenuOrder (theme="hotel"); requests reuse the same
  * guest APIs as every edition. Status is polled — guests have no
@@ -22,7 +24,26 @@ type RequestTypeView = {
   code: string;
   label: LocaleMap;
   sublabel: LocaleMap;
+  icon: string | null;
   closesSession: boolean;
+  etaMinutes: number | null;
+};
+
+/** Tile emoji by the request type's icon slug — covers the built-ins
+ *  and gives custom buttons their star. */
+const TILE_EMOJI: Record<string, string> = {
+  wrench: "🔧",
+  bell: "🛎️",
+  clock: "🕰️",
+  wine: "🍷",
+  taxi: "🚕",
+  star: "⭐",
+  coffee: "☕",
+  towel: "🧺",
+  bed: "🛏️",
+  pillow: "🛌",
+  soap: "🧴",
+  menu: "🍽️",
 };
 
 type Props = {
@@ -39,7 +60,7 @@ type Props = {
   strings: UiStringsShape;
 };
 
-type Sheet = "home" | "housekeeping" | "maintenance" | "concierge" | "status" | "sent";
+type Sheet = "home" | "housekeeping" | "maintenance" | "status" | "sent";
 
 type ActiveOrder = {
   phase: "received" | "preparing" | "on_the_way" | "delivered";
@@ -186,9 +207,11 @@ export function HotelGuest({
   );
 
   /* Grouping is by code convention: hotel_hk_* → the Housekeeping
-     sheet, hotel_maintenance → Maintenance, every other non-closing
-     signal → Concierge. Bill-style types don't exist on the hotel
-     home (a stay has no "ask for the bill"). */
+     sheet, hotel_maintenance → its note sheet, and every other
+     non-closing signal — concierge, book a table, taxi, the hotel's
+     own custom buttons — is its own tile: one tap sends the request.
+     Bill-style types don't exist on the hotel home (a stay has no
+     "ask for the bill"). */
   const housekeepingTypes = useMemo(
     () => requestTypes.filter((type) => type.code.startsWith("hotel_hk_")),
     [requestTypes]
@@ -197,7 +220,7 @@ export function HotelGuest({
     () => requestTypes.find((type) => type.code === "hotel_maintenance") ?? null,
     [requestTypes]
   );
-  const conciergeTypes = useMemo(
+  const tileTypes = useMemo(
     () =>
       requestTypes.filter(
         (type) =>
@@ -206,6 +229,16 @@ export function HotelGuest({
           !type.closesSession
       ),
     [requestTypes]
+  );
+
+  const tileSub = useCallback(
+    (type: RequestTypeView) => {
+      if (type.code === "hotel_taxi" && type.etaMinutes !== null) {
+        return t.hotelTaxiEta.replace("{min}", String(type.etaMinutes));
+      }
+      return pick(type.sublabel);
+    },
+    [pick, t]
   );
 
   const menuLive = orderingLive && menu.categories.length > 0;
@@ -276,8 +309,15 @@ export function HotelGuest({
           </button>
         ) : null}
 
-        {maintenanceType || conciergeTypes.length > 0 ? (
-          <div className="hotel-grid2" data-single={!maintenanceType || conciergeTypes.length === 0 ? "true" : "false"}>
+        {maintenanceType || tileTypes.length > 0 ? (
+          <div
+            className="hotel-grid2"
+            data-single={
+              (maintenanceType ? 1 : 0) + tileTypes.length === 1
+                ? "true"
+                : "false"
+            }
+          >
             {maintenanceType ? (
               <button
                 type="button"
@@ -294,23 +334,39 @@ export function HotelGuest({
                 </span>
               </button>
             ) : null}
-            {conciergeTypes.length > 0 ? (
+            {tileTypes.map((type) => (
               <button
+                key={type.id}
                 type="button"
                 className="hotel-action"
-                onClick={() => {
-                  setFailed(false);
-                  setSheet("concierge");
-                }}
+                disabled={busy}
+                onClick={() => void sendRequest(type.id)}
               >
-                <span className="hotel-ic" aria-hidden="true">🛎️</span>
+                <span className="hotel-ic" aria-hidden="true">
+                  {TILE_EMOJI[type.icon ?? ""] ?? "🛎️"}
+                </span>
                 <span className="hotel-tx">
-                  <span className="hotel-lb">{t.hotelConcierge}</span>
-                  <span className="hotel-sb">{t.hotelConciergeSub}</span>
+                  <span className="hotel-lb">{pick(type.label)}</span>
+                  {tileSub(type) ? (
+                    <span className="hotel-sb">{tileSub(type)}</span>
+                  ) : null}
                 </span>
               </button>
-            ) : null}
+            ))}
           </div>
+        ) : null}
+
+        {/* One-tap tiles send from the home sheet — their failure has
+            to show here, not only inside the overlay. */}
+        {failed && sheet === "home" ? (
+          <p className="hotel-error">{t.menuOrderFailed}</p>
+        ) : null}
+
+        {!menuLive &&
+        housekeepingTypes.length === 0 &&
+        !maintenanceType &&
+        tileTypes.length === 0 ? (
+          <p className="hotel-empty">{t.howCanWeHelp}</p>
         ) : null}
 
         {chipLabel ? (
@@ -358,20 +414,16 @@ export function HotelGuest({
                   ? t.hotelHousekeeping
                   : sheet === "maintenance"
                     ? t.hotelMaintenance
-                    : sheet === "concierge"
-                      ? t.hotelConcierge
-                      : sheet === "status"
-                        ? t.statusOrderTitle
-                        : t.barRequestSentTitle}
+                    : sheet === "status"
+                      ? t.statusOrderTitle
+                      : t.barRequestSentTitle}
               </b>
               <span>
                 {sheet === "housekeeping"
                   ? t.hotelHousekeepingPrompt
                   : sheet === "maintenance"
                     ? t.hotelMaintenancePrompt
-                    : sheet === "concierge"
-                      ? t.howCanWeHelp
-                      : `${roomLabel}${zoneName ? ` · ${zoneName}` : ""}`}
+                    : `${roomLabel}${zoneName ? ` · ${zoneName}` : ""}`}
               </span>
             </div>
             <span className="hotel-overlay-spacer" aria-hidden="true" />
@@ -417,23 +469,6 @@ export function HotelGuest({
                 </button>
               </>
             ) : null}
-
-            {sheet === "concierge"
-              ? conciergeTypes.map((type) => (
-                  <button
-                    key={type.id}
-                    type="button"
-                    className="hotel-opt"
-                    disabled={busy}
-                    onClick={() => void sendRequest(type.id)}
-                  >
-                    <span className="hotel-opt-name">{pick(type.label)}</span>
-                    {pick(type.sublabel) ? (
-                      <span className="hotel-opt-sub">{pick(type.sublabel)}</span>
-                    ) : null}
-                  </button>
-                ))
-              : null}
 
             {sheet === "status" ? (
               <>
@@ -536,9 +571,7 @@ export function HotelGuest({
 
             {failed ? <p className="hotel-error">{t.menuOrderFailed}</p> : null}
 
-            {sheet === "housekeeping" ||
-            sheet === "maintenance" ||
-            sheet === "concierge" ? (
+            {sheet === "housekeeping" || sheet === "maintenance" ? (
               <button
                 type="button"
                 className="hotel-ghost"

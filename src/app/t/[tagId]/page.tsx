@@ -134,7 +134,9 @@ export default async function GuestTagPage({ params }: PageProps) {
           code: type.code,
           label: type.label,
           sublabel: type.sublabel,
+          icon: type.icon,
           closesSession: type.closesSession,
+          etaMinutes: type.etaMinutes,
         }))}
         strings={strings}
       />

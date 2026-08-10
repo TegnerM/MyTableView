@@ -195,6 +195,7 @@ export type UiStrings = {
   hotelConcierge: string;
   hotelConciergeSub: string;
   hotelStatusChip: string;
+  hotelTaxiEta: string;
   statusInProgress: string;
 };
 
@@ -295,6 +296,7 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     hotelConcierge: "Concierge",
     hotelConciergeSub: "We're at your service",
     hotelStatusChip: "Your request:",
+    hotelTaxiEta: "Usually here in ~{min} min",
     statusInProgress: "In progress",
   },
   es: {
@@ -393,6 +395,7 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     hotelConcierge: "Conserjería",
     hotelConciergeSub: "A tu servicio",
     hotelStatusChip: "Tu petición:",
+    hotelTaxiEta: "Suele llegar en ~{min} min",
     statusInProgress: "En curso",
   },
   da: {
@@ -491,6 +494,7 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     hotelConcierge: "Concierge",
     hotelConciergeSub: "Vi står til tjeneste",
     hotelStatusChip: "Din anmodning:",
+    hotelTaxiEta: "Er her normalt om ~{min} min.",
     statusInProgress: "I gang",
   },
   sv: {
@@ -589,6 +593,7 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     hotelConcierge: "Concierge",
     hotelConciergeSub: "Vi står till tjänst",
     hotelStatusChip: "Din förfrågan:",
+    hotelTaxiEta: "Vanligtvis här inom ~{min} min",
     statusInProgress: "Pågår",
   },
   no: {
@@ -687,6 +692,7 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     hotelConcierge: "Concierge",
     hotelConciergeSub: "Vi står til tjeneste",
     hotelStatusChip: "Din forespørsel:",
+    hotelTaxiEta: "Er vanligvis her om ~{min} min",
     statusInProgress: "Pågår",
   },
   de: {
@@ -785,6 +791,7 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     hotelConcierge: "Concierge",
     hotelConciergeSub: "Wir sind für Sie da",
     hotelStatusChip: "Ihre Anfrage:",
+    hotelTaxiEta: "Meist in ~{min} Min. da",
     statusInProgress: "In Bearbeitung",
   },
   nl: {
@@ -883,6 +890,7 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     hotelConcierge: "Concierge",
     hotelConciergeSub: "We staan voor je klaar",
     hotelStatusChip: "Je verzoek:",
+    hotelTaxiEta: "Meestal binnen ~{min} min. hier",
     statusInProgress: "Bezig",
   },
   fr: {
@@ -981,6 +989,7 @@ export const UI_STRINGS: Record<string, UiStrings> = {
     hotelConcierge: "Conciergerie",
     hotelConciergeSub: "À votre service",
     hotelStatusChip: "Votre demande :",
+    hotelTaxiEta: "En général là dans ~{min} min",
     statusInProgress: "En cours",
   },
 };
