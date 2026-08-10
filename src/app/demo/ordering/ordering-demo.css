@@ -10,7 +10,7 @@
 }
 
 .od-crosslink a {
-  color: var(--mtv-brand-teal-deep, #0b5f56);
+  color: var(--mtv-brand-teal-deep, #9c6212);
   font-weight: 650;
   text-decoration: none;
 }
@@ -23,7 +23,7 @@
 
 .od-stage {
   display: grid;
-  grid-template-columns: 320px 1fr 1fr 320px;
+  grid-template-columns: 300px 1fr 1fr 300px;
   gap: 1.1rem;
   align-items: start;
   max-width: 90rem;

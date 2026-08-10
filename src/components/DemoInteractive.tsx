@@ -128,13 +128,13 @@ const INITIAL_TABLES: SimTable[] = [
   { id: "t4", label: "T4", zone: "Terrace", x: 38, y: 14, seatedAtTick: null, requests: [] },
   { id: "t7", label: "T7", zone: "Terrace", x: 24, y: 44, round: true, seatedAtTick: -24 * 60, requests: [], isYou: true },
   { id: "t5", label: "T5", zone: "Terrace", x: 10, y: 70, seatedAtTick: null, requests: [] },
-  { id: "t2", label: "T2", zone: "Inside", x: 60, y: 14, seatedAtTick: -32 * 60, requests: [{ code: "assistance", atTick: -7 * 60 }] },
+  { id: "t2", label: "T2", zone: "Inside", x: 60, y: 14, seatedAtTick: -32 * 60, requests: [] },
   { id: "t9", label: "T9", zone: "Inside", x: 84, y: 14, seatedAtTick: -24 * 60, requests: [] },
   { id: "t3", label: "T3", zone: "Inside", x: 60, y: 42, seatedAtTick: null, requests: [] },
   { id: "t6", label: "T6", zone: "Inside", x: 84, y: 42, round: true, seatedAtTick: null, requests: [] },
   { id: "b1", label: "B1", zone: "Bar", x: 46, y: 76, seatedAtTick: -11 * 60, requests: [] },
   { id: "b2", label: "B2", zone: "Bar", x: 66, y: 76, seatedAtTick: null, requests: [] },
-  { id: "b3", label: "B3", zone: "Bar", x: 86, y: 76, seatedAtTick: -18 * 60, requests: [{ code: "drinks", atTick: -6 * 60 }] },
+  { id: "b3", label: "B3", zone: "Bar", x: 86, y: 76, seatedAtTick: -18 * 60, requests: [] },
 ];
 
 /** The visitor's own request escalates to "overdue" after this many

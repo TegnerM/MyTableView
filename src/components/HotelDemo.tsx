@@ -71,31 +71,11 @@ export function HotelDemo() {
   const [requests, setRequests] = useState<SimRequest[]>([]);
   const [tickets, setTickets] = useState<SimTicket[]>([]);
   const nextId = useRef(1);
-  const ambientFired = useRef(false);
 
   useEffect(() => {
     const timer = window.setInterval(() => setTick((t) => t + 1), 1000);
     return () => window.clearInterval(timer);
   }, []);
-
-  /* An ambient request from another room keeps the floor alive even
-     before the visitor's first tap — clearly not theirs (Room 208). */
-  useEffect(() => {
-    if (tick >= 5 && !ambientFired.current) {
-      ambientFired.current = true;
-      setRequests((prev) => [
-        ...prev,
-        {
-          id: nextId.current++,
-          room: "Room 208",
-          label: "Extra pillows & blanket",
-          note: null,
-          state: "open",
-          createdAtTick: tick,
-        },
-      ]);
-    }
-  }, [tick]);
 
   const addRequest = (label: string, withNote?: string) => {
     setRequests((prev) => [

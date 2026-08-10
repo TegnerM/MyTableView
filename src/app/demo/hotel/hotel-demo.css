@@ -6,7 +6,7 @@
 
 .hd-panes {
   display: grid;
-  grid-template-columns: 390px minmax(0, 1fr);
+  grid-template-columns: 312px minmax(0, 1fr);
   gap: 1.6rem;
   align-items: start;
   max-width: 72rem;
@@ -20,7 +20,7 @@
     padding: 0 1rem 3rem;
   }
   .hd-phone {
-    max-width: 390px;
+    max-width: 320px;
     margin: 0 auto;
   }
 }
@@ -28,13 +28,13 @@
 /* ---------------------------------------------- guest phone */
 
 .hd-phone {
-  border-radius: 26px;
-  border: 6px solid #16293d;
+  border-radius: 34px;
+  border: 8px solid #2b3038;
   overflow: hidden;
   background: #f5f7fb;
   color: #16293d;
   box-shadow: 0 18px 40px rgba(22, 41, 61, 0.18);
-  min-height: 560px;
+  min-height: 620px;
 }
 
 .hd-ph-head {
@@ -54,7 +54,7 @@
 
 .hd-ph-brand em {
   font-style: normal;
-  color: #12a89a;
+  color: #d5872e;
   font-weight: 700;
 }
 
@@ -305,7 +305,7 @@
   padding: 12px;
   border-radius: 12px;
   border: none;
-  background: #16293d;
+  background: #9c6212;
   color: #ffffff;
   font-size: 13px;
   font-weight: 700;
@@ -457,7 +457,7 @@
 }
 
 .hd-req[data-state="open"] {
-  border-left: 4px solid #12a89a;
+  border-left: 4px solid #d5872e;
 }
 
 .hd-req[data-state="acknowledged"] {
@@ -497,7 +497,7 @@
   padding: 0.42rem 0.85rem;
   border-radius: 0.5rem;
   border: none;
-  background: #16293d;
+  background: #9c6212;
   color: #ffffff;
   font-size: 0.78rem;
   font-weight: 700;
@@ -519,7 +519,7 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   background: #f9efdd;
-  color: #8a6d1f;
+  color: #9c6212;
 }
 
 .hd-ticket[data-state="preparing"] .hd-ticket-state {
