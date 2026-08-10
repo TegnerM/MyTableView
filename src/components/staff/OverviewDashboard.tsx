@@ -4,7 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
+import { getOrderingStrings } from "@/lib/i18n/ordering";
 import { pickLocale } from "@/lib/i18n/guest";
+import {
+  groupVenues,
+  venueBaseName,
+  venueShortName,
+} from "@/lib/staff/venue-groups";
 import type { StaffIdentity } from "@/lib/staff/floor-types";
 import type { PropertyOverview, OverviewVenue } from "@/lib/staff/overview";
 
@@ -62,8 +68,26 @@ export function OverviewDashboard({
   }, []);
   const t = getStaffStrings(locale);
   const o = t.overview;
+  const editionNames = getOrderingStrings(locale).edition;
 
   const [switching, setSwitching] = useState<string | null>(null);
+
+  // "Grand Meridian" is ONE venue in the sidebar; its Restaurant /
+  // Bar / Hotel unfold beneath it. Groups start open.
+  const venueGroups = groupVenues(overview.venues);
+  const [closedGroups, setClosedGroups] = useState<Record<string, boolean>>({});
+
+  const editionName = (edition: string) =>
+    edition === "hotel"
+      ? editionNames.hotel
+      : edition === "bar"
+        ? editionNames.bar
+        : editionNames.restaurant;
+
+  /** Short display name for a grouped venue: "Restaurant", "Bar",
+   *  or the edition name when the venue IS the property (the hotel). */
+  const memberName = (venue: OverviewVenue, base: string) =>
+    venueShortName(venue.venueName, base) ?? editionName(venue.edition);
 
   // Auto-refresh: the dashboard is a wall screen too.
   useEffect(() => {
@@ -177,17 +201,52 @@ export function OverviewDashboard({
         </span>
 
         <p className="mtv-ov-group">{o.yourVenues}</p>
-        {overview.venues.map((venue) => (
-          <button
-            key={venue.venueId}
-            type="button"
-            className="mtv-ov-nav"
-            onClick={() => void openVenue(venue.venueId)}
-          >
-            <span className="mtv-ov-dot" data-edition={venue.edition} />
-            {venue.venueName}
-          </button>
-        ))}
+        {venueGroups.map((group) =>
+          group.grouped ? (
+            <div key={group.base}>
+              <button
+                type="button"
+                className="mtv-ov-nav mtv-ov-prop"
+                data-open={closedGroups[group.base] ? "false" : "true"}
+                aria-expanded={!closedGroups[group.base]}
+                onClick={() =>
+                  setClosedGroups((prev) => ({
+                    ...prev,
+                    [group.base]: !prev[group.base],
+                  }))
+                }
+              >
+                {group.base}
+                <i className="mtv-ov-caret" aria-hidden="true">▾</i>
+              </button>
+              {!closedGroups[group.base]
+                ? group.venues.map((venue) => (
+                    <button
+                      key={venue.venueId}
+                      type="button"
+                      className="mtv-ov-nav mtv-ov-sub"
+                      onClick={() => void openVenue(venue.venueId)}
+                    >
+                      <span className="mtv-ov-dot" data-edition={venue.edition} />
+                      {memberName(venue, group.base)}
+                    </button>
+                  ))
+                : null}
+            </div>
+          ) : (
+            group.venues.map((venue) => (
+              <button
+                key={venue.venueId}
+                type="button"
+                className="mtv-ov-nav"
+                onClick={() => void openVenue(venue.venueId)}
+              >
+                <span className="mtv-ov-dot" data-edition={venue.edition} />
+                {venue.venueName}
+              </button>
+            ))
+          )
+        )}
 
         <p className="mtv-ov-group">{o.tools}</p>
         <Link href="/staff/insights" className="mtv-ov-nav">
@@ -228,7 +287,15 @@ export function OverviewDashboard({
                   {EDITION_ICON[venue.edition] ?? "🍽️"}
                 </span>
                 <span className="mtv-ov-vtx">
-                  <b>{venue.venueName}</b>
+                  <b>
+                    {/* Grouped property: the card says "Restaurant",
+                        not "Grand Meridian — Restaurant". */}
+                    {venueGroups.find(
+                      (g) => g.grouped && g.base === venueBaseName(venue.venueName)
+                    )
+                      ? memberName(venue, venueBaseName(venue.venueName))
+                      : venue.venueName}
+                  </b>
                   <i>
                     {venue.edition === "hotel"
                       ? o.cardSubHotel

@@ -10,11 +10,11 @@
    (.mtv-floor) supplies page background, font and padding. */
 .mtv-insights{
   --mtv-panel: #ffffff;
-  --mtv-panel-2: #f6f4ef;
-  --mtv-line: #e5e0d5;
-  --mtv-text: #16293d;
-  --mtv-text-muted: #6b7a89;
-  --mtv-teal: #12a89a;
+  --mtv-panel-2: #f7f2ea;
+  --mtv-line: #e8e0d2;
+  --mtv-text: #1f2c38;
+  --mtv-text-muted: #5b6570;
+  --mtv-teal: #d5872e; /* legacy name, landing orange */
   --mtv-amber: #e09a12;
 
   max-width: 44rem;

@@ -2,11 +2,11 @@
    (.mtv-floor) supplies page background, font and padding. */
 .mtv-settings{
   --mtv-panel: #ffffff;
-  --mtv-panel-2: #f6f4ef;
-  --mtv-line: #e5e0d5;
-  --mtv-text: #16293d;
-  --mtv-text-muted: #6b7a89;
-  --mtv-teal: #12a89a;
+  --mtv-panel-2: #f7f2ea;
+  --mtv-line: #e8e0d2;
+  --mtv-text: #1f2c38;
+  --mtv-text-muted: #5b6570;
+  --mtv-teal: #d5872e; /* legacy name, landing orange */
   --mtv-overdue: #e5484d;
 
   max-width: 44rem;
@@ -127,7 +127,7 @@
 }
 
 .mtv-settings .mtv-btn-primary{
-  color: #04201d;
+  color: #ffffff;
   background: var(--mtv-teal);
   border-color: var(--mtv-teal);
 }
@@ -202,7 +202,7 @@
   padding: 0.55rem 0.7rem;
   font: inherit;
   font-size: 0.9rem;
-  color: var(--mtv-text, #16293d);
+  color: var(--mtv-text, #1f2c38);
   background: var(--mtv-card, #ffffff);
   border: 1px solid var(--mtv-line, #e5e0d5);
   border-radius: 0.5rem;
@@ -218,7 +218,7 @@
 
 .mtv-settings .mtv-team-form input:focus,
 .mtv-settings .mtv-team-form select:focus{
-  outline: 2px solid var(--mtv-teal, #12a89a);
+  outline: 2px solid var(--mtv-teal, #d5872e);
   outline-offset: 1px;
 }
 
@@ -402,7 +402,7 @@
 }
 
 .mtv-gb-switch[data-on="true"] {
-  background: var(--mtv-brand-teal, #12a89a);
+  background: var(--mtv-brand-teal, #d5872e);
 }
 
 .mtv-gb-switch:disabled {

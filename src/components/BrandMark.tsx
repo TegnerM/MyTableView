@@ -4,7 +4,7 @@
  * One component, every surface: the monogram strokes follow
  * currentColor so each theme (dark floor, light editor, warm guest)
  * colours it from its own text colour; only the Y-tick keeps the brand
- * teal everywhere.
+ * orange everywhere.
  */
 
 type Props = {
@@ -37,7 +37,7 @@ export function BrandMark({ withWordmark = true, className }: Props) {
         <path
           d="M18 31 l4 5 4-5"
           fill="none"
-          stroke="#12a89a"
+          stroke="#d5872e"
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"

@@ -12,12 +12,13 @@ import {
 } from "@/lib/i18n/staff";
 import { getShopStrings } from "@/lib/i18n/shop";
 import { getOrderingStrings } from "@/lib/i18n/ordering";
+import { groupVenues, venueShortName } from "@/lib/staff/venue-groups";
 
 /**
- * The one staff chrome: dark sidebar, navigation, user card, day/night
- * toggle, sign out. The floor, Insights and Settings all render inside
- * it, so navigation and theming are identical everywhere — a page can
- * no longer invent its own chrome and drift.
+ * The one staff chrome: warm sand sidebar, navigation, user card,
+ * day/night toggle, sign out. The floor, Insights and Settings all
+ * render inside it, so navigation and theming are identical
+ * everywhere — a page can no longer invent its own chrome and drift.
  *
  * The theme is remembered per device under the same key the floor has
  * always used, so an existing night-mode choice carries over.
@@ -42,7 +43,7 @@ type Props = {
   /** The venue this device is working as. */
   venueId?: string;
   /** All venues on this account; two or more shows the switcher. */
-  venues?: { venueId: string; venueName: string }[];
+  venues?: { venueId: string; venueName: string; edition?: string }[];
   /** Extra element next to the brand — the floor puts its Live badge here. */
   badge?: ReactNode;
   children: ReactNode;
@@ -160,11 +161,38 @@ export function StaffShell({
               value={venueId}
               onChange={(event) => void switchVenue(event.target.value)}
             >
-              {venues.map((venue) => (
-                <option key={venue.venueId} value={venue.venueId}>
-                  {venue.venueName}
-                </option>
-              ))}
+              {/* "Grand Meridian" is one property — its Restaurant /
+                  Bar / Hotel nest under it instead of reading as
+                  three unrelated venues. */}
+              {groupVenues(venues).map((group) =>
+                group.grouped ? (
+                  <optgroup key={group.base} label={group.base}>
+                    {group.venues.map((venue) => {
+                      const editions = getOrderingStrings(locale).edition;
+                      const editionLabel =
+                        venue.edition === "hotel"
+                          ? editions.hotel
+                          : venue.edition === "bar"
+                            ? editions.bar
+                            : venue.edition === "restaurant"
+                              ? editions.restaurant
+                              : venue.venueName;
+                      return (
+                        <option key={venue.venueId} value={venue.venueId}>
+                          {venueShortName(venue.venueName, group.base) ??
+                            editionLabel}
+                        </option>
+                      );
+                    })}
+                  </optgroup>
+                ) : (
+                  group.venues.map((venue) => (
+                    <option key={venue.venueId} value={venue.venueId}>
+                      {venue.venueName}
+                    </option>
+                  ))
+                )
+              )}
             </select>
           </label>
         ) : null}

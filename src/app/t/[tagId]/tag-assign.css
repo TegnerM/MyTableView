@@ -7,8 +7,8 @@
   place-items: center;
   min-height: 100dvh;
   padding: 1.25rem;
-  background: var(--mtv-brand-sand, #f6f4ef);
-  color: var(--mtv-brand-navy, #16293d);
+  background: var(--mtv-brand-sand, #f7f2ea);
+  color: var(--mtv-brand-navy, #1f2c38);
   font-family:
     ui-sans-serif,
     system-ui,
@@ -24,7 +24,7 @@
   padding: 1.75rem 1.5rem;
   text-align: center;
   background: var(--mtv-brand-card, #ffffff);
-  border: 1px solid var(--mtv-brand-line, #e0dace);
+  border: 1px solid var(--mtv-brand-line, #e8e0d2);
   border-radius: 1rem;
   box-shadow: 0 18px 40px rgba(22, 41, 61, 0.08);
 }
@@ -37,7 +37,7 @@
 }
 
 .mtv-tagassign .mtv-tagassign-brand span{
-  color: var(--mtv-brand-teal, #12a89a);
+  color: var(--mtv-brand-teal, #d5872e);
 }
 
 .mtv-tagassign h1{
@@ -51,7 +51,7 @@
   margin: 0 0 1.25rem;
   font-size: 0.9375rem;
   line-height: 1.55;
-  color: var(--mtv-brand-muted, #5c6b7a);
+  color: var(--mtv-brand-muted, #5b6570);
 }
 
 .mtv-tagassign .mtv-tagassign-grid{
@@ -65,16 +65,16 @@
   padding: 0.9rem 0.25rem;
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--mtv-brand-teal-deep, #0b5f56);
-  background: var(--mtv-brand-teal-wash, #e6f6f4);
-  border: 1.5px solid var(--mtv-brand-teal, #12a89a);
+  color: var(--mtv-brand-teal-deep, #9c6212);
+  background: var(--mtv-brand-teal-wash, #f9efdd);
+  border: 1.5px solid var(--mtv-brand-teal, #d5872e);
   border-radius: 0.6rem;
   cursor: pointer;
   transition: background-color 120ms ease;
 }
 
 .mtv-tagassign .mtv-tagassign-table:hover:not(:disabled){
-  background: #d3efeb;
+  background: #f3e6cc;
 }
 
 .mtv-tagassign .mtv-tagassign-table:disabled{
@@ -95,5 +95,5 @@
 .mtv-tagassign .mtv-tagassign-note{
   margin: 0;
   font-size: 0.75rem;
-  color: var(--mtv-brand-muted, #5c6b7a);
+  color: var(--mtv-brand-muted, #5b6570);
 }

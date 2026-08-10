@@ -8,31 +8,34 @@
  */
 
 :root {
-  /* Warm Mediterranean ground */
-  --mtv-brand-sand: #f6f4ef;
-  --mtv-brand-cream: #fbf9f5;
+  /* Warm ivory ground — the landing page palette, everywhere. */
+  --mtv-brand-sand: #f7f2ea;
+  --mtv-brand-cream: #fdfaf5;
   --mtv-brand-card: #ffffff;
-  --mtv-brand-line: #e0dace;
+  --mtv-brand-line: #e8e0d2;
 
   /* Ink */
-  --mtv-brand-navy: #16293d;
-  --mtv-brand-navy-soft: #24405c;
-  --mtv-brand-muted: #5c6b7a;
-  --mtv-brand-ink: #0f1c2a;
+  --mtv-brand-navy: #1f2c38;
+  --mtv-brand-navy-soft: #33424f;
+  --mtv-brand-muted: #5b6570;
+  --mtv-brand-ink: #141b22;
 
-  /* Accents */
-  --mtv-brand-teal: #12a89a;
-  --mtv-brand-teal-dark: #0d8478;
-  --mtv-brand-teal-deep: #0b5f56;
-  --mtv-brand-teal-wash: #e6f6f4;
+  /* Accents. NOTE: the "-teal" names are legacy — since the 2026-08
+     warm retheme they carry the landing page's ORANGE. Renamed in
+     place so a dozen stylesheets didn't need touching. */
+  --mtv-brand-teal: #d5872e;
+  --mtv-brand-teal-dark: #c47a24;
+  --mtv-brand-teal-deep: #9c6212;
+  --mtv-brand-teal-wash: #f9efdd;
   --mtv-brand-gold: #c9963f;
 
-  /* Dark app chrome (staff sidebar / editor bar) */
-  --mtv-brand-chrome: #0d262e;
-  --mtv-brand-chrome-2: #123039;
-  --mtv-brand-chrome-line: #1d4049;
-  --mtv-brand-chrome-text: #e8f0f2;
-  --mtv-brand-chrome-muted: #8fadb5;
+  /* Warm app chrome (staff sidebar / editor bar) — the sand panel
+     from the approved warm-theme mock; no dark chrome when logged in. */
+  --mtv-brand-chrome: #ead9bd;
+  --mtv-brand-chrome-2: #f9f3e7;
+  --mtv-brand-chrome-line: #d9c6a4;
+  --mtv-brand-chrome-text: #1f2c38;
+  --mtv-brand-chrome-muted: #6b5b41;
 }
 
 *,

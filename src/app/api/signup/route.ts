@@ -189,15 +189,20 @@ export async function POST(request: Request) {
         ? body.includeBar
         : meta.include_bar === true;
 
+    // Truncate the BASE, never the suffix: "<Property> — Restaurant"
+    // must survive intact — venue grouping in the staff navigation
+    // splits on the " — " separator to nest the trio under one
+    // property.
+    const siblingBase = venueName.slice(0, 64).trim();
     const siblings: { name: string; edition: string }[] = [];
     if (wantRestaurant) {
       siblings.push({
-        name: `${venueName} — Restaurant`.slice(0, 80),
+        name: `${siblingBase} — Restaurant`,
         edition: "restaurant",
       });
     }
     if (wantBar) {
-      siblings.push({ name: `${venueName} — Bar`.slice(0, 80), edition: "bar" });
+      siblings.push({ name: `${siblingBase} — Bar`, edition: "bar" });
     }
 
     for (const sibling of siblings) {

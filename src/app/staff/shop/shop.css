@@ -2,7 +2,7 @@
 
 .mtv-shop{
   padding: 1.25rem 1.5rem 3rem;
-  color: var(--mtv-text, #16293d);
+  color: var(--mtv-text, #1f2c38);
 }
 
 .mtv-shop .mtv-shop-head h1{
@@ -85,9 +85,9 @@
   margin: 0 0 1rem;
   padding: 0.7rem 0.85rem;
   font-size: 0.9rem;
-  color: var(--mtv-teal-deep, #0b5f56);
-  background: var(--mtv-teal-wash, #e6f6f4);
-  border: 1px solid var(--mtv-teal, #12a89a);
+  color: var(--mtv-teal-deep, #9c6212);
+  background: var(--mtv-teal-wash, #f9efdd);
+  border: 1px solid var(--mtv-teal, #d5872e);
   border-radius: 0.6rem;
 }
 

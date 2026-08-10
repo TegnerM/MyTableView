@@ -8,8 +8,8 @@
   display: grid;
   grid-template-columns: 236px minmax(0, 1fr);
   min-height: 100dvh;
-  background: #f6f4ef;
-  color: #16293d;
+  background: #f7f2ea;
+  color: #1f2c38;
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
@@ -31,8 +31,9 @@
   display: flex;
   flex-direction: column;
   padding: 1.1rem 0.9rem;
-  background: #101f30;
-  color: #e8edf3;
+  background: #ead9bd;
+  color: #1f2c38;
+  border-right: 1px solid #d9c6a4;
 }
 
 .mtv-ov-logo {
@@ -46,7 +47,7 @@
 
 .mtv-ov-logo em {
   font-style: normal;
-  color: #12a89a;
+  color: #d5872e;
 }
 
 .mtv-ov-mk {
@@ -54,7 +55,7 @@
   height: 26px;
   display: grid;
   place-items: center;
-  border: 2.5px solid #e8edf3;
+  border: 2.5px solid #1f2c38;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 800;
@@ -67,7 +68,7 @@
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #7d8ea1;
+  color: #8a5511;
 }
 
 .mtv-ov-nav {
@@ -79,7 +80,7 @@
   border: none;
   border-radius: 0.55rem;
   background: transparent;
-  color: #c5d0dc;
+  color: #3f382e;
   font: inherit;
   font-size: 0.86rem;
   text-align: left;
@@ -88,14 +89,15 @@
 }
 
 .mtv-ov-nav:hover {
-  background: #182a3e;
-  color: #ffffff;
+  background: #f3e9d5;
+  color: #1f2c38;
 }
 
 .mtv-ov-nav-on {
-  background: #1d3048;
-  color: #ffffff;
+  background: #f9f3e7;
+  color: #8a5511;
   font-weight: 700;
+  box-shadow: 0 2px 6px rgba(31, 44, 56, 0.06);
   cursor: default;
 }
 
@@ -119,14 +121,14 @@
 .mtv-ov-foot {
   margin-top: auto;
   padding: 0.8rem 0.5rem 0.2rem;
-  border-top: 1px solid #1d3048;
+  border-top: 1px solid #d9c6a4;
   font-size: 0.8rem;
-  color: #c5d0dc;
+  color: #54473a;
 }
 
 .mtv-ov-foot b {
   display: block;
-  color: #ffffff;
+  color: #1f2c38;
   font-size: 0.85rem;
 }
 
@@ -145,14 +147,14 @@
 }
 
 .mtv-ov-top h1 {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--mtv-serif, Georgia), Georgia, "Times New Roman", serif;
   font-size: 1.55rem;
   font-weight: 700;
 }
 
 .mtv-ov-top p {
   margin-top: 0.2rem;
-  color: #5c6b7a;
+  color: #5b6570;
   font-size: 0.9rem;
 }
 
@@ -160,7 +162,7 @@
   margin-left: auto;
   padding-top: 0.4rem;
   font-size: 0.85rem;
-  color: #5c6b7a;
+  color: #5b6570;
   white-space: nowrap;
 }
 
@@ -187,7 +189,7 @@
 
 .mtv-ov-vcard {
   background: #ffffff;
-  border: 1px solid #e0dace;
+  border: 1px solid #e8e0d2;
   border-radius: 1rem;
   overflow: hidden;
 }
@@ -228,7 +230,7 @@
 .mtv-ov-vtx i {
   font-style: normal;
   font-size: 0.75rem;
-  color: #5c6b7a;
+  color: #5b6570;
 }
 
 .mtv-ov-vstats {
@@ -260,7 +262,7 @@
   display: block;
   margin-top: 0.15rem;
   font-size: 0.66rem;
-  color: #5c6b7a;
+  color: #5b6570;
   line-height: 1.25;
 }
 
@@ -295,7 +297,7 @@
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #8a6d1f;
+  color: #9c6212;
 }
 
 .mtv-ov-pgrid {
@@ -313,7 +315,7 @@
 
 .mtv-ov-pcard {
   background: #ffffff;
-  border: 1px solid #e0dace;
+  border: 1px solid #e8e0d2;
   border-radius: 0.9rem;
   padding: 0.9rem 1rem;
 }
@@ -321,7 +323,7 @@
 .mtv-ov-pcard span {
   display: block;
   font-size: 0.72rem;
-  color: #5c6b7a;
+  color: #5b6570;
 }
 
 .mtv-ov-pcard b {
@@ -357,7 +359,7 @@
 
 .mtv-ov-panel {
   background: #ffffff;
-  border: 1px solid #e0dace;
+  border: 1px solid #e8e0d2;
   border-radius: 1rem;
   padding: 1rem 1.1rem;
 }
@@ -368,7 +370,7 @@
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #5c6b7a;
+  color: #5b6570;
 }
 
 .mtv-ov-empty {
@@ -420,7 +422,7 @@
 .mtv-ov-alert-tx i {
   font-style: normal;
   font-size: 0.72rem;
-  color: #5c6b7a;
+  color: #5b6570;
 }
 
 .mtv-ov-chip {
@@ -435,7 +437,7 @@
   white-space: nowrap;
 }
 
-.mtv-ov-chip[data-edition="restaurant"] { background: #f9efdd; color: #8a6d1f; }
+.mtv-ov-chip[data-edition="restaurant"] { background: #f9efdd; color: #9c6212; }
 .mtv-ov-chip[data-edition="bar"] { background: #fdeef5; color: #c92a76; }
 .mtv-ov-chip[data-edition="hotel"] { background: #eaf0f8; color: #24557c; }
 
@@ -466,4 +468,30 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ---------------------------------------------- property grouping */
+/* One property, its venues nested beneath — "Grand Meridian" is ONE
+   venue to the owner; Restaurant / Bar / Hotel live under it. */
+
+.mtv-ov-prop {
+  font-weight: 700;
+  color: #1f2c38;
+}
+
+.mtv-ov-prop .mtv-ov-caret {
+  margin-left: auto;
+  font-style: normal;
+  font-size: 0.68rem;
+  color: #8a5511;
+  transition: transform 140ms ease;
+}
+
+.mtv-ov-prop[data-open="false"] .mtv-ov-caret {
+  transform: rotate(-90deg);
+}
+
+.mtv-ov-sub {
+  padding-left: 1.7rem;
+  font-size: 0.84rem;
 }

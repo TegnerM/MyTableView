@@ -19,26 +19,26 @@
   /* Aliases of the shared brand tokens (globals.css), with the same
      values as fallbacks. --sand matches the floor shell's page
      background so switching between floor and editor doesn't shift. */
-  --sand: var(--mtv-brand-sand, #f6f4ef);
+  --sand: var(--mtv-brand-sand, #f7f2ea);
   --sand-deep: #efeae1;
   --card: var(--mtv-brand-card, #ffffff);
-  --line: var(--mtv-brand-line, #e0dace);
-  --navy: var(--mtv-brand-navy, #16293d);
-  --navy-soft: var(--mtv-brand-navy-soft, #24405c);
-  --text: var(--mtv-brand-navy, #16293d);
+  --line: var(--mtv-brand-line, #e8e0d2);
+  --navy: var(--mtv-brand-navy, #1f2c38);
+  --navy-soft: var(--mtv-brand-navy-soft, #33424f);
+  --text: var(--mtv-brand-navy, #1f2c38);
   --muted: #6b7a89;
-  --teal: var(--mtv-brand-teal, #12a89a);
-  --teal-dark: var(--mtv-brand-teal-dark, #0d8478);
-  --teal-deep: var(--mtv-brand-teal-deep, #0b5f56);
-  --teal-wash: var(--mtv-brand-teal-wash, #e6f6f4);
+  --teal: var(--mtv-brand-teal, #d5872e);
+  --teal-dark: var(--mtv-brand-teal-dark, #c47a24);
+  --teal-deep: var(--mtv-brand-teal-deep, #9c6212);
+  --teal-wash: var(--mtv-brand-teal-wash, #f9efdd);
   --terracotta: #c2643f;
   --terracotta-wash: #fbeee8;
   /* Dark chrome, same as the staff shell sidebar. */
-  --chrome: var(--mtv-brand-chrome, #0d262e);
-  --chrome-2: var(--mtv-brand-chrome-2, #123039);
-  --chrome-line: var(--mtv-brand-chrome-line, #1d4049);
-  --chrome-text: var(--mtv-brand-chrome-text, #e8f0f2);
-  --chrome-muted: var(--mtv-brand-chrome-muted, #8fadb5);
+  --chrome: var(--mtv-brand-chrome, #ead9bd);
+  --chrome-2: var(--mtv-brand-chrome-2, #f9f3e7);
+  --chrome-line: var(--mtv-brand-chrome-line, #d9c6a4);
+  --chrome-text: var(--mtv-brand-chrome-text, #1f2c38);
+  --chrome-muted: var(--mtv-brand-chrome-muted, #6b5b41);
 
   display: flex;
   flex-direction: column;
@@ -195,11 +195,11 @@
 }
 
 .mtv-layout .mtv-status[data-state="saved"]{
-  color: #4ade80;
+  color: #27824a;
 }
 
 .mtv-layout .mtv-status[data-state="failed"]{
-  color: #ef6b6f;
+  color: #c03338;
 }
 
 /* --------------------------------------------------------------- */
@@ -579,7 +579,7 @@
 .mtv-layout .mtv-plan-table[data-selected="true"]{
   border-color: var(--teal);
   background: var(--teal-wash);
-  box-shadow: 0 0 0 3px rgba(18, 168, 154, 0.25);
+  box-shadow: 0 0 0 3px rgba(213, 135, 46, 0.25);
 }
 
 .mtv-layout .mtv-plan-table[data-picked="true"]{
@@ -702,8 +702,8 @@
   padding: 0.25rem 0.7rem;
   font-size: 0.8125rem;
   font-weight: 700;
-  color: #58c7ba;
-  background: rgba(18, 168, 154, 0.12);
+  color: var(--teal-deep, #9c6212);
+  background: var(--teal-wash, #f9efdd);
   border: 1px dashed var(--teal);
   border-radius: 999px;
   cursor: pointer;
@@ -713,7 +713,7 @@
 }
 
 .mtv-layout .mtv-zone-add:hover{
-  background: rgba(18, 168, 154, 0.22);
+  background: rgba(213, 135, 46, 0.18);
   border-style: solid;
 }
 

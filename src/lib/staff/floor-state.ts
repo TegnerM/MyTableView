@@ -74,6 +74,7 @@ export async function getStaffIdentity(): Promise<StaffIdentity | null> {
     venues: memberships.map((m) => ({
       venueId: m.venueId,
       venueName: m.venueName,
+      edition: m.edition,
     })),
   };
 }

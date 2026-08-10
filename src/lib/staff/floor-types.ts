@@ -105,7 +105,7 @@ export type StaffIdentity = {
   /** The venue's edition — drives Rooms/Tables wording. */
   edition: string;
   /** Every venue this account belongs to; drives the venue switcher. */
-  venues?: { venueId: string; venueName: string }[];
+  venues?: { venueId: string; venueName: string; edition?: string }[];
 };
 
 /** The ordering module's payload on an order-kind request. */

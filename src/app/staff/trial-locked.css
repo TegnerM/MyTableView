@@ -9,8 +9,8 @@
   place-items: center;
   min-height: 100dvh;
   padding: 1.5rem;
-  background: var(--mtv-brand-sand, #f6f4ef);
-  color: var(--mtv-brand-navy, #16293d);
+  background: var(--mtv-brand-sand, #f7f2ea);
+  color: var(--mtv-brand-navy, #1f2c38);
   font-family:
     ui-sans-serif,
     system-ui,
@@ -26,7 +26,7 @@
   padding: 2.25rem 2rem;
   text-align: center;
   background: var(--mtv-brand-card, #ffffff);
-  border: 1px solid var(--mtv-brand-line, #e0dace);
+  border: 1px solid var(--mtv-brand-line, #e8e0d2);
   border-radius: 1rem;
   box-shadow: 0 18px 40px rgba(22, 41, 61, 0.08);
 }
@@ -35,7 +35,7 @@
   justify-content: center;
   width: 100%;
   font-size: 1.2rem;
-  color: var(--mtv-brand-navy, #16293d);
+  color: var(--mtv-brand-navy, #1f2c38);
 }
 
 .mtv-locked h1{
@@ -49,13 +49,13 @@
   margin: 0.7rem 0 0;
   font-size: 0.9375rem;
   line-height: 1.55;
-  color: var(--mtv-brand-muted, #5c6b7a);
+  color: var(--mtv-brand-muted, #5b6570);
 }
 
 .mtv-locked .mtv-locked-note{
   margin: 1rem 0 0;
   font-size: 0.8125rem;
-  color: var(--mtv-brand-muted, #5c6b7a);
+  color: var(--mtv-brand-muted, #5b6570);
 }
 
 .mtv-locked .mtv-locked-plans{
@@ -73,14 +73,14 @@
   font-size: 0.9375rem;
   font-weight: 650;
   color: #ffffff;
-  background: var(--mtv-brand-teal-deep, #0b5f56);
+  background: var(--mtv-brand-teal-deep, #9c6212);
   border-radius: 0.6rem;
   cursor: pointer;
   transition: background-color 140ms ease;
 }
 
 .mtv-locked .mtv-locked-plan:hover:not(:disabled){
-  background: var(--mtv-brand-teal-dark, #0d8478);
+  background: var(--mtv-brand-teal-dark, #c47a24);
 }
 
 .mtv-locked .mtv-locked-plan:disabled{
@@ -95,13 +95,13 @@
 }
 
 .mtv-locked .mtv-locked-plan[data-variant="ghost"]{
-  color: var(--mtv-brand-teal-dark, #0d8478);
+  color: var(--mtv-brand-teal-dark, #c47a24);
   background: var(--mtv-brand-card, #ffffff);
-  border: 1px solid var(--mtv-brand-teal, #12a89a);
+  border: 1px solid var(--mtv-brand-teal, #d5872e);
 }
 
 .mtv-locked .mtv-locked-plan[data-variant="ghost"]:hover:not(:disabled){
-  background: var(--mtv-brand-teal-wash, #e6f6f4);
+  background: var(--mtv-brand-teal-wash, #f9efdd);
 }
 
 .mtv-locked .mtv-locked-error{
@@ -118,7 +118,7 @@
   margin-top: 1.25rem;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--mtv-brand-muted, #5c6b7a);
+  color: var(--mtv-brand-muted, #5b6570);
   background: none;
   border: none;
   cursor: pointer;
@@ -139,8 +139,8 @@
   gap: 0.35rem;
   padding: 0.25rem;
   margin-bottom: 0.75rem;
-  background: var(--mtv-brand-sand, #f6f4ef);
-  border: 1px solid var(--mtv-brand-line, #e0dace);
+  background: var(--mtv-brand-sand, #f7f2ea);
+  border: 1px solid var(--mtv-brand-line, #e8e0d2);
   border-radius: 0.6rem;
 }
 
@@ -149,7 +149,7 @@
   padding: 0.45rem 0.5rem;
   font-size: 0.8125rem;
   font-weight: 650;
-  color: var(--mtv-brand-muted, #5c6b7a);
+  color: var(--mtv-brand-muted, #5b6570);
   background: transparent;
   border: none;
   border-radius: 0.45rem;
@@ -157,7 +157,7 @@
 }
 
 .mtv-plans-toggle button[data-active="true"]{
-  color: var(--mtv-brand-teal-deep, #0b5f56);
+  color: var(--mtv-brand-teal-deep, #9c6212);
   background: var(--mtv-brand-card, #ffffff);
   box-shadow: 0 1px 3px rgba(22, 41, 61, 0.12);
 }
@@ -174,15 +174,15 @@
   gap: 0.75rem;
   padding: 0.75rem 1rem;
   background: var(--mtv-brand-card, #ffffff);
-  border: 1.5px solid var(--mtv-brand-line, #e0dace);
+  border: 1.5px solid var(--mtv-brand-line, #e8e0d2);
   border-radius: 0.6rem;
   cursor: pointer;
   transition: border-color 140ms ease, background-color 140ms ease;
 }
 
 .mtv-plans-option:hover:not(:disabled){
-  border-color: var(--mtv-brand-teal, #12a89a);
-  background: var(--mtv-brand-teal-wash, #e6f6f4);
+  border-color: var(--mtv-brand-teal, #d5872e);
+  background: var(--mtv-brand-teal-wash, #f9efdd);
 }
 
 .mtv-plans-option:disabled{
@@ -191,19 +191,19 @@
 }
 
 .mtv-plans-option:first-child{
-  border-color: var(--mtv-brand-teal, #12a89a);
+  border-color: var(--mtv-brand-teal, #d5872e);
 }
 
 .mtv-plans-label{
   font-size: 0.9375rem;
   font-weight: 650;
-  color: var(--mtv-brand-navy, #16293d);
+  color: var(--mtv-brand-navy, #1f2c38);
 }
 
 .mtv-plans-price{
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--mtv-brand-teal-deep, #0b5f56);
+  color: var(--mtv-brand-teal-deep, #9c6212);
   white-space: nowrap;
 }
 

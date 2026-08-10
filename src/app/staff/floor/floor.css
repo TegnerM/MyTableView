@@ -13,14 +13,20 @@
   /* Native widgets (selects, scrollbars) follow the theme too. */
   color-scheme: light;
 
-  --mtv-bg: #f6f4ef;
+  --mtv-bg: #f7f2ea;
   --mtv-card: #ffffff;
-  --mtv-line: #e5e0d5;
-  --mtv-text: #16293d;
-  --mtv-text-muted: #6b7a89;
-  --mtv-teal: #12a89a;
-  --mtv-teal-deep: #0b5f56;
-  --mtv-teal-wash: #e6f6f4;
+  --mtv-line: #e8e0d2;
+  --mtv-text: #1f2c38;
+  --mtv-text-muted: #5b6570;
+  /* Legacy "-teal" names carry the landing ORANGE since the warm
+     retheme — renamed in place, see globals.css. */
+  --mtv-teal: #d5872e;
+  --mtv-teal-deep: #9c6212;
+  /* Solid fill that carries white text (nav pill, primary buttons):
+     dark enough in BOTH themes — teal-deep doubles as a TEXT colour
+     at night, so it cannot serve as the fill there. */
+  --mtv-accent-fill: #9c6212;
+  --mtv-teal-wash: #f9efdd;
   --mtv-good: #33a35c;
   --mtv-good-deep: #27824a;
   --mtv-waiting: #e09a12;
@@ -29,11 +35,13 @@
   --mtv-overdue-deep: #c03338;
   /* Reserved for combined parties — must not impersonate any status. */
   --mtv-combined: #7c3aed;
-  --mtv-sidebar: #0d262e;
-  --mtv-sidebar-2: #123039;
-  --mtv-sidebar-line: #1d4049;
-  --mtv-sidebar-text: #e8f0f2;
-  --mtv-sidebar-muted: #8fadb5;
+  /* Warm sand sidebar — the approved warm-theme mock. Night mode
+     below still darkens it for evening service. */
+  --mtv-sidebar: #ead9bd;
+  --mtv-sidebar-2: #f9f3e7;
+  --mtv-sidebar-line: #d9c6a4;
+  --mtv-sidebar-text: #1f2c38;
+  --mtv-sidebar-muted: #6b5b41;
   /* Plan surface + furniture, split out so night mode can dim them. */
   --mtv-plan-bg: #fbf9f4;
   --mtv-table-line: #d4cdbf;
@@ -71,14 +79,19 @@
   --mtv-line: #24404b;
   --mtv-text: #e8f0f2;
   --mtv-text-muted: #8fa7b1;
-  --mtv-teal-deep: #128a7d;
-  --mtv-teal-wash: #113a38;
+  --mtv-teal-deep: #c98a35;
+  --mtv-accent-fill: #8a5a14;
+  --mtv-teal-wash: #3a2c14;
   --mtv-good-deep: #4cbd77;
   --mtv-waiting-deep: #e0a83a;
   --mtv-overdue-deep: #ef6b6f;
   --mtv-sidebar: #091319;
   --mtv-sidebar-2: #0f2028;
   --mtv-sidebar-line: #1b3540;
+  /* The day theme's sidebar text is dark (sand panel) — night must
+     flip it back to light on the dark chrome. */
+  --mtv-sidebar-text: #e8f0f2;
+  --mtv-sidebar-muted: #8fa7b1;
   --mtv-plan-bg: #101f27;
   --mtv-table-line: #2c4854;
   --mtv-chair: #24343d;
@@ -136,9 +149,9 @@
   padding: 0.12rem 0.42rem;
   font-size: 0.625rem;
   font-weight: 700;
-  color: #4ade80;
-  background: rgba(74, 222, 128, 0.12);
-  border: 1px solid rgba(74, 222, 128, 0.3);
+  color: var(--mtv-good-deep);
+  background: rgba(51, 163, 92, 0.12);
+  border: 1px solid rgba(51, 163, 92, 0.35);
   border-radius: 999px;
 }
 
@@ -147,7 +160,7 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #4ade80;
+  background: var(--mtv-good-deep);
 }
 
 .mtv-floor .mtv-sidebar-nav{
@@ -177,8 +190,8 @@
 }
 
 .mtv-floor .mtv-nav-item[data-active="true"]{
-  color: var(--mtv-sidebar-text);
-  background: var(--mtv-teal-deep);
+  color: #ffffff;
+  background: var(--mtv-accent-fill);
 }
 
 .mtv-floor .mtv-nav-icon{
@@ -216,7 +229,7 @@
   height: 2rem;
   flex: none;
   border-radius: 50%;
-  background: var(--mtv-teal-deep);
+  background: var(--mtv-accent-fill);
   color: #ffffff;
   font-size: 0.75rem;
   font-weight: 700;
@@ -460,7 +473,7 @@
 
 .mtv-floor .mtv-zone-tab[data-active="true"]{
   color: #ffffff;
-  background: var(--mtv-teal-deep);
+  background: var(--mtv-accent-fill);
   border-color: var(--mtv-teal-deep);
 }
 
@@ -505,8 +518,8 @@
 
 .mtv-floor .mtv-btn-primary{
   color: #ffffff;
-  background: var(--mtv-teal-deep);
-  border-color: var(--mtv-teal-deep);
+  background: var(--mtv-accent-fill);
+  border-color: var(--mtv-accent-fill);
 }
 
 .mtv-floor .mtv-btn-primary:hover:not(:disabled){
@@ -1000,7 +1013,7 @@
 
 .mtv-floor .mtv-plan-table[data-picked="true"]{
   border-color: var(--mtv-teal);
-  box-shadow: 0 0 0 3px rgba(18, 168, 154, 0.3);
+  box-shadow: 0 0 0 3px rgba(213, 135, 46, 0.3);
 }
 
 .mtv-floor .mtv-plan-table[data-selected="true"]{
@@ -1318,7 +1331,7 @@
 
 .mtv-floor .mtv-plan-marker[data-picked="true"]{
   border-color: var(--mtv-teal);
-  box-shadow: 0 0 0 3px rgba(18, 168, 154, 0.3);
+  box-shadow: 0 0 0 3px rgba(213, 135, 46, 0.3);
 }
 
 .mtv-floor .mtv-plan-marker[data-selected="true"]{
@@ -1579,7 +1592,7 @@
 
 .mtv-floor .mtv-view-toggle button[data-active="true"]{
   color: #ffffff;
-  background: var(--mtv-teal-deep);
+  background: var(--mtv-accent-fill);
 }
 
 .mtv-floor .mtv-table-list{
@@ -1746,7 +1759,7 @@
   font: inherit;
   font-size: 0.8125rem;
   color: var(--mtv-sidebar-text, #e8f0f2);
-  background: var(--mtv-sidebar-2, #123039);
+  background: var(--mtv-sidebar-2, #f9f3e7);
   border: 1px solid var(--mtv-sidebar-line, #1d4049);
   border-radius: 0.5rem;
   cursor: pointer;
@@ -1938,4 +1951,79 @@
   .mtv-gs-action .mtv-btn{
     flex: 1 1 100%;
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* Ordering module — pass bell banner + order details in the queue.   */
+/* ------------------------------------------------------------------ */
+
+.mtv-ready-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.8rem 0 0;
+  padding: 0.65rem 0.9rem;
+  background: #e9f3ec;
+  border: 1px solid #bfdcc9;
+  border-left: 4px solid #2e8b57;
+  border-radius: 0.75rem;
+  font-size: 0.9rem;
+  animation: mtv-ready-pop 240ms ease-out;
+}
+
+.mtv-ready-banner strong {
+  flex: 1;
+  min-width: 0;
+}
+
+@keyframes mtv-ready-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mtv-queue-ready {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-right: 0.4rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 99px;
+  background: #e9f3ec;
+  color: #2e8b57;
+  font-size: 0.7rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.mtv-queue-order {
+  display: block;
+  margin-top: 0.3rem;
+  font-weight: 500;
+}
+
+.mtv-queue-order-line {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.mtv-queue-order-note {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.75rem;
+  color: #8a6d33;
+}
+
+.mtv-queue-order-total {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #8a6d33;
 }
