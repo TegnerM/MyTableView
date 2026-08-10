@@ -292,15 +292,6 @@
   object-position: 50% 70%;
 }
 
-/* Hotel card: close crop on the ticket screen of the staff-tablet
-   graphic — swap /landing/card-hotel.png for a hotel-room photo
-   anytime and delete this rule. */
-.lp-photo-hotel img {
-  object-position: 88% 42%;
-  transform: scale(2.6);
-  transform-origin: 88% 42%;
-}
-
 .lp-card-badge {
   position: absolute;
   left: 1.1rem;

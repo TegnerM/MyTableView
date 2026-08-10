@@ -89,8 +89,8 @@ export default async function HomePage({ searchParams }: PageProps) {
     },
     {
       key: "hotel",
-      photo: "/landing/card-hotel.png",
-      photoClass: "lp-photo-hotel",
+      photo: "/landing/card-hotel.jpg",
+      photoClass: "",
       icon: <BellIcon />,
       s: t.solHotel,
       href: "/demo/hotel",
