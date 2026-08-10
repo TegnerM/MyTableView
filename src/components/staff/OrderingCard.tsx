@@ -8,8 +8,9 @@ import { readStaffLocale } from "@/lib/i18n/staff";
 import { isTrialRunning } from "@/lib/billing/status";
 
 /**
- * Settings → the Ordering module card. The owner's switch for the
- * €19-per-restaurant add-on, plus the venue's service-charge setting.
+ * Settings → the Ordering module card. Ordering (the menu) is included
+ * in every subscription — this is the owner's free feature switch,
+ * plus the venue's service-charge setting.
  */
 
 type Props = {
@@ -127,19 +128,14 @@ export function OrderingCard({
       {isOwner ? (
         <div className="mtv-billing-actions">
           {!orderingActive ? (
-            <>
-              <button
-                type="button"
-                className="mtv-btn mtv-btn-primary"
-                disabled={busy || !canActivate}
-                onClick={() => void toggle(true)}
-              >
-                {busy ? t.billing.working : t.billing.activate}
-              </button>
-              {subscribed && !inTrial ? (
-                <span className="mtv-settings-help">{t.billing.prorationNote}</span>
-              ) : null}
-            </>
+            <button
+              type="button"
+              className="mtv-btn mtv-btn-primary"
+              disabled={busy || !canActivate}
+              onClick={() => void toggle(true)}
+            >
+              {busy ? t.billing.working : t.billing.activate}
+            </button>
           ) : (
             <button
               type="button"

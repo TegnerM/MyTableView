@@ -142,43 +142,30 @@ export async function GET(request: Request) {
     }
   }
 
-  // ---- Ordering add-on sweep -----------------------------------------
-  // A venue whose free trial lapsed yesterday with Ordering switched on
-  // starts counting toward the €19-per-restaurant add-on today. The
-  // owner's toggle already syncs on every change; this daily pass
-  // catches the one transition no click triggers: trial expiry.
+  // ---- Legacy Ordering add-on cleanup --------------------------------
+  // Ordering is included in every plan now. This daily pass removes the
+  // old €19-per-restaurant add-on item from subscriptions that still
+  // carry one, crediting the unused time — no owner click required.
+  //
+  // Keyed off accounts.ordering_quantity (the webhook keeps it a mirror
+  // of the Stripe subscription's add-on item), NOT the free per-venue
+  // toggle: a legacy subscriber must be cleaned up even if every one of
+  // their venues has Ordering switched off.
   let orderingSynced = 0;
 
   const { data: orderingAccounts, error: orderingError } = await service
-    .from("venues")
-    .select("account_id, accounts:account_id ( billing_status, stripe_subscription_id )")
-    .eq("ordering_active", true)
-    .returns<
-      {
-        account_id: string;
-        accounts: {
-          billing_status: string | null;
-          stripe_subscription_id: string | null;
-        } | null;
-      }[]
-    >();
+    .from("accounts")
+    .select("id")
+    .gt("ordering_quantity", 0)
+    .not("stripe_subscription_id", "is", null)
+    .in("billing_status", ["active", "past_due"])
+    .returns<{ id: string }[]>();
 
   if (orderingError) {
     console.error("trial-reminders: ordering sweep query failed", orderingError.message);
   } else {
-    const accountIds = new Set<string>();
     for (const row of orderingAccounts ?? []) {
-      const status = row.accounts?.billing_status;
-      if (
-        row.accounts?.stripe_subscription_id &&
-        (status === "active" || status === "past_due")
-      ) {
-        accountIds.add(row.account_id);
-      }
-    }
-
-    for (const accountId of accountIds) {
-      const result = await syncOrderingQuantity(accountId);
+      const result = await syncOrderingQuantity(row.id);
       if (result.ok && result.changed) {
         orderingSynced += 1;
       }

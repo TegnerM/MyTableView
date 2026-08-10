@@ -104,8 +104,10 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   const plan = getPlan(session.metadata?.plan);
 
-  // The checkout may have carried the Ordering add-on as a second line
-  // item — read its quantity off the subscription itself.
+  // New checkouts never carry an Ordering add-on line (it's included in
+  // every plan), so this reads 0 — kept as a mirror so a LEGACY add-on
+  // item on an old subscription stays visible in the db until the
+  // janitor removes it.
   let orderingQuantity = 0;
   if (subscriptionId) {
     try {

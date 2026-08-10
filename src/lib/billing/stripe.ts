@@ -1,10 +1,5 @@
 import Stripe from "stripe";
-import {
-  getPlan,
-  ORDERING_ADDON,
-  type OrderingInterval,
-  type PlanKey,
-} from "@/lib/billing/plans";
+import { getPlan, ORDERING_ADDON, type PlanKey } from "@/lib/billing/plans";
 
 /**
  * Stripe client + price resolution.
@@ -145,58 +140,11 @@ export function planKeyFromPrice(
 }
 
 /**
- * Resolves the Ordering add-on price for an interval.
- *
- * Env var wins; otherwise the price is found by lookup_key, and on the
- * very first use created (product + price) — idempotent because Stripe
- * enforces one active price per lookup_key via transfer_lookup_key
- * being unused and our search-first order.
- */
-export async function getOrderingPriceId(
-  interval: OrderingInterval
-): Promise<string> {
-  const addon = ORDERING_ADDON[interval];
-
-  const fromEnv = process.env[addon.envVar];
-  if (fromEnv) {
-    return fromEnv;
-  }
-
-  const stripe = getStripe();
-
-  const existing = await stripe.prices.list({
-    lookup_keys: [addon.lookupKey],
-    active: true,
-    limit: 1,
-  });
-
-  if (existing.data[0]) {
-    return existing.data[0].id;
-  }
-
-  const product = await stripe.products.create({
-    name: "Ordering module",
-    description:
-      "In-app food & drink ordering for one restaurant. Guests browse the menu and order from the table.",
-    metadata: { mtv_kind: "ordering_addon" },
-  });
-
-  const price = await stripe.prices.create({
-    product: product.id,
-    currency: "eur",
-    unit_amount: addon.amount * 100,
-    recurring: { interval: addon.interval },
-    lookup_key: addon.lookupKey,
-    metadata: { mtv_kind: "ordering_addon" },
-  });
-
-  return price.id;
-}
-
-/**
- * Whether a subscription item's price is the Ordering add-on (either
- * interval). Prefers metadata/lookup_key so it also matches env-var
- * prices created by hand in the dashboard.
+ * Whether a subscription item's price is the LEGACY Ordering add-on
+ * (either interval). Ordering is included in every plan now — this
+ * matcher survives so the janitor sync can find and remove old add-on
+ * items. Prefers metadata/lookup_key so it also matches env-var prices
+ * created by hand in the dashboard.
  */
 export function isOrderingPrice(
   price: Stripe.Price | null | undefined

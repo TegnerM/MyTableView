@@ -10,11 +10,11 @@ import { syncOrderingQuantity } from "@/lib/billing/ordering";
  *   { enable: boolean }            — switch Ordering for the CURRENT venue
  *   { serviceChargePct: number }   — set the cart's service line (0–20)
  *
- * Owner only, like every billing action. Enabling on a subscribed
- * account adds/raises the €19-per-restaurant subscription item with
- * proration; on a venue still in trial it's free until the trial ends
- * (the daily sweep starts billing then). Enabling with no subscription
- * and no trial is refused — subscribe first.
+ * Owner only. Ordering (the menu) is included in every subscription —
+ * the switch costs nothing either way; it's purely the owner's choice
+ * of whether guests can browse the menu and order. Enabling with no
+ * subscription and no trial is still refused — the venue is locked
+ * then anyway, so the switch would mislead.
  */
 
 export const runtime = "nodejs";
@@ -105,9 +105,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, reason: "error" }, { status: 500 });
   }
 
-  // Keep Stripe honest. If Stripe is briefly unreachable the flag still
-  // stands and the daily sweep will reconcile — an owner's activation
-  // must not bounce on a transient Stripe hiccup.
+  // Janitor pass: if this account still carries the legacy add-on item
+  // on its Stripe subscription, remove it. If Stripe is briefly
+  // unreachable the flag still stands and the daily sweep reconciles —
+  // an owner's toggle must not bounce on a transient Stripe hiccup.
   const sync = await syncOrderingQuantity(venue.account_id);
 
   return NextResponse.json(

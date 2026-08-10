@@ -1,5 +1,13 @@
 # Ordering module — setup steps
 
+> **UPDATE 2026-08:** Ordering is now INCLUDED in every subscription
+> (restaurant, bar and hotel) at no extra charge — the owner's toggle
+> in Settings is a free feature switch. Everything below about the
+> €19-per-restaurant add-on price is LEGACY: no new add-on items are
+> ever created, and a daily sweep automatically removes the old add-on
+> item (with a proration credit) from any subscription still carrying
+> one. The migration steps remain valid.
+
 Everything in code is done. These are the one-time steps only you can
 do. **Order matters: run the migration BEFORE deploying the new code**
 — the floor and the guest page now read columns/tables the migration

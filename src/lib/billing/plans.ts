@@ -104,15 +104,12 @@ export const PLANS: Plan[] = [
 ];
 
 /**
- * The Ordering module add-on — priced PER RESTAURANT on top of the
- * account subscription, one Stripe subscription item whose quantity is
- * the number of restaurants with Ordering switched on (trial venues
- * ride free and don't count).
- *
- * Price resolution differs from the base tiers: env var first, then a
- * Stripe lookup_key ("mtv_ordering_monthly"/"mtv_ordering_yearly") —
- * the server creates product + price on first use if neither exists,
- * so sandbox AND live need zero manual Stripe setup.
+ * LEGACY — Ordering (the menu) is included in every plan since
+ * 2026-08. This descriptor survives only so isOrderingPrice() can
+ * still RECOGNISE the old €19-per-restaurant add-on item on existing
+ * subscriptions and remove it (see lib/billing/ordering.ts). Nothing
+ * creates new add-on items anymore. Delete once no live subscription
+ * carries one.
  */
 export const ORDERING_ADDON = {
   monthly: {
@@ -130,8 +127,6 @@ export const ORDERING_ADDON = {
     interval: "year" as const,
   },
 } as const;
-
-export type OrderingInterval = keyof typeof ORDERING_ADDON;
 
 export function getPlan(key: string | null | undefined): Plan | null {
   return PLANS.find((plan) => plan.key === key) ?? null;

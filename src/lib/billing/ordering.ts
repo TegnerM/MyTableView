@@ -1,23 +1,17 @@
 import { getServiceClient } from "@/lib/supabase/service";
-import { getPlan } from "@/lib/billing/plans";
-import {
-  getStripe,
-  getOrderingPriceId,
-  isOrderingPrice,
-} from "@/lib/billing/stripe";
-import { isTrialRunning } from "@/lib/billing/status";
+import { getStripe, isOrderingPrice } from "@/lib/billing/stripe";
 
 /**
- * Keeps the Stripe side of the Ordering add-on honest.
+ * Ordering (the menu) is INCLUDED in every subscription — restaurant,
+ * bar and hotel alike. Nothing is billed for it; the owner's toggle is
+ * purely a feature switch.
  *
- * The rule: the add-on subscription item's quantity equals the number
- * of the account's venues that have ordering_active AND are past their
- * own free trial. Trial venues taste the full product for free; the
- * moment the trial lapses (and the account is subscribed) the daily
- * sweep picks the venue up and the quantity rises.
- *
- * Called from the owner's toggle API and from the daily cron. Runs on
- * the service client — callers gate authorization.
+ * This sync survives as the janitor for accounts that subscribed back
+ * when Ordering was a €19-per-restaurant add-on: it finds the legacy
+ * add-on item on the Stripe subscription and removes it (with a
+ * proration credit). Called from the owner's toggle API and the daily
+ * cron, so every legacy account is cleaned up on its next touch.
+ * Runs on the service client — callers gate authorization.
  */
 
 type AccountRow = {
@@ -26,12 +20,6 @@ type AccountRow = {
   plan: string | null;
   stripe_subscription_id: string | null;
   ordering_quantity: number;
-};
-
-type VenueRow = {
-  id: string;
-  ordering_active: boolean;
-  trial_ends_at: string | null;
 };
 
 export type SyncResult =
@@ -56,38 +44,21 @@ export async function syncOrderingQuantity(
     return { ok: false, reason: "account_not_found" };
   }
 
-  const { data: venues, error: venuesError } = await service
-    .from("venues")
-    .select("id, ordering_active, trial_ends_at")
-    .eq("account_id", accountId)
-    .returns<VenueRow[]>();
-
-  if (venuesError) {
-    console.error("syncOrderingQuantity: venues load failed", venuesError.message);
-    return { ok: false, reason: "error" };
-  }
-
-  const activeCount = (venues ?? []).filter(
-    (venue) => venue.ordering_active && !isTrialRunning(venue.trial_ends_at)
-  ).length;
-
-  // The hotel bundle includes Ordering — nothing extra to bill,
-  // whatever the switches say.
-  const payable = getPlan(account.plan)?.hotel ? 0 : activeCount;
-
   const subscribed =
     account.billing_status === "active" || account.billing_status === "past_due";
 
-  // No subscription (all-trial account, or lapsed): nothing to bill.
-  // The db quantity still tracks the truth for the day they subscribe.
+  // Nothing on Stripe to clean up (all-trial account, or lapsed).
   if (!subscribed || !account.stripe_subscription_id) {
-    if (account.ordering_quantity !== payable) {
-      await service
+    if (account.ordering_quantity !== 0) {
+      const { error } = await service
         .from("accounts")
-        .update({ ordering_quantity: payable })
+        .update({ ordering_quantity: 0 })
         .eq("id", accountId);
+      if (error) {
+        console.error("syncOrderingQuantity: quantity reset failed", error.message);
+      }
     }
-    return { ok: true, quantity: payable, changed: false };
+    return { ok: true, quantity: 0, changed: false };
   }
 
   try {
@@ -97,49 +68,29 @@ export async function syncOrderingQuantity(
       { expand: ["items.data.price"] }
     );
 
+    // A legacy add-on item from before Ordering became included:
+    // remove it and let Stripe credit the unused time.
     const addonItem = subscription.items.data.find((item) =>
       isOrderingPrice(item.price)
     );
-    const currentQuantity = addonItem ? (addonItem.quantity ?? 0) : 0;
 
-    if (currentQuantity !== payable) {
-      if (addonItem && payable === 0) {
-        await stripe.subscriptionItems.del(addonItem.id, {
-          proration_behavior: "create_prorations",
-        });
-      } else if (addonItem) {
-        await stripe.subscriptionItems.update(addonItem.id, {
-          quantity: payable,
-          proration_behavior: "create_prorations",
-        });
-      } else if (payable > 0) {
-        // Match the add-on's interval to the base plan's interval so
-        // one invoice covers everything.
-        const interval =
-          getPlan(account.plan)?.interval === "yearly" ? "yearly" : "monthly";
-        const priceId = await getOrderingPriceId(interval);
+    if (addonItem) {
+      await stripe.subscriptionItems.del(addonItem.id, {
+        proration_behavior: "create_prorations",
+      });
+    }
 
-        await stripe.subscriptionItems.create({
-          subscription: subscription.id,
-          price: priceId,
-          quantity: payable,
-          proration_behavior: "create_prorations",
-        });
+    if (account.ordering_quantity !== 0) {
+      const { error } = await service
+        .from("accounts")
+        .update({ ordering_quantity: 0 })
+        .eq("id", accountId);
+      if (error) {
+        console.error("syncOrderingQuantity: quantity reset failed", error.message);
       }
     }
 
-    if (account.ordering_quantity !== payable) {
-      await service
-        .from("accounts")
-        .update({ ordering_quantity: payable })
-        .eq("id", accountId);
-    }
-
-    return {
-      ok: true,
-      quantity: payable,
-      changed: currentQuantity !== payable,
-    };
+    return { ok: true, quantity: 0, changed: Boolean(addonItem) };
   } catch (error) {
     console.error(
       "syncOrderingQuantity: stripe failed",

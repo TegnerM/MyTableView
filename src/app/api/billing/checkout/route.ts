@@ -6,10 +6,8 @@ import { getPlan, isPlanKey } from "@/lib/billing/plans";
 import {
   getStripe,
   resolvePlanPriceId,
-  getOrderingPriceId,
   resolveOrigin,
 } from "@/lib/billing/stripe";
-import { isTrialRunning } from "@/lib/billing/status";
 
 /**
  * POST /api/billing/checkout  { plan: PlanKey }
@@ -90,11 +88,9 @@ export async function POST(request: Request) {
   // The tier must cover every venue the account already runs.
   const { data: accountVenues } = await service
     .from("venues")
-    .select("id, ordering_active, trial_ends_at")
+    .select("id")
     .eq("account_id", account.id)
-    .returns<
-      { id: string; ordering_active: boolean; trial_ends_at: string | null }[]
-    >();
+    .returns<{ id: string }[]>();
 
   const venueCount = accountVenues?.length ?? null;
 
@@ -106,12 +102,6 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
-
-  // Venues that already switched Ordering on and are past their free
-  // trial join the subscription as the €19-per-restaurant add-on item.
-  const orderingQuantity = (accountVenues ?? []).filter(
-    (venue) => venue.ordering_active && !isTrialRunning(venue.trial_ends_at)
-  ).length;
 
   try {
     const stripe = getStripe();
@@ -137,17 +127,11 @@ export async function POST(request: Request) {
 
     const origin = resolveOrigin(request);
 
+    // Ordering (the menu) is included in every plan — the subscription
+    // is always exactly one line: the tier itself.
     const lineItems: { price: string; quantity: number }[] = [
       { price: await resolvePlanPriceId(planKey), quantity: 1 },
     ];
-
-    // The hotel bundle includes Ordering — no add-on line.
-    if (orderingQuantity > 0 && plan && !plan.hotel) {
-      lineItems.push({
-        price: await getOrderingPriceId(plan.interval),
-        quantity: orderingQuantity,
-      });
-    }
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
