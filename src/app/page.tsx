@@ -6,22 +6,16 @@ import { Fraunces } from "next/font/google";
 import { EmailLink } from "@/components/EmailLink";
 import { TrackBeacon } from "@/components/TrackBeacon";
 import { PLANS, type Plan } from "@/lib/billing/plans";
-import {
-  getLandingStrings,
-  resolveLandingLocale,
-} from "@/lib/i18n/landing";
+import { getLandingStrings, resolveLandingLocale } from "@/lib/i18n/landing";
 import "./home.css";
 
 /**
- * Marketing landing page.
+ * Marketing landing page — the 2026 redesign.
  *
- * Fully localised: every visible string comes from the landing
- * dictionary, and the locale is resolved per-request from
- * Accept-Language (override with ?lang=es for testing). Adding a
- * language touches only src/lib/i18n/landing.ts.
- *
- * All product data shown is service data — requests, response times,
- * repeat asks. Nothing here implies POS/order/revenue access.
+ * "See every guest. Miss nothing." One hero, three solution cards
+ * (Restaurant / Bar / Hotel), the product on real devices, the stats
+ * band and a photo CTA. Fully localised; every visible string comes
+ * from src/lib/i18n/landing.ts.
  */
 
 export const dynamic = "force-dynamic";
@@ -32,9 +26,6 @@ const fraunces = Fraunces({
   display: "swap",
 });
 
-const TABLE_STATUS_COLORS = ["#3fb950", "#d4a017", "#e5484d", "#b8b1a5"];
-const TABLE_STATUS_VALUES = [9, 3, 1, 13];
-
 type PageProps = {
   searchParams: Promise<{ lang?: string; code?: string }>;
 };
@@ -42,10 +33,9 @@ type PageProps = {
 export default async function HomePage({ searchParams }: PageProps) {
   const { lang, code } = await searchParams;
 
-  // Supabase's default confirmation-email flow redirects here with
-  // ?code=... — forward it to the auth callback, which exchanges it
-  // for a session and continues signup. Without this, a confirming
-  // user just lands on the marketing page, signed out.
+  // Supabase's confirmation-email flow redirects here with ?code=... —
+  // forward it to the auth callback, which exchanges it for a session
+  // and continues signup.
   if (code) {
     redirect(`/auth/callback?code=${encodeURIComponent(code)}`);
   }
@@ -54,71 +44,12 @@ export default async function HomePage({ searchParams }: PageProps) {
   const locale = resolveLandingLocale(lang, headerList.get("accept-language"));
   const t = getLandingStrings(locale);
 
-  const liveRequests = [
-    { table: `${t.floor.table} 12`, ask: t.floor.askDrinks, when: t.floor.now, tone: "new" },
-    { table: `${t.floor.table} 8`, ask: t.floor.askBill, when: t.floor.twoMin, tone: "seen" },
-    { table: `${t.floor.table} 3`, ask: t.floor.askAssist, when: t.floor.twelveMin, tone: "late" },
-  ];
-
-  const glanceStats = [
-    { label: t.glance.statRequests, value: "132", delta: "↑ 12%" },
-    { label: t.glance.statResponse, value: "1m 48s", delta: "↓ 23%" },
-    { label: t.glance.statUnder, value: "86%", delta: "↑ 9%" },
-    { label: t.glance.statTwice, value: "4", delta: "↓ 6" },
-  ];
-
-  const tableStatus = [
-    t.glance.legendGood,
-    t.glance.legendWaiting,
-    t.glance.legendOverdue,
-    t.glance.legendFree,
-  ].map((label, i) => ({
-    label,
-    value: TABLE_STATUS_VALUES[i],
-    color: TABLE_STATUS_COLORS[i],
-  }));
-
-  const topRequests = [
-    { name: t.glance.itemNapkins, count: 12 },
-    { name: t.glance.itemWater, count: 10 },
-    { name: t.glance.itemBill, count: 8 },
-    { name: t.glance.itemRound, count: 7 },
-  ];
-
-  const steps = [
-    { title: t.how.step1Title, body: t.how.step1Body },
-    { title: t.how.step2Title, body: t.how.step2Body },
-    { title: t.how.step3Title, body: t.how.step3Body },
-    { title: t.how.step4Title, body: t.how.step4Body },
-  ];
-
-  const clockMarks = [
-    { time: t.how.mark0Time, text: t.how.mark0Text },
-    { time: t.how.mark5Time, text: t.how.mark5Text },
-    { time: t.how.mark10Time, text: t.how.mark10Text },
-  ];
-
-  const posPartners = [
-    "Lightspeed",
-    "Square",
-    "Toast",
-    "Revel",
-    "NCR Voyix",
-    "Oracle Micros",
-  ];
-
-  // Pricing straight from the plan ladder — the landing page can never
-  // disagree with what checkout actually charges. Formatted per locale
-  // so €1,490 reads as 1.490 € where it should.
   const euro = (amount: number) =>
     new Intl.NumberFormat(locale === "no" ? "nb" : locale, {
       style: "currency",
       currency: "EUR",
       maximumFractionDigits: 0,
     }).format(amount);
-
-  const hotelMonthly = PLANS.find((plan) => plan.key === "hotel-monthly");
-  const hotelYearly = PLANS.find((plan) => plan.key === "hotel-yearly");
 
   const pricingTiers = [1, 3, 5, 10]
     .map((size) => {
@@ -137,416 +68,318 @@ export default async function HomePage({ searchParams }: PageProps) {
         tier !== null
     );
 
+  const hotelMonthly = PLANS.find((plan) => plan.key === "hotel-monthly");
+
+  const solutions = [
+    {
+      key: "restaurant",
+      photo: "/landing/card-restaurant.jpg",
+      photoClass: "",
+      icon: <ForkIcon />,
+      s: t.solRest,
+      href: "/demo",
+    },
+    {
+      key: "bar",
+      photo: "/landing/card-bar.jpg",
+      photoClass: "lp-photo-bar",
+      icon: <MartiniIcon />,
+      s: t.solBar,
+      href: "/demo/ordering",
+    },
+    {
+      key: "hotel",
+      photo: "/landing/card-hotel.png",
+      photoClass: "lp-photo-hotel",
+      icon: <BellIcon />,
+      s: t.solHotel,
+      href: "/demo/hotel",
+    },
+  ];
+
   return (
     <div className="lp" lang={locale}>
       <TrackBeacon />
+
+      {/* ------------------------------------------------ header */}
       <header className="lp-header">
         <Link href="/" className="lp-logo" aria-label="MyTableView home">
-          <Monogram />
-          <span className="lp-wordmark">
-            <span>mytable</span>
-            <em>view</em>
+          <span className="lp-mark" aria-hidden="true">
+            <i />
           </span>
+          My<em>Table</em>View
         </Link>
 
         <nav className="lp-nav" aria-label="Main">
+          <a href="#solutions">{t.nav.products}</a>
           <a href="#features">{t.nav.features}</a>
-          <a href="#editions">{t.nav.editions}</a>
-          <a href="#how-it-works">{t.nav.howItWorks}</a>
           <a href="#pricing">{t.nav.pricing}</a>
+          <EmailLink className="lp-nav-contact">{t.nav.contact}</EmailLink>
         </nav>
 
         <div className="lp-header-cta">
-          <Link href="/staff/sign-in" className="lp-link-quiet">
-            {t.nav.logIn}
+          <Link href="/demo" className="lp-btn lp-btn-ghost">
+            {t.nav.bookDemo}
+          </Link>
+          <Link href="/staff/sign-up" className="lp-btn lp-btn-orange">
+            {t.nav.tryFree}
           </Link>
         </div>
       </header>
 
       <main>
+        {/* ------------------------------------------------ hero */}
         <section className="lp-hero">
-          <div className="lp-hero-copy">
-            <h1 className={`${fraunces.className} lp-title`}>
-              {t.hero.titleLine1}
-              <br />
-              <em>{t.hero.titleLine2}</em>
-            </h1>
-
-            <p className="lp-sub">{t.hero.sub}</p>
-
-            <div className="lp-pos-note">
-              <PosIcon />
-              <p>
-                {t.hero.posLine1}
+          <div className="lp-w lp-hero-in">
+            <div className="lp-hero-copy">
+              <h1 className={fraunces.className}>
+                {t.hero.title1}
                 <br />
-                <strong>{t.hero.posLine2}</strong>
-              </p>
-            </div>
-
-            <div className="lp-cta-row">
-              <Link href="/demo" className="lp-btn lp-btn-primary lp-btn-large">
-                {t.hero.ctaDemo}
-              </Link>
-              <a
-                href="#how-it-works"
-                className="lp-btn lp-btn-ghost lp-btn-large"
-              >
-                {t.hero.ctaHow}
-              </a>
-              <a href="#features" className="lp-btn lp-btn-ghost lp-btn-large">
-                {t.hero.ctaWho}
-              </a>
-            </div>
-
-            <ul className="lp-trust-row">
-              <li>
-                <CardIcon /> {t.hero.trustCard}
-              </li>
-              <li>
-                <ClockIcon /> {t.hero.trustSetup}
-              </li>
-              <li>
-                <CancelIcon /> {t.hero.trustCancel}
-              </li>
-            </ul>
-          </div>
-
-          <div className="lp-hero-visual">
-            <Image
-              className="lp-hero-photo"
-              src="/landing-hero.jpg"
-              alt={t.hero.photoAlt}
-              fill
-              priority
-              sizes="(max-width: 960px) 100vw, 58vw"
-            />
-
-            <div className="lp-glance-card">
-              <div className="lp-glance-head">
-                <p>{t.glance.title}</p>
-                <span className="lp-glance-chip">{t.glance.chip}</span>
+                <span className="lp-o">{t.hero.title2}</span>
+              </h1>
+              <p className="lp-hero-sub">{t.hero.sub}</p>
+              <div className="lp-hero-btns">
+                <a href="#features" className="lp-btn lp-btn-orange">
+                  {t.hero.ctaHow}
+                </a>
+                <a href="#solutions" className="lp-btn lp-btn-outline">
+                  {t.hero.ctaProducts}
+                </a>
               </div>
-
-              <div className="lp-glance-stats">
-                {glanceStats.map((stat) => (
-                  <div key={stat.label} className="lp-glance-stat">
-                    <span className="lp-glance-label">{stat.label}</span>
-                    <span className="lp-glance-value">{stat.value}</span>
-                    <span className="lp-glance-delta">{stat.delta}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="lp-glance-body">
-                <div className="lp-glance-status">
-                  <p className="lp-glance-subhead">{t.glance.tableStatus}</p>
-                  <div className="lp-donut-row">
-                    <Donut slices={tableStatus} />
-                    <ul className="lp-donut-legend">
-                      {tableStatus.map((slice) => (
-                        <li key={slice.label}>
-                          <i style={{ background: slice.color }} />
-                          {slice.label}
-                          <span>{slice.value}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="lp-glance-top">
-                  <p className="lp-glance-subhead">{t.glance.topRequests}</p>
-                  <ul className="lp-top-items">
-                    {topRequests.map((item) => (
-                      <li key={item.name}>
-                        {item.name}
-                        <span>{item.count}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              <ul className="lp-trust">
+                <li>
+                  <HeartIcon /> {t.hero.trust1}
+                </li>
+                <li>
+                  <ClockIcon /> {t.hero.trust2}
+                </li>
+                <li>
+                  <ChartIcon /> {t.hero.trust3}
+                </li>
+              </ul>
             </div>
-          </div>
-        </section>
-
-        <section className="lp-features" id="features">
-          <article className="lp-feature lp-feature-guest">
-            <div className="lp-feature-text lp-feature-guest-copy">
-              <span className="lp-feature-icon lp-feature-guest-icon" data-tone="teal">
-                <GuestsIcon />
-              </span>
-              <p className="lp-feature-eyebrow" data-tone="teal">
-                {t.features.guestsEyebrow}
-              </p>
-              <h2>{t.features.guestsTitle}</h2>
-              <p className="lp-feature-copy">{t.features.guestsCopy}</p>
-            </div>
-
-            <div className="lp-device lp-phone-shot lp-feature-guest-phone">
-              <div className="lp-feature-guest-glow" aria-hidden="true" />
+            <div className="lp-hero-photo">
               <Image
-                src="/guest-phone.png"
-                alt={t.features.phoneAlt}
-                width={574}
-                height={1200}
-                sizes="(max-width: 720px) 78vw, (max-width: 1100px) 38vw, 360px"
-                priority={false}
+                src="/landing/hero.jpg"
+                alt={t.hero.photoAlt}
+                fill
+                priority
+                sizes="(max-width: 900px) 100vw, 56vw"
               />
             </div>
-          </article>
+          </div>
+        </section>
 
-          <h2 className={`${fraunces.className} lp-features-pair-title`}>
-            {t.features.pairTitle}
-          </h2>
-
-          <article className="lp-feature">
-            <div className="lp-feature-text">
-              <span className="lp-feature-icon" data-tone="gold">
-                <StaffIcon />
-              </span>
-              <p className="lp-feature-eyebrow" data-tone="gold">
-                {t.features.staffEyebrow}
-              </p>
-              <p className="lp-feature-copy">{t.features.staffCopy}</p>
-            </div>
-
-            <div className="lp-device lp-tablet" aria-hidden="true">
-              <p className="lp-orders-head">{t.floor.title}</p>
-              {liveRequests.map((request) => (
-                <div
-                  key={request.table}
-                  className="lp-order"
-                  data-tone={request.tone}
-                >
-                  <div className="lp-order-top">
-                    <span>{request.table}</span>
-                    <span className="lp-order-when">{request.when}</span>
+        {/* ------------------------------------------------ solutions */}
+        <section className="lp-solutions" id="solutions">
+          <div className="lp-w">
+            <p className="lp-eyebrow">{t.sol.eyebrow}</p>
+            <h2 className={`${fraunces.className} lp-sol-title`}>
+              {t.sol.title}
+            </h2>
+            <div className="lp-cards">
+              {solutions.map((card) => (
+                <article key={card.key} className="lp-card">
+                  <div className={`lp-card-photo ${card.photoClass}`}>
+                    <Image
+                      src={card.photo}
+                      alt=""
+                      fill
+                      sizes="(max-width: 900px) 100vw, 33vw"
+                    />
+                    <span className="lp-card-badge" aria-hidden="true">
+                      {card.icon}
+                    </span>
                   </div>
-                  <p className="lp-order-item">{request.ask}</p>
-                </div>
+                  <div className="lp-card-body">
+                    <h3 className={fraunces.className}>
+                      {t.sol.brand}
+                      <span className="lp-o">{card.s.name}</span>
+                    </h3>
+                    <p className="lp-card-desc">{card.s.desc}</p>
+                    <ul className="lp-card-list">
+                      <li>{card.s.f1}</li>
+                      <li>{card.s.f2}</li>
+                      <li>{card.s.f3}</li>
+                      <li>{card.s.f4}</li>
+                      <li>{card.s.f5}</li>
+                    </ul>
+                    <Link href={card.href} className="lp-btn lp-btn-navy">
+                      {card.s.cta} →
+                    </Link>
+                  </div>
+                </article>
               ))}
             </div>
-          </article>
-
-          <article className="lp-feature">
-            <div className="lp-feature-text">
-              <span className="lp-feature-icon" data-tone="teal">
-                <ChartIcon />
-              </span>
-              <p className="lp-feature-eyebrow" data-tone="teal">
-                {t.features.bizEyebrow}
-              </p>
-              <p className="lp-feature-copy">{t.features.bizCopy}</p>
-            </div>
-
-            <div className="lp-device lp-laptop" aria-hidden="true">
-              <div className="lp-laptop-chips">
-                {glanceStats.map((stat) => (
-                  <div key={stat.label} className="lp-laptop-chip">
-                    <span>{stat.value}</span>
-                    <em>{stat.delta}</em>
-                  </div>
-                ))}
-              </div>
-              <div className="lp-laptop-bars">
-                {[42, 58, 47, 66, 74, 61, 82].map((height, index) => (
-                  <i key={index} style={{ height: `${height}%` }} />
-                ))}
-              </div>
-              <p className="lp-laptop-caption">{t.features.chartCaption}</p>
-            </div>
-          </article>
-        </section>
-
-        <section className="lp-editions" id="editions">
-          <div className="lp-editions-head">
-            <p className="lp-feature-eyebrow" data-tone="teal">
-              {t.editions.eyebrow}
-            </p>
-            <h2 className={fraunces.className}>{t.editions.title}</h2>
-            <p>{t.editions.sub}</p>
-          </div>
-
-          <div className="lp-editions-grid">
-            <article className="lp-edition-card">
-              <span className="lp-edition-tag" data-edition="restaurant">
-                {t.editions.restaurantTitle}
-              </span>
-              <div className="lp-mini-phone lp-mini-restaurant" aria-hidden="true">
-                <i className="lpm-hero" />
-                <i className="lpm-row" />
-                <i className="lpm-row" />
-                <i className="lpm-row lpm-row-gold" />
-              </div>
-              <h3 className={fraunces.className}>{t.editions.restaurantTitle}</h3>
-              <p>{t.editions.restaurantCopy}</p>
-              <Link href="/demo" className="lp-edition-cta">
-                {t.editions.restaurantCta}
-              </Link>
-            </article>
-
-            <article className="lp-edition-card">
-              <span className="lp-edition-tag" data-edition="bar">
-                {t.editions.barTitle}
-              </span>
-              <div className="lp-mini-phone lp-mini-bar" aria-hidden="true">
-                <i className="lpm-glow" />
-                <i className="lpm-row lpm-row-amber" />
-                <i className="lpm-row lpm-row-dark" />
-                <i className="lpm-row lpm-row-dark" />
-                <i className="lpm-chip" />
-              </div>
-              <h3 className={fraunces.className}>{t.editions.barTitle}</h3>
-              <p>{t.editions.barCopy}</p>
-              <Link href="/demo/ordering" className="lp-edition-cta">
-                {t.editions.barCta}
-              </Link>
-            </article>
-
-            <article className="lp-edition-card">
-              <span className="lp-edition-tag" data-edition="hotel">
-                {t.editions.hotelTitle}
-              </span>
-              <div className="lp-mini-phone lp-mini-hotel" aria-hidden="true">
-                <i className="lpm-row lpm-row-goldline" />
-                <i className="lpm-row" />
-                <span className="lpm-pair">
-                  <i className="lpm-half" />
-                  <i className="lpm-half" />
-                </span>
-              </div>
-              <h3 className={fraunces.className}>{t.editions.hotelTitle}</h3>
-              <p>{t.editions.hotelCopy}</p>
-              <Link href="/demo/hotel" className="lp-edition-cta">
-                {t.editions.hotelCta}
-              </Link>
-            </article>
           </div>
         </section>
 
-        <section className="lp-how" id="how-it-works">
-          <div className="lp-how-head">
-            <h2 className={fraunces.className}>{t.how.title}</h2>
-            <p>{t.how.sub}</p>
-          </div>
-
-          <ol className="lp-steps">
-            {steps.map((step, index) => (
-              <li key={step.title} className="lp-step">
-                <span className="lp-step-num">{index + 1}</span>
-                <h3>{step.title}</h3>
-                <p>{step.body}</p>
-              </li>
-            ))}
-          </ol>
-
-          {/* The escalation clock — the part a demo would demonstrate. */}
-          <div className="lp-clock" aria-label={t.how.clockAria}>
-            <p className="lp-clock-title">{t.how.clockTitle}</p>
-            <div className="lp-clock-bar">
-              <span className="lp-clock-seg" data-zone="good" />
-              <span className="lp-clock-seg" data-zone="waiting" />
-              <span className="lp-clock-seg" data-zone="overdue" />
-            </div>
-            <div className="lp-clock-marks">
-              {clockMarks.map((mark) => (
-                <div key={mark.time}>
-                  <strong>{mark.time}</strong>
-                  <span>{mark.text}</span>
-                </div>
-              ))}
-            </div>
-            <p className="lp-clock-note">
-              {t.how.noteBefore}
-              <em>{t.how.noteEm}</em>
-              {t.how.noteAfter}
-            </p>
-          </div>
-        </section>
-
-        <section className="lp-pricing" id="pricing">
-          <div className="lp-pricing-head">
-            <h2 className={fraunces.className}>{t.pricing.title}</h2>
-            <p>{t.pricing.sub}</p>
-          </div>
-
-          <div className="lp-pricing-grid">
-            {pricingTiers.map(({ size, monthly, yearly }) => (
-              <article key={size} className="lp-price-card">
-                <p className="lp-price-tier">
-                  {size === 1
-                    ? t.pricing.tier1
-                    : t.pricing.tierN.replace("{n}", String(size))}
-                </p>
-                <p className="lp-price-main">
-                  <strong>{euro(monthly.amount)}</strong>
-                  <span>{t.pricing.perMonth}</span>
-                </p>
-                <p className="lp-price-year">
-                  {t.pricing.yearlyLine.replace("{price}", euro(yearly.amount))}
-                </p>
-                <Link href="/staff/sign-up" className="lp-btn lp-btn-ghost">
-                  {t.pricing.cta}
-                </Link>
-              </article>
-            ))}
-
-            {hotelMonthly && hotelYearly ? (
-              <article className="lp-price-card lp-price-hotel">
-                <span className="lp-price-badge">{t.pricing.hotelBadge}</span>
-                <p className="lp-price-tier">{t.pricing.hotelTier}</p>
-                <p className="lp-price-main">
-                  <strong>{euro(hotelMonthly.amount)}</strong>
-                  <span>{t.pricing.perMonth}</span>
-                </p>
-                <p className="lp-price-year">
-                  {t.pricing.hotelIncluded} ·{" "}
-                  {t.pricing.yearlyLine.replace(
-                    "{price}",
-                    euro(hotelYearly.amount)
-                  )}
-                </p>
-                <Link href="/staff/sign-up" className="lp-btn lp-btn-ghost">
-                  {t.pricing.cta}
-                </Link>
-              </article>
-            ) : null}
-          </div>
-
-          <p className="lp-pricing-foot">{t.pricing.foot}</p>
-        </section>
-
-        <section className="lp-integrations" id="integrations">
-          <div className="lp-integrations-intro">
-            <span className="lp-integrations-icon">
-              <PosIcon />
-            </span>
+        {/* ------------------------------------------------ features */}
+        <section className="lp-features" id="features">
+          <div className="lp-w lp-feat-in">
             <div>
-              <h2>{t.pos.title}</h2>
-              <p>
-                {t.pos.line1}
+              <p className="lp-eyebrow lp-eyebrow-left">{t.feat.eyebrow}</p>
+              <h2 className={fraunces.className}>
+                {t.feat.title1}
                 <br />
-                {t.pos.line2}
-              </p>
+                {t.feat.title2}
+              </h2>
+              <p className="lp-feat-sub">{t.feat.sub}</p>
+              <div className="lp-minis">
+                <div>
+                  <ShieldIcon />
+                  {t.feat.mini1}
+                </div>
+                <div>
+                  <HeartIcon />
+                  {t.feat.mini2}
+                </div>
+                <div>
+                  <DeviceIcon />
+                  {t.feat.mini3}
+                </div>
+              </div>
+              <a href="#solutions" className="lp-btn lp-btn-outline">
+                {t.feat.cta}
+              </a>
+            </div>
+            <div className="lp-devices" role="img" aria-label={t.feat.alt}>
+              <div className="lp-dev-laptop">
+                <Image src="/landing/laptop.png" alt="" width={1400} height={933} />
+              </div>
+              <div className="lp-dev-phone">
+                <Image src="/landing/phone.png" alt="" width={574} height={1200} />
+              </div>
+              <div className="lp-dev-tab">
+                <Image src="/landing/tablet.png" alt="" width={1100} height={733} />
+              </div>
             </div>
           </div>
-          <ul className="lp-partner-row">
-            {posPartners.map((partner) => (
-              <li key={partner}>{partner}</li>
-            ))}
-          </ul>
         </section>
 
-        <section className="lp-demo" id="get-started">
-          <h2 className={fraunces.className}>{t.demo.title}</h2>
-          <p>{t.demo.body}</p>
-          <Link
-            href="/staff/sign-up"
-            className="lp-btn lp-btn-primary lp-btn-large"
-          >
-            {t.demo.cta}
-          </Link>
+        {/* ------------------------------------------------ stats */}
+        <section className="lp-stats">
+          <div className="lp-w lp-stats-in">
+            <div className="lp-stat">
+              <span className="lp-stat-ic">
+                <SparkIcon />
+              </span>
+              <span>
+                <span className="lp-stat-t">{t.stats.s1t}</span>
+                <span className={`${fraunces.className} lp-stat-v`}>
+                  {t.stats.s1v}
+                </span>
+                <span className="lp-stat-u">{t.stats.s1u}</span>
+              </span>
+            </div>
+            <div className="lp-stat">
+              <span className="lp-stat-ic">
+                <HeartIcon />
+              </span>
+              <span>
+                <span className="lp-stat-t">{t.stats.s2t}</span>
+                <span className={`${fraunces.className} lp-stat-v`}>
+                  {t.stats.s2v}
+                </span>
+                <span className="lp-stat-u">{t.stats.s2u}</span>
+              </span>
+            </div>
+            <div className="lp-stat">
+              <span className="lp-stat-ic">
+                <ClockIcon />
+              </span>
+              <span>
+                <span className="lp-stat-t">{t.stats.s3t}</span>
+                <span className={`${fraunces.className} lp-stat-v`}>
+                  {t.stats.s3v}
+                </span>
+                <span className="lp-stat-u">{t.stats.s3u}</span>
+              </span>
+            </div>
+            <div className="lp-stat">
+              <span className="lp-stat-ic">
+                <PenIcon />
+              </span>
+              <span>
+                <span className="lp-stat-t">{t.stats.s4t}</span>
+                <span className={`${fraunces.className} lp-stat-v lp-stat-v-small`}>
+                  {t.stats.s4v}
+                </span>
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* ------------------------------------------------ pricing */}
+        <section className="lp-pricing" id="pricing">
+          <div className="lp-w">
+            <h2 className={`${fraunces.className} lp-pricing-title`}>
+              {t.pricing.title}
+            </h2>
+            <p className="lp-pricing-sub">{t.pricing.sub}</p>
+            <div className="lp-price-grid">
+              {pricingTiers.map(({ size, monthly, yearly }) => (
+                <article key={size} className="lp-price-card">
+                  <p className="lp-price-tier">
+                    {size === 1
+                      ? t.pricing.tier1
+                      : t.pricing.tierN.replace("{n}", String(size))}
+                  </p>
+                  <p className="lp-price-main">
+                    <strong className={fraunces.className}>
+                      {euro(monthly.amount)}
+                    </strong>
+                    <span>{t.pricing.perMonth}</span>
+                  </p>
+                  <p className="lp-price-year">
+                    {t.pricing.yearlyLine.replace(
+                      "{price}",
+                      euro(yearly.amount)
+                    )}
+                  </p>
+                  <Link href="/staff/sign-up" className="lp-btn lp-btn-outline">
+                    {t.pricing.cta}
+                  </Link>
+                </article>
+              ))}
+            </div>
+            {hotelMonthly ? (
+              <p className="lp-price-hotel-note">
+                {t.pricing.hotelTier} — {euro(hotelMonthly.amount)}{" "}
+                {t.pricing.perMonth} · {t.pricing.hotelIncluded}
+              </p>
+            ) : null}
+            <p className="lp-pricing-foot">{t.pricing.foot}</p>
+          </div>
+        </section>
+
+        {/* ------------------------------------------------ CTA */}
+        <section className="lp-cta">
+          <Image
+            src="/landing/card-bar.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="lp-cta-bg"
+          />
+          <span className="lp-cta-ov" aria-hidden="true" />
+          <div className="lp-w lp-cta-in">
+            <div>
+              <h2 className={fraunces.className}>{t.cta.title}</h2>
+              <p>{t.cta.sub}</p>
+            </div>
+            <div className="lp-cta-btns">
+              <Link href="/demo" className="lp-btn lp-btn-dark">
+                {t.cta.rest}
+              </Link>
+              <Link href="/demo/ordering" className="lp-btn lp-btn-dark">
+                {t.cta.bar}
+              </Link>
+              <Link href="/demo/hotel" className="lp-btn lp-btn-orange">
+                {t.cta.hotel}
+              </Link>
+            </div>
+          </div>
         </section>
       </main>
 
@@ -560,158 +393,127 @@ export default async function HomePage({ searchParams }: PageProps) {
 
 /* ---------------------------------------------------------------- SVGs */
 
-function Monogram() {
-  return (
-    <svg className="lp-monogram" viewBox="0 0 44 44" aria-hidden="true">
-      <rect
-        x="2"
-        y="2"
-        width="40"
-        height="40"
-        rx="10"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
-      />
-      <path
-        d="M12 31 V14 l10 11 10-11 v17"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M18 31 l4 5 4-5"
-        fill="none"
-        stroke="#12a89a"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function Donut({
-  slices,
-}: {
-  slices: Array<{ label: string; value: number; color: string }>;
-}) {
-  const total = slices.reduce((sum, slice) => sum + slice.value, 0);
-  const radius = 15.9155; // circumference ≈ 100 → dash values are percentages
-  let offset = 25; // start at 12 o'clock
-
-  return (
-    <svg className="lp-donut" viewBox="0 0 42 42" aria-hidden="true">
-      {slices.map((slice) => {
-        const share = (slice.value / total) * 100;
-        const circle = (
-          <circle
-            key={slice.label}
-            cx="21"
-            cy="21"
-            r={radius}
-            fill="none"
-            stroke={slice.color}
-            strokeWidth="6"
-            strokeDasharray={`${share - 1.5} ${100 - share + 1.5}`}
-            strokeDashoffset={offset}
-          />
-        );
-        offset -= share;
-        return circle;
-      })}
-    </svg>
-  );
-}
-
-function PosIcon() {
+function icon(path: React.ReactNode) {
   return (
     <svg viewBox="0 0 24 24" className="lp-icon" aria-hidden="true">
-      <rect
-        x="3"
-        y="4"
-        width="18"
-        height="13"
-        rx="2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      />
-      <path d="M7 8h4M7 11h2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M8 20h8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      {path}
     </svg>
   );
 }
 
-function CardIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="lp-icon" aria-hidden="true">
-      <rect
-        x="3"
-        y="5"
-        width="18"
-        height="14"
-        rx="2.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      />
-      <path d="M3 10h18" stroke="currentColor" strokeWidth="1.8" />
-    </svg>
+function HeartIcon() {
+  return icon(
+    <path
+      d="M12 21c-5-3.4-8-6.8-8-10.5C4 7 6 5 8.5 5c1.6 0 3 .8 3.5 2 .5-1.2 1.9-2 3.5-2C18 5 20 7 20 10.5 20 14.2 17 17.6 12 21z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinejoin="round"
+    />
   );
 }
 
 function ClockIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="lp-icon" aria-hidden="true">
+  return icon(
+    <>
       <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
       <path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function CancelIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="lp-icon" aria-hidden="true">
-      <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function GuestsIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="lp-icon" aria-hidden="true">
-      <circle cx="9" cy="9" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M3.5 19c.7-3 2.8-4.5 5.5-4.5s4.8 1.5 5.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <circle cx="16.5" cy="10" r="2.4" fill="none" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M15.5 14.8c2.6 0 4.3 1.3 5 3.7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function StaffIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="lp-icon" aria-hidden="true">
-      <path
-        d="M4.5 17a7.5 7.5 0 0 1 15 0"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      <path d="M3 17h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M12 9.5V8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
+    </>
   );
 }
 
 function ChartIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="lp-icon" aria-hidden="true">
-      <path d="M4 20V10M10 20V4M16 20v-8M21 20H3" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
+  return icon(
+    <path
+      d="M4 20V10M10 20V4M16 20v-8M21 20H3"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  );
+}
+
+function ShieldIcon() {
+  return icon(
+    <path
+      d="M12 3l7 3v5c0 4.6-3 8.2-7 10-4-1.8-7-5.4-7-10V6l7-3z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinejoin="round"
+    />
+  );
+}
+
+function DeviceIcon() {
+  return icon(
+    <>
+      <rect x="3" y="4" width="18" height="13" rx="2" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M8 21h8M12 17v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </>
+  );
+}
+
+function SparkIcon() {
+  return icon(
+    <path
+      d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+    />
+  );
+}
+
+function PenIcon() {
+  return icon(
+    <>
+      <path
+        d="M4 20l3.5-1 11-11a1.8 1.8 0 0 0-2.5-2.5l-11 11L4 20z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <path d="M13.5 6.5l2.5 2.5" stroke="currentColor" strokeWidth="1.8" />
+    </>
+  );
+}
+
+function ForkIcon() {
+  return icon(
+    <path
+      d="M8 3v7a2 2 0 0 0 2 2v9M8 3v5M6 3v5M16 3c-1.5 1-2.5 3-2.5 5.5 0 2 .8 3 2.5 3.5V21"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+    />
+  );
+}
+
+function MartiniIcon() {
+  return icon(
+    <path
+      d="M4 5h16l-8 9-8-9zM12 14v6M8 20h8"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  );
+}
+
+function BellIcon() {
+  return icon(
+    <path
+      d="M4 17a8 8 0 0 1 16 0M2.5 17h19M12 9V7M10 7h4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+    />
   );
 }
