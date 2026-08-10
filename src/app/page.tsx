@@ -69,6 +69,7 @@ export default async function HomePage({ searchParams }: PageProps) {
     );
 
   const hotelMonthly = PLANS.find((plan) => plan.key === "hotel-monthly");
+  const hotelYearly = PLANS.find((plan) => plan.key === "hotel-yearly");
 
   const solutions = [
     {
@@ -343,11 +344,35 @@ export default async function HomePage({ searchParams }: PageProps) {
                 </article>
               ))}
             </div>
+            {/* The hotel bundle gets its own card and its own button —
+                same weight as the restaurant/bar tiers. */}
             {hotelMonthly ? (
-              <p className="lp-price-hotel-note">
-                {t.pricing.hotelTier} — {euro(hotelMonthly.amount)}{" "}
-                {t.pricing.perMonth} · {t.pricing.hotelIncluded}
-              </p>
+              <article className="lp-price-card lp-price-hotel">
+                <span className="lp-price-badge">{t.pricing.hotelBadge}</span>
+                <div className="lp-price-hotel-in">
+                  <div>
+                    <p className="lp-price-tier">{t.pricing.hotelTier}</p>
+                    <p className="lp-price-main">
+                      <strong className={fraunces.className}>
+                        {euro(hotelMonthly.amount)}
+                      </strong>
+                      <span>{t.pricing.perMonth}</span>
+                    </p>
+                    {hotelYearly ? (
+                      <p className="lp-price-year">
+                        {t.pricing.yearlyLine.replace(
+                          "{price}",
+                          euro(hotelYearly.amount)
+                        )}
+                      </p>
+                    ) : null}
+                    <p className="lp-price-year">{t.pricing.hotelIncluded}</p>
+                  </div>
+                  <Link href="/staff/sign-up" className="lp-btn lp-btn-orange">
+                    {t.pricing.cta}
+                  </Link>
+                </div>
+              </article>
             ) : null}
             <p className="lp-pricing-foot">{t.pricing.foot}</p>
           </div>

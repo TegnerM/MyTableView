@@ -538,6 +538,8 @@
   display: block;
   font-size: 0.64rem;
   color: #1f2c38;
+  /* keep clear of the bell icon — "Room 307" must never clip */
+  padding-right: 0.85rem;
 }
 
 .dl-hcard .dl-bell {
@@ -727,6 +729,17 @@
   font-weight: 800;
   color: #f4a83f;
   font-size: 0.72rem;
+}
+
+.dl-stime-late {
+  color: #ef6b6f;
+}
+
+.dl-upnext {
+  font-size: 0.48rem;
+  letter-spacing: 0.1em;
+  color: #77808d;
+  padding: 0.4rem 0.7rem 0.2rem;
 }
 
 .dl-snav {

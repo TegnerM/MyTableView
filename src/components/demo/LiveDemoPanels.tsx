@@ -162,7 +162,7 @@ export function RestaurantLivePanels({ photo }: { photo: string }) {
         <div className="dl-status"><span>9:41</span><span>▄▆█ ᯤ ▐▋</span></div>
         <div className="dl-shead"><i>☰</i><span>My Requests</span><i>⋮</i></div>
         <div className="dl-stabs">
-          <span className="dl-on">Active ({open.length})</span>
+          <span className="dl-on">Active ({open.length + 1})</span>
           <span>Done{doneCount > 0 ? ` (${doneCount})` : ""}</span>
         </div>
         {newest ? (
@@ -176,20 +176,26 @@ export function RestaurantLivePanels({ photo }: { photo: string }) {
             <button type="button" className="dl-sbtn dl-sbtn-dark" style={{ width: "calc(100% - 1.1rem)", margin: "0.2rem 0.55rem 0" }} onClick={completeNewest}>
               ✓ Mark as served
             </button>
-            <button type="button" className="dl-sbtn dl-sbtn-dark" style={{ width: "calc(100% - 1.1rem)", margin: "0.4rem 0.55rem 0" }}>
+            <button type="button" className="dl-sbtn dl-sbtn-dark" style={{ width: "calc(100% - 1.1rem)", margin: "0.4rem 0.55rem 0.2rem" }}>
               View table
             </button>
           </>
         ) : (
           <div className="dl-scard-dark">
-            <b>All caught up</b>
+            <b>Your table is nr 7</b>
             <div>Tap a button on the guest phone →</div>
           </div>
         )}
+        {/* Table 12 is overdue on the floor — it MUST be here too. */}
+        <div className="dl-scard-dark">
+          <b>TABLE 12</b>
+          <div className="dl-sname">Ask for bill</div>
+          <div>🕐 <span className="dl-stime dl-stime-late">10:12</span></div>
+        </div>
         <div className="dl-snav">
           <span className="dl-on">
             <i>📥</i>Requests
-            {open.length > 0 ? <span className="dl-badge">{open.length}</span> : null}
+            <span className="dl-badge">{open.length + 1}</span>
           </span>
           <span><i>🍽</i>Tables</span>
           <span><i>💬</i>Messages</span>
@@ -299,11 +305,11 @@ export function BarLivePanels({ photo }: { photo: string }) {
       {/* Table 5 — dark bartender phone */}
       <div className="dl-sphone">
         <div className="dl-status"><span>9:41</span><span>▄▆█ ᯤ ▐▋</span></div>
-        <div className="dl-shead"><i>←</i><span>Table 5</span><i>⋮</i></div>
+        <div className="dl-shead"><i>☰</i><span>Open orders ({open.length + 3})</span><i>⋮</i></div>
         {newest ? (
           <>
             <div style={{ padding: "0.3rem 0.7rem 0" }}>
-              <div className="dl-sname" style={{ fontSize: "0.78rem" }}>{newest.label}</div>
+              <div className="dl-sname" style={{ fontSize: "0.78rem" }}>Table 5 — {newest.label}</div>
               <div className="dl-stime">{elapsed(now, newest.createdAt)}</div>
             </div>
             <div className="dl-scard-dark" style={{ marginTop: "0.4rem" }}>
@@ -317,9 +323,6 @@ export function BarLivePanels({ photo }: { photo: string }) {
             <button type="button" className="dl-sbtn dl-sbtn-orange" style={{ width: "calc(100% - 1.1rem)", margin: "0.2rem 0.55rem 0" }} onClick={completeNewest}>
               ✓ Mark as served
             </button>
-            <button type="button" className="dl-sbtn dl-sbtn-dark" style={{ width: "calc(100% - 1.1rem)", margin: "0.4rem 0.55rem 0" }}>
-              View all orders
-            </button>
           </>
         ) : (
           <div className="dl-scard-dark" style={{ marginTop: "0.4rem" }}>
@@ -327,6 +330,23 @@ export function BarLivePanels({ photo }: { photo: string }) {
             <div>Order on the guest phone →</div>
           </div>
         )}
+        {/* The same orders the Bar Overview shows — always in sync. */}
+        <div className="dl-upnext">UP NEXT</div>
+        <div className="dl-scard-dark">
+          <b>TABLE 2</b>
+          <div className="dl-sname">Order drinks</div>
+          <div>2 × Aperol Spritz · <span className="dl-stime">1:18</span></div>
+        </div>
+        <div className="dl-scard-dark">
+          <b>TABLE 8</b>
+          <div className="dl-sname">Order drinks</div>
+          <div>1 × Margarita · <span className="dl-stime">2:45</span></div>
+        </div>
+        <div className="dl-scard-dark">
+          <b>TABLE 1</b>
+          <div className="dl-sname">Order drinks</div>
+          <div>1 × Rum &amp; Coke · <span className="dl-stime dl-stime-late">4:09</span></div>
+        </div>
         <div className="dl-snav">
           <span className="dl-on"><i>🍸</i>Overview</span>
           <span><i>📥</i>Orders</span>
