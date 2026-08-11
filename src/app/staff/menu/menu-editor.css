@@ -650,35 +650,12 @@
   font-weight: 800;
 }
 
-/* ---- "Also on the bar menu" tick (bar menu sharing) ---- */
+/* ---- "Bar menu" tick on the dish row (bar menu sharing) ---- */
 
-.mtv-menued-sharebar {
-  display: flex;
-  align-items: baseline;
-  gap: 0.55rem;
-  flex-wrap: wrap;
-  margin: 0.9rem 0 0.2rem;
-  padding: 0.65rem 0.8rem;
-  border: 1px solid var(--mtv-line, #e3e6ea);
-  border-radius: 10px;
-  background: var(--mtv-bg, #fafafa);
-  cursor: pointer;
+.mtv-menued-barshare {
+  margin-right: 0.4rem;
 }
 
-.mtv-menued-sharebar input {
+.mtv-menued-barshare input {
   accent-color: #c5a059;
-  transform: translateY(1px);
-}
-
-.mtv-menued-sharebar span {
-  font-weight: 700;
-  font-size: 0.88rem;
-}
-
-.mtv-menued-sharebar i {
-  font-style: normal;
-  font-size: 0.78rem;
-  opacity: 0.7;
-  flex-basis: 100%;
-  padding-left: 1.45rem;
 }

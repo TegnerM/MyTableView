@@ -58,6 +58,8 @@ export async function POST(request: Request) {
       return move(ctx, body, "menu_items");
     case "item_availability":
       return itemAvailability(ctx, body);
+    case "item_bar_share":
+      return itemBarShare(ctx, body);
     case "option_save":
       return optionSave(ctx, body);
     case "option_delete":
@@ -281,6 +283,23 @@ async function itemAvailability(ctx: Ctx, body: Record<string, unknown>) {
   const { data, error } = await service
     .from("menu_items")
     .update({ available: body.available })
+    .eq("id", body.id)
+    .eq("venue_id", ctx.venueId)
+    .select("id")
+    .maybeSingle<{ id: string }>();
+  return finish(data?.id, error?.message);
+}
+
+/** The per-dish "Bar menu" tick — instant, like availability. Fails
+ *  loudly (the row reverts) until the 2026-08-11 migration has run. */
+async function itemBarShare(ctx: Ctx, body: Record<string, unknown>) {
+  if (typeof body.id !== "string" || typeof body.alsoOnBar !== "boolean") {
+    return bad();
+  }
+  const service = getServiceClient();
+  const { data, error } = await service
+    .from("menu_items")
+    .update({ also_on_bar: body.alsoOnBar })
     .eq("id", body.id)
     .eq("venue_id", ctx.venueId)
     .select("id")
