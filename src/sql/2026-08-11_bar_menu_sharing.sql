@@ -23,3 +23,26 @@ comment on column public.menu_items.also_on_bar is
 create index if not exists menu_items_bar_share_idx
   on public.menu_items (venue_id, also_on_bar)
   where also_on_bar;
+
+-- ---------------------------------------------------------------
+-- Backfill: the orderable flag (buttons the live menu makes
+-- redundant — Drinks / Coffee / Dessert). The 2026-08-08 migration
+-- stamped it for venues that existed then; signup does not stamp
+-- it, so venues created since have shown redundant buttons next to
+-- a live menu. Same rule, re-runnable, catches them all.
+-- ---------------------------------------------------------------
+
+update public.request_types
+   set orderable = true
+ where kind = 'signal'
+   and closes_session = false
+   and orderable = false
+   -- edition buttons are real services, never menu duplicates
+   and code not like 'hotel\_%'
+   and code not like 'bar\_%'
+   and (
+     lower(coalesce(code, '')) in
+       ('drinks','drink','wine','bar','cocktail','coffee','espresso','tea',
+        'cake','dessert','desserts','menu','food','order','dessert_menu')
+     or lower(coalesce(icon, '')) in ('wine','coffee','cake','menu')
+   );

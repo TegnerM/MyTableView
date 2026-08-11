@@ -38,6 +38,9 @@ type Props = {
   entry?: "card" | "none";
   /** Flip to true to open the menu overlay from outside. */
   externalOpen?: boolean;
+  /** Category to land on when opened externally (e.g. the bar home's
+   *  Snacks tile opens straight onto the food). Null = keep current. */
+  externalOpenCategoryId?: string | null;
   onExternalOpenHandled?: () => void;
 };
 
@@ -77,6 +80,7 @@ export function MenuOrder({
   theme = "gold",
   entry = "card",
   externalOpen = false,
+  externalOpenCategoryId = null,
   onExternalOpenHandled,
 }: Props) {
   const t = strings;
@@ -93,10 +97,16 @@ export function MenuOrder({
   // buttons instead of the built-in entry card.
   useEffect(() => {
     if (externalOpen) {
+      if (
+        externalOpenCategoryId &&
+        menu.categories.some((category) => category.id === externalOpenCategoryId)
+      ) {
+        setActiveCategoryId(externalOpenCategoryId);
+      }
       setScreen({ kind: "menu" });
       onExternalOpenHandled?.();
     }
-  }, [externalOpen, onExternalOpenHandled]);
+  }, [externalOpen, externalOpenCategoryId, menu.categories, onExternalOpenHandled]);
 
   const pick = useCallback(
     (map: LocaleMap) => pickLocale(map, locale, venueDefaultLocale),

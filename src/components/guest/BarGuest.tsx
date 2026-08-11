@@ -91,6 +91,7 @@ export function BarGuest({
 
   const [sheet, setSheet] = useState<Sheet>("home");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpenCategory, setMenuOpenCategory] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
 
@@ -270,6 +271,18 @@ export function BarGuest({
   const callStaffTypes = requestTypes.filter((type) => !type.closesSession);
   const billTypes = requestTypes.filter((type) => type.closesSession);
 
+  // "Order drinks" lands on the first drinks category, "Snacks" on the
+  // first food category — not everyone starts with a cocktail.
+  const drinksCategoryId =
+    menu.categories.find((category) => category.station === "bar")?.id ?? null;
+  const foodCategoryId =
+    menu.categories.find((category) => category.station !== "bar")?.id ?? null;
+
+  const openMenu = (categoryId: string | null) => {
+    setMenuOpenCategory(categoryId);
+    setMenuOpen(true);
+  };
+
   /* ---------------------------------------------- render */
 
   return (
@@ -291,7 +304,7 @@ export function BarGuest({
             <button
               type="button"
               className="bar-action bar-action-feature"
-              onClick={() => setMenuOpen(true)}
+              onClick={() => openMenu(drinksCategoryId)}
             >
               <span className="bar-ic" aria-hidden="true">🍸</span>
               <span className="bar-tx">
@@ -322,7 +335,7 @@ export function BarGuest({
               <button
                 type="button"
                 className="bar-action"
-                onClick={() => setMenuOpen(true)}
+                onClick={() => openMenu(foodCategoryId)}
               >
                 <span className="bar-ic" aria-hidden="true">🍟</span>
                 <span className="bar-tx">
@@ -406,9 +419,10 @@ export function BarGuest({
         serviceChargePct={serviceChargePct}
         menu={menu}
         strings={strings}
-        theme="bar"
+        theme="gold"
         entry="none"
         externalOpen={menuOpen}
+        externalOpenCategoryId={menuOpenCategory}
         onExternalOpenHandled={() => setMenuOpen(false)}
       />
 
@@ -510,7 +524,7 @@ export function BarGuest({
                   className="bar-ghost"
                   onClick={() => {
                     setSheet("home");
-                    setMenuOpen(true);
+                    openMenu(null);
                   }}
                 >
                   {t.barViewFullMenu}

@@ -833,6 +833,68 @@ async function ensureMenu(venueId, spec) {
   }
 }
 
+/** The menu makes the Drinks / Coffee / Dessert buttons redundant, so
+ *  the guest page hides them while ordering is live — but only when
+ *  they carry the orderable flag, which the signup routine does not
+ *  stamp. Stamp it here, same rule as the 2026-08-08 migration. */
+async function ensureOrderableFlags(venueId) {
+  const CODES = [
+    "drinks", "drink", "wine", "bar", "cocktail", "coffee", "espresso",
+    "tea", "cake", "dessert", "desserts", "menu", "food", "order",
+    "dessert_menu",
+  ];
+  const ICONS = ["wine", "coffee", "cake", "menu"];
+
+  const { data: rows, error } = await db
+    .from("request_types")
+    .select("id, code, icon, kind, closes_session, orderable")
+    .eq("venue_id", venueId);
+  if (error) {
+    console.warn("  ! orderable flags read:", error.message);
+    return;
+  }
+
+  // Edition buttons (hotel_*, bar_*) are real services — "Book a
+  // table for dinner" is not a menu duplicate just because its icon
+  // is a wine glass.
+  const isEditionButton = (code) =>
+    code.startsWith("hotel_") || code.startsWith("bar_");
+
+  const ids = (rows ?? [])
+    .filter((row) => {
+      const code = (row.code ?? "").toLowerCase();
+      return (
+        row.kind === "signal" &&
+        !row.closes_session &&
+        !row.orderable &&
+        !isEditionButton(code) &&
+        (CODES.includes(code) || ICONS.includes((row.icon ?? "").toLowerCase()))
+      );
+    })
+    .map((row) => row.id);
+
+  // Undo any earlier over-eager stamp on edition buttons.
+  const revertIds = (rows ?? [])
+    .filter((row) => row.orderable && isEditionButton((row.code ?? "").toLowerCase()))
+    .map((row) => row.id);
+  if (revertIds.length > 0) {
+    await db.from("request_types").update({ orderable: false }).in("id", revertIds);
+    console.log(`  ✎ Restored edition buttons: ${revertIds.length}`);
+  }
+
+  if (ids.length === 0) return;
+
+  const { error: updateError } = await db
+    .from("request_types")
+    .update({ orderable: true })
+    .in("id", ids);
+  if (updateError) {
+    console.warn("  ! orderable flags:", updateError.message);
+  } else {
+    console.log(`  ✎ Hidden behind the live menu: ${ids.length} redundant buttons`);
+  }
+}
+
 /** "Also on the bar menu": flag the spec's shared dishes so the Demo
  *  Restaurant publishes them onto Demo Bar's guest menu (same account).
  *  Warns instead of failing until the 2026-08-11 migration has run. */
@@ -1196,6 +1258,7 @@ async function main() {
     await ensureTables(venueId, spec, zoneIds);
     await ensureTags(venueId, spec);
     await ensureMenu(venueId, spec);
+    await ensureOrderableFlags(venueId);
     await ensureBarSharing(venueId, spec);
     await stageLiveData(venueId, spec);
 

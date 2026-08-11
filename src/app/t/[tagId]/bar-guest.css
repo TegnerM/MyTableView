@@ -1,25 +1,27 @@
 /* ============================================================
-   Bar edition — guest surface (dark neon theme, approved mockup)
-   Tokens: bg #0e1015 · card #171a21 · line #242833
-           amber #f59e0b · pink #e84393 · good #22c55e
+   Bar edition — guest surface (MyTableView light theme).
+   Same warm cream + gold family as the restaurant and hotel
+   surfaces, so the brand reads the same at noon and at midnight.
+   Tokens: cream #f7f3ea · card #ffffff · line #e7dfcc
+           gold #c5a059 · deep #8a6d33 · good #1e9e63
    ============================================================ */
 
 .bar-guest {
-  --bar-bg: #0e1015;
-  --bar-card: #171a21;
-  --bar-card-2: #1c2029;
-  --bar-line: #242833;
-  --bar-amber: #f59e0b;
-  --bar-pink: #e84393;
-  --bar-good: #22c55e;
-  --bar-text: #f3f4f6;
-  --bar-dim: #9ca3af;
+  --bar-bg: #f7f3ea;
+  --bar-card: #ffffff;
+  --bar-card-2: #f4eedd;
+  --bar-line: #e7dfcc;
+  --bar-gold: #c5a059;
+  --bar-deep: #8a6d33;
+  --bar-good: #1e9e63;
+  --bar-text: #2a2620;
+  --bar-dim: #7a7263;
 
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   background:
-    radial-gradient(120% 60% at 50% -10%, #1a1430 0%, transparent 60%),
+    radial-gradient(120% 60% at 50% -10%, #f1e7cf 0%, transparent 60%),
     var(--bar-bg);
   color: var(--bar-text);
   font-family: var(--font-body, "Inter", system-ui, sans-serif);
@@ -31,9 +33,7 @@
   padding: 34px 22px 22px;
   text-align: center;
   border-bottom: 1px solid var(--bar-line);
-  background:
-    radial-gradient(80% 120% at 80% 0%, rgba(232, 67, 147, 0.16) 0%, transparent 55%),
-    radial-gradient(80% 120% at 15% 10%, rgba(245, 158, 11, 0.14) 0%, transparent 55%);
+  background: linear-gradient(180deg, #f2ead6 0%, var(--bar-bg) 100%);
 }
 
 .bar-brand {
@@ -45,7 +45,7 @@
 
 .bar-brand em {
   font-style: normal;
-  color: var(--bar-amber);
+  color: var(--bar-deep);
 }
 
 .bar-brand span {
@@ -53,8 +53,8 @@
   margin-left: 8px;
   padding: 2px 8px;
   border-radius: 999px;
-  border: 1px solid rgba(232, 67, 147, 0.5);
-  color: var(--bar-pink);
+  border: 1px solid rgba(197, 160, 89, 0.65);
+  color: var(--bar-deep);
   font-size: 10px;
   letter-spacing: 0.16em;
 }
@@ -75,12 +75,12 @@
   padding: 6px 14px;
   border-radius: 999px;
   border: 1px solid var(--bar-line);
-  background: rgba(23, 26, 33, 0.85);
+  background: rgba(255, 255, 255, 0.85);
   font-size: 13px;
 }
 
 .bar-table b {
-  color: var(--bar-amber);
+  color: var(--bar-deep);
   font-weight: 600;
 }
 
@@ -113,21 +113,22 @@
   color: var(--bar-text);
   text-align: left;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(94, 77, 41, 0.06);
   transition: transform 0.08s ease, border-color 0.15s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
 .bar-action:active {
   transform: scale(0.985);
-  border-color: rgba(245, 158, 11, 0.5);
+  border-color: rgba(197, 160, 89, 0.7);
 }
 
 .bar-action-feature {
-  border: 1px solid rgba(245, 158, 11, 0.55);
+  border: 1px solid rgba(197, 160, 89, 0.7);
   background:
-    linear-gradient(135deg, rgba(245, 158, 11, 0.14) 0%, rgba(232, 67, 147, 0.12) 100%),
+    linear-gradient(135deg, rgba(197, 160, 89, 0.16) 0%, rgba(197, 160, 89, 0.05) 100%),
     var(--bar-card);
-  box-shadow: 0 0 22px rgba(245, 158, 11, 0.12);
+  box-shadow: 0 4px 18px rgba(197, 160, 89, 0.18);
 }
 
 .bar-ic {
@@ -143,8 +144,8 @@
 }
 
 .bar-action-feature .bar-ic {
-  background: rgba(245, 158, 11, 0.16);
-  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(197, 160, 89, 0.18);
+  border-color: rgba(197, 160, 89, 0.5);
 }
 
 .bar-tx {
@@ -203,8 +204,8 @@
   width: 100%;
   padding: 13px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(34, 197, 94, 0.45);
-  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(30, 158, 99, 0.45);
+  background: rgba(30, 158, 99, 0.08);
   color: var(--bar-text);
   font-size: 13px;
   cursor: pointer;
@@ -235,8 +236,8 @@
 }
 
 @keyframes bar-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
-  55% { box-shadow: 0 0 0 7px rgba(34, 197, 94, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(30, 158, 99, 0.45); }
+  55% { box-shadow: 0 0 0 7px rgba(30, 158, 99, 0); }
 }
 
 /* ---------------------------------------------- sheets (overlay) */
@@ -247,11 +248,10 @@
   z-index: 60;
   display: flex;
   flex-direction: column;
-  background: var(--bar-bg, #0e1015);
   background:
-    radial-gradient(120% 60% at 50% -10%, #1a1430 0%, transparent 60%),
-    #0e1015;
-  color: #f3f4f6;
+    radial-gradient(120% 60% at 50% -10%, #f1e7cf 0%, transparent 60%),
+    #f7f3ea;
+  color: #2a2620;
   overflow-y: auto;
 }
 
@@ -259,8 +259,8 @@
   .bar-overlay {
     max-width: 480px;
     margin: 0 auto;
-    border-left: 1px solid #242833;
-    border-right: 1px solid #242833;
+    border-left: 1px solid #e7dfcc;
+    border-right: 1px solid #e7dfcc;
   }
 }
 
@@ -272,9 +272,9 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
-  background: rgba(14, 16, 21, 0.92);
+  background: rgba(247, 243, 234, 0.92);
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid #242833;
+  border-bottom: 1px solid #e7dfcc;
 }
 
 .bar-back {
@@ -284,9 +284,9 @@
   display: grid;
   place-items: center;
   border-radius: 12px;
-  border: 1px solid #242833;
-  background: #171a21;
-  color: #f3f4f6;
+  border: 1px solid #e7dfcc;
+  background: #ffffff;
+  color: #2a2620;
   font-size: 20px;
   line-height: 1;
   cursor: pointer;
@@ -311,7 +311,7 @@
 .bar-overlay-title span {
   display: block;
   font-size: 12px;
-  color: #9ca3af;
+  color: #7a7263;
   line-height: 1.3;
 }
 
@@ -336,16 +336,17 @@
   width: 100%;
   padding: 15px 16px;
   border-radius: 14px;
-  border: 1px solid #242833;
-  background: #171a21;
-  color: #f3f4f6;
+  border: 1px solid #e7dfcc;
+  background: #ffffff;
+  color: #2a2620;
   text-align: left;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(94, 77, 41, 0.06);
   -webkit-tap-highlight-color: transparent;
 }
 
 .bar-opt:active {
-  border-color: rgba(245, 158, 11, 0.5);
+  border-color: rgba(197, 160, 89, 0.7);
 }
 
 .bar-opt:disabled {
@@ -362,7 +363,7 @@
 .bar-opt-sub {
   display: block;
   font-size: 12px;
-  color: #9ca3af;
+  color: #7a7263;
   line-height: 1.3;
 }
 
@@ -375,15 +376,16 @@
   width: 100%;
   padding: 14px 16px;
   border-radius: 14px;
-  border: 1px solid #242833;
-  background: #171a21;
-  color: #f3f4f6;
+  border: 1px solid #e7dfcc;
+  background: #ffffff;
+  color: #2a2620;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(94, 77, 41, 0.06);
   -webkit-tap-highlight-color: transparent;
 }
 
 .bar-fav:active {
-  border-color: rgba(245, 158, 11, 0.5);
+  border-color: rgba(197, 160, 89, 0.7);
 }
 
 .bar-fav-name {
@@ -401,7 +403,7 @@
 .bar-fav-price {
   flex: 0 0 auto;
   font-size: 13px;
-  color: #9ca3af;
+  color: #7a7263;
 }
 
 .bar-fav-add {
@@ -412,9 +414,9 @@
   place-items: center;
   padding: 0 6px;
   border-radius: 10px;
-  border: 1px solid rgba(245, 158, 11, 0.5);
-  background: rgba(245, 158, 11, 0.12);
-  color: #f59e0b;
+  border: 1px solid rgba(197, 160, 89, 0.6);
+  background: rgba(197, 160, 89, 0.14);
+  color: #8a6d33;
   font-size: 15px;
   font-weight: 700;
 }
@@ -426,11 +428,12 @@
   padding: 15px;
   border-radius: 14px;
   border: none;
-  background: linear-gradient(135deg, #f59e0b 0%, #e84393 100%);
-  color: #14060a;
+  background: linear-gradient(135deg, #c5a059 0%, #a8853f 100%);
+  color: #ffffff;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 6px 18px rgba(168, 133, 63, 0.3);
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -442,9 +445,9 @@
   width: 100%;
   padding: 13px;
   border-radius: 14px;
-  border: 1px solid #242833;
+  border: 1px solid #e7dfcc;
   background: transparent;
-  color: #9ca3af;
+  color: #7a7263;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -466,16 +469,16 @@
   display: grid;
   place-items: center;
   border-radius: 999px;
-  border: 2px solid rgba(245, 158, 11, 0.55);
-  background: rgba(245, 158, 11, 0.08);
-  box-shadow: 0 0 26px rgba(245, 158, 11, 0.18);
+  border: 2px solid rgba(197, 160, 89, 0.6);
+  background: rgba(197, 160, 89, 0.1);
+  box-shadow: 0 0 26px rgba(197, 160, 89, 0.22);
   font-size: 30px;
 }
 
 .bar-status-lead {
   margin-top: 14px;
   font-size: 13px;
-  color: #9ca3af;
+  color: #7a7263;
 }
 
 .bar-status-phase {
@@ -483,7 +486,7 @@
   font-family: var(--font-display, "Playfair Display", serif);
   font-size: 24px;
   font-weight: 700;
-  color: #f59e0b;
+  color: #8a6d33;
 }
 
 .bar-steps {
@@ -514,9 +517,9 @@
   display: grid;
   place-items: center;
   border-radius: 999px;
-  border: 2px solid #242833;
-  background: #171a21;
-  color: #14060a;
+  border: 2px solid #e7dfcc;
+  background: #ffffff;
+  color: #ffffff;
   font-size: 12px;
   font-weight: 800;
   line-height: 1;
@@ -528,21 +531,21 @@
   min-height: 22px;
   margin: 4px 0;
   border-radius: 2px;
-  background: #242833;
+  background: #e7dfcc;
 }
 
 .bar-step[data-state="done"] .bar-step-dot {
-  border-color: #22c55e;
-  background: #22c55e;
+  border-color: #1e9e63;
+  background: #1e9e63;
 }
 
 .bar-step[data-state="done"] .bar-step-bar {
-  background: rgba(34, 197, 94, 0.55);
+  background: rgba(30, 158, 99, 0.5);
 }
 
 .bar-step[data-state="now"] .bar-step-dot {
-  border-color: #f59e0b;
-  background: rgba(245, 158, 11, 0.18);
+  border-color: #c5a059;
+  background: rgba(197, 160, 89, 0.22);
   animation: bar-pulse 1.6s ease-in-out infinite;
 }
 
@@ -561,22 +564,22 @@
   font-size: 14px;
   font-weight: 600;
   line-height: 1.3;
-  color: #6b7280;
+  color: #a89f8c;
 }
 
 .bar-step[data-state="done"] .bar-step-label,
 .bar-step[data-state="now"] .bar-step-label {
-  color: #f3f4f6;
+  color: #2a2620;
 }
 
 .bar-step[data-state="now"] .bar-step-label {
-  color: #f59e0b;
+  color: #8a6d33;
 }
 
 .bar-step-time {
   flex: 0 0 auto;
   font-size: 12px;
-  color: #9ca3af;
+  color: #7a7263;
   font-variant-numeric: tabular-nums;
 }
 
@@ -597,9 +600,9 @@
   display: grid;
   place-items: center;
   border-radius: 999px;
-  background: rgba(34, 197, 94, 0.14);
-  border: 2px solid #22c55e;
-  color: #22c55e;
+  background: rgba(30, 158, 99, 0.12);
+  border: 2px solid #1e9e63;
+  color: #1e9e63;
   font-size: 30px;
   font-weight: 800;
 }
@@ -614,7 +617,7 @@
 .bar-sent p {
   margin: 0 0 10px;
   font-size: 14px;
-  color: #9ca3af;
+  color: #7a7263;
   line-height: 1.5;
 }
 
@@ -622,7 +625,7 @@
   margin: 24px 8px;
   text-align: center;
   font-size: 14px;
-  color: #9ca3af;
+  color: #7a7263;
   line-height: 1.5;
 }
 
@@ -630,284 +633,13 @@
   margin: 0;
   padding: 12px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(239, 68, 68, 0.5);
-  background: rgba(239, 68, 68, 0.1);
-  color: #fca5a5;
+  border: 1px solid rgba(196, 69, 54, 0.5);
+  background: rgba(196, 69, 54, 0.08);
+  color: #b03a2e;
   font-size: 13px;
   text-align: center;
 }
 
-/* ============================================================
-   MenuOrder, dark-skinned — every mtv-menu-* surface restyled
-   when the overlay carries data-theme="bar".
-   ============================================================ */
-
-.mtv-menu-overlay[data-theme="bar"] {
-  background:
-    radial-gradient(120% 60% at 50% -10%, #1a1430 0%, transparent 60%),
-    #0e1015;
-  color: #f3f4f6;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-menu-head {
-  background: rgba(14, 16, 21, 0.92);
-  border-bottom: 1px solid #242833;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-menu-back,
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-back {
-  background: #171a21;
-  border: 1px solid #242833;
-  color: #f3f4f6;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-menu-head-title h2 {
-  color: #f3f4f6;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-menu-head-title span {
-  color: #9ca3af;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-menu-chip {
-  background: #171a21;
-  border: 1px solid #242833;
-  color: #9ca3af;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-menu-chip[data-active="true"] {
-  background: rgba(245, 158, 11, 0.14);
-  border-color: rgba(245, 158, 11, 0.55);
-  color: #f59e0b;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-dish {
-  background: #171a21;
-  border: 1px solid #242833;
-  box-shadow: none;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-dish-name {
-  color: #f3f4f6;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-dish-desc {
-  color: #9ca3af;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-dish-price {
-  color: #f59e0b;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-dish-photo-empty {
-  background: #1c2029;
-  color: #4b5563;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-dish-add {
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.5);
-  color: #f59e0b;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-dish-soldout {
-  color: #6b7280;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-allergen-badge,
-.mtv-menu-overlay[data-theme="bar"] .mtv-allergen-pill {
-  background: #1c2029;
-  border-color: #242833;
-  color: #9ca3af;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-allergen-badge[data-dietary="true"],
-.mtv-menu-overlay[data-theme="bar"] .mtv-allergen-pill[data-dietary="true"] {
-  background: rgba(34, 197, 94, 0.1);
-  border-color: rgba(34, 197, 94, 0.4);
-  color: #22c55e;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-bar {
-  background: linear-gradient(135deg, #f59e0b 0%, #e84393 100%);
-  color: #14060a;
-  box-shadow: 0 8px 26px rgba(232, 67, 147, 0.35);
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-bar-count {
-  background: rgba(20, 6, 10, 0.22);
-  color: #14060a;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-screen {
-  background: #0e1015;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-photo-empty {
-  background:
-    radial-gradient(circle at 50% 45%, rgba(245, 158, 11, 0.14) 0 30%, transparent 31%),
-    #171a21;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-sheet {
-  background: #14161c;
-  color: #f3f4f6;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-handle {
-  background: #242833;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-title-row h2 {
-  color: #f3f4f6;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-price {
-  color: #f59e0b;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-desc {
-  color: #9ca3af;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-options-title {
-  color: #9ca3af;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-option {
-  background: #171a21;
-  border: 1px solid #242833;
-  color: #f3f4f6;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-option[data-on="true"] {
-  border-color: rgba(245, 158, 11, 0.55);
-  background: rgba(245, 158, 11, 0.08);
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-option-box {
-  border-color: #3a4050;
-  background: #1c2029;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-option[data-on="true"] .mtv-item-option-box {
-  background: #f59e0b;
-  border-color: #f59e0b;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-option-price {
-  color: #9ca3af;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-qty {
-  background: #171a21;
-  border: 1px solid #242833;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-qty button {
-  color: #f59e0b;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-qty b {
-  color: #f3f4f6;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-item-add,
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-place,
-.mtv-menu-overlay[data-theme="bar"] .mtv-done-primary {
-  background: linear-gradient(135deg, #f59e0b 0%, #e84393 100%);
-  color: #14060a;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-place:disabled {
-  background: #242833;
-  color: #6b7280;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-item {
-  background: #171a21;
-  border: 1px solid #242833;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-name {
-  color: #f3f4f6;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-options {
-  color: #9ca3af;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-price {
-  color: #f59e0b;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-qty {
-  background: #1c2029;
-  border: 1px solid #242833;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-qty button {
-  color: #f59e0b;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-photo {
-  background: #1c2029;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-note textarea {
-  background: #171a21;
-  border: 1px solid #242833;
-  color: #f3f4f6;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-note textarea::placeholder {
-  color: #6b7280;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-totals {
-  background: #171a21;
-  border: 1px solid #242833;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-row {
-  color: #9ca3af;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-row-total {
-  color: #f3f4f6;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-payline {
-  color: #9ca3af;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-cart-error {
-  border: 1px solid rgba(239, 68, 68, 0.5);
-  background: rgba(239, 68, 68, 0.1);
-  color: #fca5a5;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-done-screen {
-  background: transparent;
-  color: #f3f4f6;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-done-check {
-  background: rgba(34, 197, 94, 0.14);
-  border: 2px solid #22c55e;
-  color: #22c55e;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-done-screen h2 {
-  color: #f3f4f6;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-done-screen p {
-  color: #9ca3af;
-}
-
-.mtv-menu-overlay[data-theme="bar"] .mtv-done-secondary {
-  background: transparent;
-  border: 1px solid #242833;
-  color: #9ca3af;
-}
+/* The ordering overlay itself now uses the standard light gold
+   MenuOrder theme (theme="gold" from BarGuest) — the old dark
+   data-theme="bar" skin is gone with the neon look. */
