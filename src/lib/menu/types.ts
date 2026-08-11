@@ -34,6 +34,9 @@ export type MenuItem = {
   allergens: string[];
   available: boolean;
   sortOrder: number;
+  /** Published onto the linked bar's guest menu ("Also on the bar
+   *  menu"). Absent on surfaces that don't load the flag. */
+  alsoOnBar?: boolean;
   options: MenuOption[];
 };
 

@@ -151,6 +151,10 @@ async function itemSave(ctx: Ctx, body: Record<string, unknown>) {
   const priceCents = body.priceCents;
   const photo = cleanPhoto(body.photo);
   const allergens = cleanAllergens(body.allergens);
+  // "Also on the bar menu" — optional; absent when the editor hides
+  // the tick (no linked bar, or a bar venue's own editor).
+  const alsoOnBar =
+    typeof body.alsoOnBar === "boolean" ? body.alsoOnBar : undefined;
 
   if (
     !name ||
@@ -183,20 +187,33 @@ async function itemSave(ctx: Ctx, body: Record<string, unknown>) {
       existing.price_cents <= 0 &&
       priceCents > 0;
 
-    const { data, error } = await service
+    const update = {
+      name,
+      description,
+      price_cents: priceCents,
+      photo,
+      allergens,
+      ...(revive ? { available: true } : {}),
+      ...(alsoOnBar === undefined ? {} : { also_on_bar: alsoOnBar }),
+    };
+    let { data, error } = await service
       .from("menu_items")
-      .update({
-        name,
-        description,
-        price_cents: priceCents,
-        photo,
-        allergens,
-        ...(revive ? { available: true } : {}),
-      })
+      .update(update)
       .eq("id", body.id)
       .eq("venue_id", ctx.venueId)
       .select("id")
       .maybeSingle<{ id: string }>();
+    if (error && /also_on_bar/.test(error.message)) {
+      // Pre-migration database — save everything else.
+      delete (update as Record<string, unknown>).also_on_bar;
+      ({ data, error } = await service
+        .from("menu_items")
+        .update(update)
+        .eq("id", body.id)
+        .eq("venue_id", ctx.venueId)
+        .select("id")
+        .maybeSingle<{ id: string }>());
+    }
     if (data?.id) {
       await autoTranslateMenuRow("menu_items", data.id, ctx.venueId, {
         name: primaryText(name),
@@ -223,20 +240,30 @@ async function itemSave(ctx: Ctx, body: Record<string, unknown>) {
   }
 
   const sortOrder = await nextSortOrder(ctx, "menu_items", body.categoryId);
-  const { data, error } = await service
+  const insert = {
+    venue_id: ctx.venueId,
+    category_id: body.categoryId,
+    name,
+    description,
+    price_cents: priceCents,
+    photo,
+    allergens,
+    sort_order: sortOrder,
+    ...(alsoOnBar === undefined ? {} : { also_on_bar: alsoOnBar }),
+  };
+  let { data, error } = await service
     .from("menu_items")
-    .insert({
-      venue_id: ctx.venueId,
-      category_id: body.categoryId,
-      name,
-      description,
-      price_cents: priceCents,
-      photo,
-      allergens,
-      sort_order: sortOrder,
-    })
+    .insert(insert)
     .select("id")
     .single<{ id: string }>();
+  if (error && /also_on_bar/.test(error.message)) {
+    delete (insert as Record<string, unknown>).also_on_bar;
+    ({ data, error } = await service
+      .from("menu_items")
+      .insert(insert)
+      .select("id")
+      .single<{ id: string }>());
+  }
   if (data?.id) {
     await autoTranslateMenuRow("menu_items", data.id, ctx.venueId, {
       name: primaryText(name),

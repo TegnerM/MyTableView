@@ -33,6 +33,7 @@ type ItemRow = {
   allergens: string[] | null;
   available: boolean;
   sort_order: number;
+  also_on_bar?: boolean | null;
 };
 
 type OptionRow = {
@@ -54,15 +55,7 @@ export async function loadStaffMenu(venueId: string): Promise<VenueMenu> {
       .eq("active", true)
       .order("sort_order", { ascending: true })
       .returns<CategoryRow[]>(),
-    supabase
-      .from("menu_items")
-      .select(
-        "id, category_id, name, description, price_cents, photo, allergens, available, sort_order"
-      )
-      .eq("venue_id", venueId)
-      .eq("active", true)
-      .order("sort_order", { ascending: true })
-      .returns<ItemRow[]>(),
+    loadItemRows(venueId),
     supabase
       .from("menu_item_options")
       .select("id, item_id, name, surcharge_cents, sort_order")
@@ -107,6 +100,7 @@ export async function loadStaffMenu(venueId: string): Promise<VenueMenu> {
       allergens: row.allergens ?? [],
       available: row.available,
       sortOrder: row.sort_order,
+      alsoOnBar: Boolean(row.also_on_bar),
       options: optionsByItem.get(row.id) ?? [],
     });
     itemsByCategory.set(row.category_id, list);
@@ -121,4 +115,34 @@ export async function loadStaffMenu(venueId: string): Promise<VenueMenu> {
   }));
 
   return { categories };
+}
+
+/** Item rows with the bar-share flag; retries without it on a
+ *  pre-migration database so the editor never goes down. */
+async function loadItemRows(venueId: string) {
+  const supabase = getServiceClient();
+
+  const withFlag = await supabase
+    .from("menu_items")
+    .select(
+      "id, category_id, name, description, price_cents, photo, allergens, available, sort_order, also_on_bar"
+    )
+    .eq("venue_id", venueId)
+    .eq("active", true)
+    .order("sort_order", { ascending: true })
+    .returns<ItemRow[]>();
+
+  if (withFlag.error && /also_on_bar/.test(withFlag.error.message)) {
+    return supabase
+      .from("menu_items")
+      .select(
+        "id, category_id, name, description, price_cents, photo, allergens, available, sort_order"
+      )
+      .eq("venue_id", venueId)
+      .eq("active", true)
+      .order("sort_order", { ascending: true })
+      .returns<ItemRow[]>();
+  }
+
+  return withFlag;
 }

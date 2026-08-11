@@ -6,6 +6,7 @@ import { getVenueBilling } from "@/lib/staff/billing";
 import { getServiceClient } from "@/lib/supabase/service";
 import { loadStaffMenu } from "@/lib/staff/menu-data";
 import { loadVenueStations } from "@/lib/stations";
+import { linkedBarVenue } from "@/lib/menu/bar-share";
 import { MenuEditor } from "@/components/staff/MenuEditor";
 import { StaffShell } from "@/components/staff/StaffShell";
 import { TrialLocked } from "@/components/staff/TrialLocked";
@@ -59,7 +60,7 @@ export default async function StaffMenuPage() {
   const t = getOrderingStrings(locale);
 
   const service = getServiceClient();
-  const [{ data: venue }, menu, stations] = await Promise.all([
+  const [{ data: venue }, menu, stations, linkedBar] = await Promise.all([
     service
       .from("venues")
       .select("locales, default_locale, menu_auto_translate")
@@ -71,6 +72,11 @@ export default async function StaffMenuPage() {
       }>(),
     loadStaffMenu(identity.venueId),
     loadVenueStations(identity.venueId),
+    // "Also on the bar menu" — only offered on full menus with a bar
+    // on the same account to publish to.
+    identity.edition === "bar"
+      ? Promise.resolve(null)
+      : linkedBarVenue(identity.venueId),
   ]);
 
   const venueLocales =
@@ -111,6 +117,7 @@ export default async function StaffMenuPage() {
           defaultLocale={venue?.default_locale ?? venueLocales[0] ?? "en"}
           autoTranslate={venue?.menu_auto_translate ?? true}
           stations={stations}
+          barShareName={linkedBar?.name ?? null}
         />
       </main>
     </StaffShell>

@@ -37,6 +37,9 @@ type Props = {
   autoTranslate: boolean;
   /** The venue's stations (display names follow the edition). */
   stations: VenueStation[];
+  /** Linked bar venue name — non-null shows the "Also on the bar
+   *  menu" tick on every dish. */
+  barShareName: string | null;
 };
 
 type SaveState = "idle" | "saving" | "saved" | "failed";
@@ -81,6 +84,7 @@ export function MenuEditor({
   defaultLocale,
   autoTranslate,
   stations,
+  barShareName,
 }: Props) {
   const router = useRouter();
 
@@ -347,6 +351,7 @@ export function MenuEditor({
                 locale={locale}
                 primary={primary}
                 others={manualLocales}
+                barShareName={barShareName}
                 item={item}
                 expanded={expandedItemId === item.id}
                 onToggle={() =>
@@ -362,6 +367,7 @@ export function MenuEditor({
                 t={t}
                 primary={primary}
                 others={manualLocales}
+                barShareName={barShareName}
                 categoryId={activeCategory.id}
                 item={null}
                 onDone={() => {
@@ -563,6 +569,7 @@ function ItemCard({
   locale,
   primary,
   others,
+  barShareName,
   item,
   expanded,
   onToggle,
@@ -572,6 +579,7 @@ function ItemCard({
   locale: string;
   primary: string;
   others: string[];
+  barShareName: string | null;
   item: MenuItem;
   expanded: boolean;
   onToggle: () => void;
@@ -629,6 +637,7 @@ function ItemCard({
           t={t}
           primary={primary}
           others={others}
+          barShareName={barShareName}
           categoryId={item.categoryId}
           item={item}
           onDone={onChanged}
@@ -643,6 +652,7 @@ function ItemForm({
   t,
   primary,
   others,
+  barShareName,
   categoryId,
   item,
   onDone,
@@ -651,6 +661,7 @@ function ItemForm({
   t: ReturnType<typeof getOrderingStrings>;
   primary: string;
   others: string[];
+  barShareName: string | null;
   categoryId: string;
   item: MenuItem | null;
   onDone: () => void;
@@ -663,6 +674,7 @@ function ItemForm({
   );
   const [allergens, setAllergens] = useState<string[]>(item?.allergens ?? []);
   const [photo, setPhoto] = useState<string | null>(item?.photo ?? null);
+  const [alsoOnBar, setAlsoOnBar] = useState(item?.alsoOnBar ?? false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [state, setState] = useState<SaveState>("idle");
 
@@ -695,6 +707,7 @@ function ItemForm({
       priceCents,
       photo,
       allergens,
+      ...(barShareName !== null ? { alsoOnBar } : {}),
     });
     if (result.ok) {
       // Green tick, breathe, then collapse back to the list.
@@ -840,6 +853,18 @@ function ItemForm({
           </button>
         ))}
       </div>
+
+      {barShareName !== null ? (
+        <label className="mtv-menued-sharebar">
+          <input
+            type="checkbox"
+            checked={alsoOnBar}
+            onChange={(event) => setAlsoOnBar(event.target.checked)}
+          />
+          <span>{t.editor.shareBar}</span>
+          <i>{t.editor.shareBarHelp.replace("{bar}", barShareName)}</i>
+        </label>
+      ) : null}
 
       {item ? (
         <OptionsEditor t={t} primary={primary} item={item} onChanged={onDone} />

@@ -1,6 +1,7 @@
 import { getServiceClient } from "@/lib/supabase/service";
 import { TAG_ID_PATTERN } from "@/lib/guest/resolve-tag";
 import { isOrderingLive } from "@/lib/billing/status";
+import { barShareSourceVenueIds } from "@/lib/menu/bar-share";
 import type { Station } from "@/lib/menu/types";
 
 /**
@@ -62,6 +63,8 @@ type TagRow = {
 
 type MenuItemRow = {
   id: string;
+  venue_id: string;
+  also_on_bar: boolean | null;
   category_id: string;
   name: Record<string, string> | null;
   price_cents: number;
@@ -173,18 +176,50 @@ export async function placeGuestOrder(
   // ---- re-read the menu and price everything server-side -------------
   const itemIds = [...new Set(lines.map((line) => line.itemId))];
 
-  const { data: items, error: itemsError } = await supabase
+  // "Also on the bar menu": a bar's guests may order dishes a linked
+  // full-menu venue ticked for sharing, so items are fetched by id and
+  // validated against the venue OR the share whitelist afterwards.
+  let shareSourceIds: string[] = [];
+  try {
+    shareSourceIds = await barShareSourceVenueIds(venueId);
+  } catch (shareError) {
+    console.error("placeGuestOrder: share lookup failed", shareError);
+  }
+
+  let items: MenuItemRow[] | null = null;
+
+  const firstRead = await supabase
     .from("menu_items")
     .select(
-      "id, category_id, name, price_cents, available, active, menu_categories:category_id ( station, active )"
+      "id, venue_id, also_on_bar, category_id, name, price_cents, available, active, menu_categories:category_id ( station, active )"
     )
-    .eq("venue_id", venueId)
     .in("id", itemIds)
     .returns<MenuItemRow[]>();
 
-  if (itemsError) {
-    console.error("placeGuestOrder: items lookup failed", itemsError);
+  if (firstRead.error && /also_on_bar/.test(firstRead.error.message)) {
+    // Pre-migration database — fall back to the venue-scoped read.
+    const retry = await supabase
+      .from("menu_items")
+      .select(
+        "id, category_id, name, price_cents, available, active, menu_categories:category_id ( station, active )"
+      )
+      .eq("venue_id", venueId)
+      .in("id", itemIds)
+      .returns<MenuItemRow[]>();
+    if (retry.error) {
+      console.error("placeGuestOrder: items lookup failed", retry.error);
+      return { ok: false, reason: "error" };
+    }
+    items = (retry.data ?? []).map((item) => ({
+      ...item,
+      venue_id: venueId,
+      also_on_bar: false,
+    }));
+  } else if (firstRead.error) {
+    console.error("placeGuestOrder: items lookup failed", firstRead.error);
     return { ok: false, reason: "error" };
+  } else {
+    items = firstRead.data;
   }
 
   const itemById = new Map((items ?? []).map((item) => [item.id, item]));
@@ -192,6 +227,14 @@ export async function placeGuestOrder(
   for (const line of lines) {
     const item = itemById.get(line.itemId);
     if (!item || !item.active || !item.menu_categories?.active) {
+      return { ok: false, reason: "unknown_item" };
+    }
+    const ownItem = item.venue_id === venueId;
+    const sharedItem =
+      !ownItem &&
+      Boolean(item.also_on_bar) &&
+      shareSourceIds.includes(item.venue_id);
+    if (!ownItem && !sharedItem) {
       return { ok: false, reason: "unknown_item" };
     }
     if (!item.available || item.price_cents <= 0) {
@@ -203,10 +246,12 @@ export async function placeGuestOrder(
 
   let optionById = new Map<string, OptionRow>();
   if (optionIds.length > 0) {
+    // Options may belong to a shared dish's home venue; each option is
+    // still pinned to its own item below (option.item_id check).
     const { data: options, error: optionsError } = await supabase
       .from("menu_item_options")
       .select("id, item_id, name, surcharge_cents, active")
-      .eq("venue_id", venueId)
+      .in("venue_id", [venueId, ...shareSourceIds])
       .in("id", optionIds)
       .returns<OptionRow[]>();
 

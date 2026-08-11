@@ -230,11 +230,11 @@ const VENUES = [
         name: l("Starters", "Entrantes", "Vorspeisen", "Forretter"), station: "kitchen",
         items: [
           { name: l("Garlic prawns", "Gambas al ajillo", "Knoblauchgarnelen", "Hvidløgsrejer"),
-            desc: l("Sizzling in olive oil and chilli", "En aceite de oliva y guindilla", "In Olivenöl und Chili", "I olivenolie og chili"), cents: 1250 },
+            desc: l("Sizzling in olive oil and chilli", "En aceite de oliva y guindilla", "In Olivenöl und Chili", "I olivenolie og chili"), cents: 1250, alsoOnBar: true },
           { name: l("Burrata & tomatoes", "Burrata con tomate", "Burrata & Tomaten", "Burrata og tomater"),
             desc: l("Heritage tomatoes, basil oil", "Tomate de temporada, aceite de albahaca", "Alte Tomatensorten, Basilikumöl", "Tomater, basilikumolie"), cents: 1150 },
           { name: l("Crispy calamari", "Calamares crujientes", "Knusprige Calamari", "Sprøde blæksprutteringe"),
-            desc: l("Lemon aioli", "Alioli de limón", "Zitronen-Aioli", "Citronaioli"), cents: 990 },
+            desc: l("Lemon aioli", "Alioli de limón", "Zitronen-Aioli", "Citronaioli"), cents: 990, alsoOnBar: true },
         ],
       },
       {
@@ -833,6 +833,47 @@ async function ensureMenu(venueId, spec) {
   }
 }
 
+/** "Also on the bar menu": flag the spec's shared dishes so the Demo
+ *  Restaurant publishes them onto Demo Bar's guest menu (same account).
+ *  Warns instead of failing until the 2026-08-11 migration has run. */
+async function ensureBarSharing(venueId, spec) {
+  const wanted = [];
+  for (const category of spec.menu) {
+    for (const item of category.items) {
+      if (item.alsoOnBar) wanted.push(item.name.en);
+    }
+  }
+  if (wanted.length === 0) return;
+
+  const { data: items, error } = await db
+    .from("menu_items")
+    .select("id, name")
+    .eq("venue_id", venueId)
+    .eq("active", true);
+  if (error) {
+    console.warn("  ! bar sharing read:", error.message);
+    return;
+  }
+
+  const ids = (items ?? [])
+    .filter((item) => wanted.includes(item.name?.en ?? ""))
+    .map((item) => item.id);
+  if (ids.length === 0) return;
+
+  const { error: updateError } = await db
+    .from("menu_items")
+    .update({ also_on_bar: true })
+    .in("id", ids);
+  if (updateError) {
+    console.warn(
+      `  ! bar sharing: ${updateError.message}\n` +
+        "    → run src/sql/2026-08-11_bar_menu_sharing.sql in Supabase, then re-run this seed"
+    );
+  } else {
+    console.log(`  ✎ Shared onto the bar menu: ${ids.length} dishes`);
+  }
+}
+
 // ---------------------------------------------------- live floor data
 
 /** Wipe sessions / requests / orders so every run stages the same
@@ -1155,6 +1196,7 @@ async function main() {
     await ensureTables(venueId, spec, zoneIds);
     await ensureTags(venueId, spec);
     await ensureMenu(venueId, spec);
+    await ensureBarSharing(venueId, spec);
     await stageLiveData(venueId, spec);
 
     // A few guest links for the pitch.

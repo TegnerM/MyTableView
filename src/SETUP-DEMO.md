@@ -63,6 +63,21 @@ of the account's billing status, so no Stripe subscription is needed
 and the guest pages, ordering and staff floor all stay live. (The
 billing card will show them as on-trial — that's expected.)
 
+## Bar menu sharing ("Also on the bar menu")
+
+Dishes on a full menu (restaurant/hotel edition) can be ticked
+**Also on the bar menu** in the menu editor — they then appear on the
+guest menu of the bar venue on the same account (same-property venues
+win when names use the "<Property> — Bar" convention), and bar guests
+can order them like any other dish. Requires the
+`src/sql/2026-08-11_bar_menu_sharing.sql` migration (Supabase → SQL
+Editor) and a deploy.
+
+The seed ticks Garlic prawns and Crispy calamari on Demo Restaurant,
+so Demo Bar's guest menu shows a "Starters" section coming from the
+restaurant — that's the feature demo. Until the migration has run,
+the seed prints a warning and skips this step.
+
 ## Notes
 
 - The bar edition's two bill buttons meet the one-closer-per-venue
