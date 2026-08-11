@@ -390,25 +390,52 @@ export async function applyEdition(
     } else {
       const have = new Set((existing ?? []).map((row) => row.code));
       const missing = seeds.filter((type) => !have.has(type.code));
-      if (missing.length > 0) {
-        const { error: seedError } = await service.from("request_types").insert(
-          missing.map((type) => ({
-            venue_id: venueId,
-            code: type.code,
-            kind: "signal",
-            label: type.label,
-            sublabel: type.sublabel,
-            icon: type.icon,
-            closes_session: type.closesSession,
-            sort_order: type.sortOrder,
-            active: true,
-          }))
-        );
+
+      // The schema allows ONE session-closing button per venue
+      // (request_types_one_closer_per_venue). When the edition brings
+      // its own closer (the bar's "Bring the bill"), the default
+      // "Request the Bill" must hand over the role first — retire it
+      // (off + no longer a closer) so the edition button can take its
+      // place. Any further closers in the seed list land as ordinary
+      // signals. The old batch insert tripped the constraint and lost
+      // the WHOLE batch, so bar signups ended up with no bar buttons
+      // at all.
+      if (missing.some((type) => type.closesSession)) {
+        const { error: retireError } = await service
+          .from("request_types")
+          .update({ active: false, closes_session: false })
+          .eq("venue_id", venueId)
+          .eq("closes_session", true);
+        if (retireError) {
+          console.error(
+            "applyEdition: retiring default closer failed",
+            retireError.message
+          );
+        }
+      }
+
+      let closerAssigned = false;
+      for (const type of missing) {
+        const closes = type.closesSession && !closerAssigned;
+        const { error: seedError } = await service.from("request_types").insert({
+          venue_id: venueId,
+          code: type.code,
+          kind: "signal",
+          label: type.label,
+          sublabel: type.sublabel,
+          icon: type.icon,
+          closes_session: closes,
+          sort_order: type.sortOrder,
+          active: true,
+        });
         if (seedError) {
           console.error(
-            "applyEdition: request types seed failed",
+            "applyEdition: request type seed failed",
+            type.code,
             seedError.message
           );
+        } else if (closes) {
+          closerAssigned = true;
         }
       }
     }
