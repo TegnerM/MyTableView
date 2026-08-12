@@ -104,6 +104,27 @@ const EN = {
     cta: "Start your free trial",
     foot: "14-day free trial on every plan — no credit card, cancel anytime.",
   },
+  videos: {
+    eyebrow: "See it in action",
+    title: "18 seconds, from tap to table",
+    sub: "Three short films — restaurant, bar and hotel — showing what your guests see and what your staff sees.",
+  },
+  contactPage: {
+    title: "Talk to us",
+    sub: "Questions about MyTableView, pricing, or a demo for your venue? Send us a message — a real person answers, usually within one business day.",
+    name: "Your name",
+    email: "Your email",
+    business: "Venue or business (optional)",
+    message: "How can we help?",
+    send: "Send message",
+    sending: "Sending…",
+    sentTitle: "Message sent",
+    sentBody: "Thank you — we'll get back to you shortly.",
+    error: "That didn't go through. Please try again, or email us directly below.",
+    altTitle: "Prefer email?",
+    altBody: "Write to us any time — we read everything:",
+    backHome: "Back to the front page",
+  },
 };
 
 export type LandingStrings = typeof EN;
@@ -207,6 +228,27 @@ const ES: LandingStrings = {
     cta: "Empieza tu prueba gratis",
     foot: "14 días de prueba gratis en todos los planes — sin tarjeta, cancela cuando quieras.",
   },
+  videos: {
+    eyebrow: "Míralo en acción",
+    title: "18 segundos, del toque a la mesa",
+    sub: "Tres vídeos breves — restaurante, bar y hotel — con lo que ve tu cliente y lo que ve tu equipo.",
+  },
+  contactPage: {
+    title: "Hablemos",
+    sub: "¿Preguntas sobre MyTableView, precios o una demo para tu negocio? Escríbenos — responde una persona real, normalmente en un día laborable.",
+    name: "Tu nombre",
+    email: "Tu email",
+    business: "Local o empresa (opcional)",
+    message: "¿En qué podemos ayudarte?",
+    send: "Enviar mensaje",
+    sending: "Enviando…",
+    sentTitle: "Mensaje enviado",
+    sentBody: "Gracias — te responderemos muy pronto.",
+    error: "No se ha podido enviar. Inténtalo de nuevo o escríbenos directamente abajo.",
+    altTitle: "¿Prefieres el email?",
+    altBody: "Escríbenos cuando quieras — lo leemos todo:",
+    backHome: "Volver a la portada",
+  },
 };
 
 const DA: LandingStrings = {
@@ -307,6 +349,27 @@ const DA: LandingStrings = {
     yearlyLine: "eller {price} / år — 2 måneder gratis",
     cta: "Start din gratis prøveperiode",
     foot: "14 dages gratis prøve på alle planer — uden kreditkort, opsig når som helst.",
+  },
+  videos: {
+    eyebrow: "Se det i aktion",
+    title: "18 sekunder, fra tryk til bord",
+    sub: "Tre korte film — restaurant, bar og hotel — med det, dine gæster ser, og det, dit personale ser.",
+  },
+  contactPage: {
+    title: "Lad os tale sammen",
+    sub: "Spørgsmål om MyTableView, priser eller en demo til dit sted? Send os en besked — et rigtigt menneske svarer, som regel inden for én hverdag.",
+    name: "Dit navn",
+    email: "Din email",
+    business: "Sted eller virksomhed (valgfrit)",
+    message: "Hvad kan vi hjælpe med?",
+    send: "Send besked",
+    sending: "Sender…",
+    sentTitle: "Beskeden er sendt",
+    sentBody: "Tak — vi vender tilbage hurtigst muligt.",
+    error: "Beskeden kom ikke igennem. Prøv igen, eller skriv direkte til os nedenfor.",
+    altTitle: "Foretrækker du email?",
+    altBody: "Skriv til os når som helst — vi læser det hele:",
+    backHome: "Tilbage til forsiden",
   },
 };
 
@@ -409,6 +472,27 @@ const SV: LandingStrings = {
     cta: "Starta din gratisperiod",
     foot: "14 dagar gratis på alla planer — inget kreditkort, avsluta när som helst.",
   },
+  videos: {
+    eyebrow: "Se det i aktion",
+    title: "18 sekunder, från tryck till bord",
+    sub: "Tre korta filmer — restaurang, bar och hotell — med det dina gäster ser och det din personal ser.",
+  },
+  contactPage: {
+    title: "Hör av dig",
+    sub: "Frågor om MyTableView, priser eller en demo för din verksamhet? Skicka ett meddelande — en riktig människa svarar, oftast inom en arbetsdag.",
+    name: "Ditt namn",
+    email: "Din e-post",
+    business: "Ställe eller företag (valfritt)",
+    message: "Vad kan vi hjälpa till med?",
+    send: "Skicka meddelande",
+    sending: "Skickar…",
+    sentTitle: "Meddelandet skickat",
+    sentBody: "Tack — vi återkommer inom kort.",
+    error: "Det gick inte att skicka. Försök igen eller mejla oss direkt nedan.",
+    altTitle: "Föredrar du e-post?",
+    altBody: "Skriv till oss när som helst — vi läser allt:",
+    backHome: "Tillbaka till startsidan",
+  },
 };
 
 const NO: LandingStrings = {
@@ -509,6 +593,27 @@ const NO: LandingStrings = {
     yearlyLine: "eller {price} / år — 2 måneder gratis",
     cta: "Start din gratisperiode",
     foot: "14 dager gratis på alle planer — uten kredittkort, avslutt når som helst.",
+  },
+  videos: {
+    eyebrow: "Se det i aksjon",
+    title: "18 sekunder, fra trykk til bord",
+    sub: "Tre korte filmer — restaurant, bar og hotell — med det gjestene dine ser og det personalet ditt ser.",
+  },
+  contactPage: {
+    title: "Ta kontakt",
+    sub: "Spørsmål om MyTableView, priser eller en demo for stedet ditt? Send oss en melding — et ekte menneske svarer, som regel innen én virkedag.",
+    name: "Navnet ditt",
+    email: "E-posten din",
+    business: "Sted eller bedrift (valgfritt)",
+    message: "Hva kan vi hjelpe med?",
+    send: "Send melding",
+    sending: "Sender…",
+    sentTitle: "Meldingen er sendt",
+    sentBody: "Takk — vi kommer tilbake til deg snart.",
+    error: "Meldingen kom ikke gjennom. Prøv igjen, eller send oss en e-post direkte nedenfor.",
+    altTitle: "Foretrekker du e-post?",
+    altBody: "Skriv til oss når som helst — vi leser alt:",
+    backHome: "Tilbake til forsiden",
   },
 };
 
@@ -611,6 +716,27 @@ const DE: LandingStrings = {
     cta: "Kostenlos testen",
     foot: "14 Tage kostenlos testen bei jedem Plan — ohne Kreditkarte, jederzeit kündbar.",
   },
+  videos: {
+    eyebrow: "In Aktion erleben",
+    title: "18 Sekunden — vom Tippen zum Tisch",
+    sub: "Drei kurze Filme — Restaurant, Bar und Hotel — mit dem, was Ihre Gäste sehen, und dem, was Ihr Team sieht.",
+  },
+  contactPage: {
+    title: "Sprechen Sie mit uns",
+    sub: "Fragen zu MyTableView, den Preisen oder einer Demo für Ihren Betrieb? Schreiben Sie uns — ein echter Mensch antwortet, meist innerhalb eines Werktags.",
+    name: "Ihr Name",
+    email: "Ihre E-Mail",
+    business: "Betrieb oder Unternehmen (optional)",
+    message: "Wie können wir helfen?",
+    send: "Nachricht senden",
+    sending: "Wird gesendet…",
+    sentTitle: "Nachricht gesendet",
+    sentBody: "Danke — wir melden uns in Kürze.",
+    error: "Das hat nicht geklappt. Bitte erneut versuchen oder direkt unten mailen.",
+    altTitle: "Lieber per E-Mail?",
+    altBody: "Schreiben Sie uns jederzeit — wir lesen alles:",
+    backHome: "Zurück zur Startseite",
+  },
 };
 
 const NL: LandingStrings = {
@@ -712,6 +838,27 @@ const NL: LandingStrings = {
     cta: "Start je gratis proefperiode",
     foot: "14 dagen gratis bij elk abonnement — geen creditcard, opzeggen wanneer je wilt.",
   },
+  videos: {
+    eyebrow: "Zie het in actie",
+    title: "18 seconden, van tik tot tafel",
+    sub: "Drie korte films — restaurant, bar en hotel — met wat je gasten zien en wat je personeel ziet.",
+  },
+  contactPage: {
+    title: "Praat met ons",
+    sub: "Vragen over MyTableView, prijzen of een demo voor jouw zaak? Stuur een bericht — een echt mens antwoordt, meestal binnen één werkdag.",
+    name: "Je naam",
+    email: "Je e-mail",
+    business: "Zaak of bedrijf (optioneel)",
+    message: "Waarmee kunnen we helpen?",
+    send: "Bericht versturen",
+    sending: "Versturen…",
+    sentTitle: "Bericht verzonden",
+    sentBody: "Bedankt — we komen er snel bij je op terug.",
+    error: "Versturen is niet gelukt. Probeer het opnieuw of mail ons direct hieronder.",
+    altTitle: "Liever e-mail?",
+    altBody: "Schrijf ons wanneer je wilt — we lezen alles:",
+    backHome: "Terug naar de startpagina",
+  },
 };
 
 const FR: LandingStrings = {
@@ -812,6 +959,27 @@ const FR: LandingStrings = {
     yearlyLine: "ou {price} / an — 2 mois offerts",
     cta: "Commencer l'essai gratuit",
     foot: "14 jours d'essai gratuit sur chaque formule — sans carte bancaire, résiliez à tout moment.",
+  },
+  videos: {
+    eyebrow: "Voyez-le en action",
+    title: "18 secondes, du geste à la table",
+    sub: "Trois courts films — restaurant, bar et hôtel — avec ce que voient vos clients et ce que voit votre équipe.",
+  },
+  contactPage: {
+    title: "Parlons-en",
+    sub: "Des questions sur MyTableView, les tarifs ou une démo pour votre établissement ? Écrivez-nous — une vraie personne répond, généralement sous un jour ouvré.",
+    name: "Votre nom",
+    email: "Votre e-mail",
+    business: "Établissement ou société (facultatif)",
+    message: "Comment pouvons-nous aider ?",
+    send: "Envoyer le message",
+    sending: "Envoi…",
+    sentTitle: "Message envoyé",
+    sentBody: "Merci — nous revenons vers vous très vite.",
+    error: "L'envoi a échoué. Réessayez ou écrivez-nous directement ci-dessous.",
+    altTitle: "Vous préférez l'e-mail ?",
+    altBody: "Écrivez-nous à tout moment — nous lisons tout :",
+    backHome: "Retour à l'accueil",
   },
 };
 

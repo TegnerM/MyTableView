@@ -1,0 +1,181 @@
+/* ============================================================
+   /contact — form + direct-email card in the landing language
+   (ivory ground, navy ink, orange accent; tokens from home.css).
+   ============================================================ */
+
+.lp-contact {
+  background: var(--lp-ivory);
+  padding: 3.6rem 0 4.4rem;
+  min-height: 60dvh;
+}
+
+.lp-contact-in {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 2.8rem;
+  align-items: start;
+}
+
+.lp-contact-copy h1 {
+  font-size: 2.2rem;
+  line-height: 1.15;
+  margin: 0 0 0.9rem;
+}
+
+.lp-contact-sub {
+  color: var(--lp-muted);
+  font-size: 0.98rem;
+  line-height: 1.6;
+  margin: 0 0 2rem;
+}
+
+.lp-contact-alt {
+  border: 1px solid var(--lp-line);
+  border-radius: 14px;
+  background: var(--lp-cream);
+  padding: 1.1rem 1.3rem;
+  margin-bottom: 1.6rem;
+}
+
+.lp-contact-alt h2 {
+  font-size: 0.95rem;
+  margin: 0 0 0.3rem;
+}
+
+.lp-contact-alt p {
+  margin: 0 0 0.5rem;
+  font-size: 0.88rem;
+  color: var(--lp-muted);
+}
+
+.lp-contact-email {
+  font-weight: 700;
+  color: var(--lp-orange-d);
+}
+
+.lp-contact-back {
+  display: inline-block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--lp-muted);
+}
+
+/* ------------------------------------------------------------ form card */
+
+.lp-contact-card {
+  background: #ffffff;
+  border: 1px solid var(--lp-line);
+  border-radius: 18px;
+  padding: 1.8rem;
+  box-shadow: 0 14px 34px rgba(31, 44, 56, 0.08);
+}
+
+.lp-cform {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lp-cform label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.lp-cform label span {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--lp-ink);
+}
+
+.lp-cform input,
+.lp-cform textarea {
+  font: inherit;
+  color: var(--lp-ink);
+  background: var(--lp-cream);
+  border: 1px solid var(--lp-line);
+  border-radius: 10px;
+  padding: 0.65rem 0.8rem;
+  outline: none;
+}
+
+.lp-cform input:focus,
+.lp-cform textarea:focus {
+  border-color: var(--lp-orange);
+  box-shadow: 0 0 0 3px rgba(213, 135, 46, 0.15);
+}
+
+.lp-cform textarea {
+  resize: vertical;
+  min-height: 7rem;
+}
+
+/* Honeypot: parked far off-canvas, still focusable by bots. */
+.lp-cform-hp {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.lp-cform-submit {
+  align-self: flex-start;
+  padding: 0.7rem 1.6rem;
+}
+
+.lp-cform-submit:disabled {
+  opacity: 0.6;
+}
+
+.lp-cform-error {
+  margin: 0;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid rgba(196, 69, 54, 0.4);
+  background: rgba(196, 69, 54, 0.07);
+  color: #b03a2e;
+  font-size: 0.87rem;
+}
+
+/* ------------------------------------------------------------ sent state */
+
+.lp-cform-sent {
+  text-align: center;
+  padding: 2.4rem 1rem;
+}
+
+.lp-cform-check {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 1rem;
+  border-radius: 999px;
+  border: 2px solid #1e9e63;
+  color: #1e9e63;
+  font-size: 26px;
+  font-weight: 800;
+  background: rgba(30, 158, 99, 0.09);
+}
+
+.lp-cform-sent h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.2rem;
+}
+
+.lp-cform-sent p {
+  margin: 0;
+  color: var(--lp-muted);
+  font-size: 0.92rem;
+}
+
+/* ------------------------------------------------------------ mobile */
+
+@media (max-width: 820px) {
+  .lp-contact-in {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.8rem;
+  }
+}

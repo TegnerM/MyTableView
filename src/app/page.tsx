@@ -3,7 +3,6 @@ import Image from "next/image";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Fraunces } from "next/font/google";
-import { EmailLink } from "@/components/EmailLink";
 import { TrackBeacon } from "@/components/TrackBeacon";
 import { PLANS, type Plan } from "@/lib/billing/plans";
 import { getLandingStrings, resolveLandingLocale } from "@/lib/i18n/landing";
@@ -115,7 +114,9 @@ export default async function HomePage({ searchParams }: PageProps) {
           <a href="#solutions">{t.nav.products}</a>
           <a href="#features">{t.nav.features}</a>
           <a href="#pricing">{t.nav.pricing}</a>
-          <EmailLink className="lp-nav-contact">{t.nav.contact}</EmailLink>
+          <Link href="/contact" className="lp-nav-contact">
+            {t.nav.contact}
+          </Link>
         </nav>
 
         <div className="lp-header-cta">
@@ -254,6 +255,45 @@ export default async function HomePage({ searchParams }: PageProps) {
               <div className="lp-dev-tab">
                 <Image src="/landing/tablet.png" alt="" width={1100} height={733} />
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ------------------------------------------------ promo films */}
+        <section className="lp-videos" id="videos">
+          <div className="lp-w">
+            <p className="lp-eyebrow">{t.videos.eyebrow}</p>
+            <h2 className={`${fraunces.className} lp-sol-title`}>
+              {t.videos.title}
+            </h2>
+            <p className="lp-videos-sub">{t.videos.sub}</p>
+            <div className="lp-phones">
+              {[
+                {
+                  key: "restaurant",
+                  label: t.solRest.name,
+                  base: "/landing/promo-restaurant",
+                },
+                { key: "bar", label: t.solBar.name, base: "/landing/promo-bar" },
+                {
+                  key: "hotel",
+                  label: t.solHotel.name,
+                  base: "/landing/promo-hotel",
+                },
+              ].map((film) => (
+                <figure key={film.key} className="lp-phone">
+                  {/* preload="none": nothing downloads until the guest
+                      presses play — three posters cost ~100 KB each. */}
+                  <video
+                    controls
+                    playsInline
+                    preload="none"
+                    poster={`${film.base}.jpg`}
+                    src={`${film.base}.mp4`}
+                  />
+                  <figcaption>{film.label}</figcaption>
+                </figure>
+              ))}
             </div>
           </div>
         </section>
@@ -410,7 +450,7 @@ export default async function HomePage({ searchParams }: PageProps) {
 
       <footer className="lp-footer">
         <span>© {new Date().getFullYear()} MyTableView</span>
-        <EmailLink showAddress />
+        <Link href="/contact">{t.nav.contact}</Link>
       </footer>
     </div>
   );

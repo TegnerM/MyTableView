@@ -243,6 +243,65 @@ export async function sendTrialReminderEmail(options: {
   }
 }
 
+/** The landing page's contact form → info@. Reply-To is the sender,
+ *  so answering is one click in any mail client. */
+export async function sendContactEmail(options: {
+  fromName: string;
+  fromEmail: string;
+  business: string | null;
+  message: string;
+}): Promise<{ configured: boolean; sent: boolean; detail?: string }> {
+  const key = process.env.RESEND_API_KEY;
+
+  if (!key) {
+    return { configured: false, sent: false };
+  }
+
+  const { fromName, fromEmail, business, message } = options;
+
+  const html = `
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f6f4ef;padding:32px 16px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <tr><td align="center">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background-color:#ffffff;border:1px solid #e0dace;border-radius:12px;">
+      <tr><td style="padding:28px 32px;">
+        <p style="margin:0 0 18px;font-size:20px;font-weight:700;letter-spacing:-0.02em;color:#16293d;">mytable<span style="color:#12a89a;">view</span> · contact form</p>
+        <p style="margin:0 0 6px;font-size:14px;color:#5c6b7a;"><strong style="color:#0f1c2a;">${escapeHtml(fromName)}</strong> &lt;${escapeHtml(fromEmail)}&gt;</p>
+        ${business ? `<p style="margin:0 0 6px;font-size:14px;color:#5c6b7a;">${escapeHtml(business)}</p>` : ""}
+        <p style="margin:18px 0 0;padding:14px 16px;font-size:15px;line-height:1.6;color:#24405c;background:#fbf9f5;border-left:3px solid #12a89a;border-radius:6px;white-space:pre-wrap;">${escapeHtml(message)}</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>`;
+
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "MyTableView <no-reply@mytableview.com>",
+        to: ["info@mytableview.com"],
+        reply_to: fromEmail,
+        subject: `Contact form — ${fromName}${business ? ` (${business})` : ""}`,
+        html,
+      }),
+    });
+
+    if (!response.ok) {
+      const detail = await response.text();
+      console.error("resend: contact failed", response.status, detail.slice(0, 200));
+      return { configured: true, sent: false, detail: `resend ${response.status}` };
+    }
+
+    return { configured: true, sent: true };
+  } catch (error) {
+    console.error("resend: contact request failed", error);
+    return { configured: true, sent: false, detail: "network error" };
+  }
+}
+
 function escapeHtml(value: string): string {
   return value
     .replaceAll("&", "&amp;")

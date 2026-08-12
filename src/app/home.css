@@ -800,3 +800,56 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ------------------------------------------------------------ promo films */
+
+.lp-videos {
+  padding: 4.2rem 0 4.6rem;
+  background: var(--lp-ivory);
+}
+
+.lp-videos-sub {
+  text-align: center;
+  color: var(--lp-muted);
+  max-width: 34rem;
+  margin: 0 auto 2.2rem;
+  font-size: 0.95rem;
+}
+
+.lp-phones {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.6rem;
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+.lp-phone {
+  margin: 0;
+  text-align: center;
+}
+
+.lp-phone video {
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  display: block;
+  object-fit: cover;
+  background: #10151b;
+  border-radius: 22px;
+  border: 1px solid var(--lp-line);
+  box-shadow: 0 14px 34px rgba(31, 44, 56, 0.16);
+}
+
+.lp-phone figcaption {
+  margin-top: 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--lp-ink);
+}
+
+@media (max-width: 760px) {
+  .lp-phones {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 17rem;
+  }
+}
