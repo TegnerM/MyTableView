@@ -3,8 +3,10 @@ import { redirect } from "next/navigation";
 import { getStaffIdentity, loadFloorState } from "@/lib/staff/floor-state";
 import { getVenueBilling } from "@/lib/staff/billing";
 import { LayoutEditor } from "@/components/staff/LayoutEditor";
+import { StaffShell } from "@/components/staff/StaffShell";
 import { TrialLocked } from "@/components/staff/TrialLocked";
 import { resolveStaffLocale, STAFF_LANG_COOKIE } from "@/lib/i18n/staff";
+import "../floor/floor.css";
 import "./layout-editor.css";
 import "../trial-locked.css";
 
@@ -52,5 +54,17 @@ export default async function StaffLayoutPage() {
     headerList.get("accept-language")
   );
 
-  return <LayoutEditor initialState={state} locale={locale} />;
+  // Inside the shell like every other staff page — the editor going
+  // full-screen made it feel like a different product.
+  return (
+    <StaffShell
+      active="layout"
+      displayName={identity.displayName}
+      role={identity.role}
+      venueId={identity.venueId}
+      venues={identity.venues}
+    >
+      <LayoutEditor initialState={state} locale={locale} />
+    </StaffShell>
+  );
 }

@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FloorPlan } from "@/components/staff/FloorPlan";
-import { BrandMark } from "@/components/BrandMark";
 import { pickLocale } from "@/lib/i18n/guest";
 import { getStaffStrings, readStaffLocale } from "@/lib/i18n/staff";
 import { readStoredZone, storeZone } from "@/lib/staff/zone-memory";
@@ -535,7 +534,6 @@ export function LayoutEditor({ initialState, locale }: Props) {
           that used to occupy three stacked rows. */}
       <header className="mtv-bar">
         <div className="mtv-bar-title">
-          <BrandMark className="mtv-bar-brand" />
           <h1>{t.layout.title}</h1>
           <span>{initialState.identity.venueName}</span>
         </div>
