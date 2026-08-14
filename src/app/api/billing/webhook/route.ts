@@ -85,6 +85,11 @@ export async function POST(request: Request) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+  // Shared Stripe account: another product's checkout reaches this endpoint
+  // too. Return before the error log, or every one of their signups shows up
+  // here as a fault that isn't one.
+  if (!isOurs(session.metadata)) return;
+
   const accountId = session.metadata?.account_id;
 
   if (!accountId) {
@@ -155,6 +160,11 @@ function orderingQuantityFromItems(subscription: Stripe.Subscription): number {
 }
 
 async function handleSubscriptionChange(subscription: Stripe.Subscription) {
+  // Without this the fallback below searches `accounts` for a subscription id
+  // belonging to another product. It updates nothing today only because those
+  // ids never appear in this table — an absence, not a check.
+  if (!isOurs(subscription.metadata)) return;
+
   const service = getServiceClient();
 
   const accountId = subscription.metadata?.account_id ?? null;
@@ -201,6 +211,18 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   if (error) {
     throw new Error(`account update failed: ${error.message}`);
   }
+}
+
+/**
+ * Does this Stripe object belong to MyTableView?
+ *
+ * Objects created before the app stamp was introduced carry no `app` key at
+ * all, so an absent stamp is treated as ours — otherwise every existing
+ * subscription would stop updating. Only an explicit foreign stamp is refused.
+ */
+function isOurs(metadata: Stripe.Metadata | null | undefined): boolean {
+  const app = metadata?.app;
+  return !app || app === "mytableview";
 }
 
 /**

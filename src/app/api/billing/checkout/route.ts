@@ -18,6 +18,10 @@ import {
  *
  * The account id travels in both the session metadata and the
  * subscription metadata so the webhook can always find its way home.
+ *
+ * The Stripe account is shared with other products, and Stripe delivers every
+ * event to every webhook endpoint on it. Objects created here are stamped
+ * app: "mytableview" so each product's webhook can ignore what is not its own.
  */
 
 export const runtime = "nodejs";
@@ -111,7 +115,7 @@ export async function POST(request: Request) {
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: user.email ?? undefined,
-        metadata: { account_id: account.id },
+        metadata: { app: "mytableview", account_id: account.id },
       });
       customerId = customer.id;
 
@@ -138,9 +142,9 @@ export async function POST(request: Request) {
       customer: customerId,
       line_items: lineItems,
       allow_promotion_codes: true,
-      metadata: { account_id: account.id, plan: planKey },
+      metadata: { app: "mytableview", account_id: account.id, plan: planKey },
       subscription_data: {
-        metadata: { account_id: account.id, plan: planKey },
+        metadata: { app: "mytableview", account_id: account.id, plan: planKey },
       },
       success_url: `${origin}/staff/settings?billing=success`,
       cancel_url: `${origin}/staff/settings?billing=cancelled`,
