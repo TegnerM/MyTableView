@@ -60,9 +60,16 @@ export async function POST(request: Request) {
   }
 
   try {
+    // The Stripe account hosts more than one product, and a portal session
+    // without an explicit configuration falls back to whichever one happens to
+    // be the account default — which is not necessarily this product's. Naming
+    // it keeps MyTableView customers on MyTableView's portal regardless.
+    const configuration = process.env.STRIPE_PORTAL_CONFIGURATION_ID;
+
     const session = await getStripe().billingPortal.sessions.create({
       customer: account.stripe_customer_id,
       return_url: `${resolveOrigin(request)}/staff/settings`,
+      ...(configuration ? { configuration } : {}),
     });
 
     return NextResponse.json({ ok: true, url: session.url }, { status: 200 });
