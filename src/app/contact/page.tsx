@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { Fraunces } from "next/font/google";
 import { ContactForm } from "@/components/ContactForm";
 import { EmailLink } from "@/components/EmailLink";
+import { WhatsAppLink } from "@/components/WhatsAppLink";
 import { TrackBeacon } from "@/components/TrackBeacon";
 import { getLandingStrings, resolveLandingLocale } from "@/lib/i18n/landing";
 import "../home.css";
@@ -81,6 +82,7 @@ export default async function ContactPage({ searchParams }: PageProps) {
               <h2>{c.altTitle}</h2>
               <p>{c.altBody}</p>
               <EmailLink showAddress className="lp-contact-email" />
+              <WhatsAppLink className="lp-wa-btn">{c.whatsapp}</WhatsAppLink>
             </div>
 
             <Link href="/" className="lp-contact-back">

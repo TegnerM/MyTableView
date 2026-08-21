@@ -53,6 +53,31 @@
   color: var(--lp-orange-d);
 }
 
+.lp-wa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  background: #25d366;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+  transition: transform 0.08s ease;
+}
+
+.lp-wa-btn:active {
+  transform: scale(0.97);
+}
+
+.lp-wa-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
 .lp-contact-back {
   display: inline-block;
   font-size: 0.88rem;

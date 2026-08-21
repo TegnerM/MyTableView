@@ -125,6 +125,7 @@ const EN = {
     error: "That didn't go through. Please try again, or email us directly below.",
     altTitle: "Prefer email?",
     altBody: "Write to us any time — we read everything:",
+    whatsapp: "Chat on WhatsApp",
     backHome: "Back to the front page",
   },
 };
@@ -251,6 +252,7 @@ const ES: LandingStrings = {
     error: "No se ha podido enviar. Inténtalo de nuevo o escríbenos directamente abajo.",
     altTitle: "¿Prefieres el email?",
     altBody: "Escríbenos cuando quieras — lo leemos todo:",
+    whatsapp: "Escríbenos por WhatsApp",
     backHome: "Volver a la portada",
   },
 };
@@ -375,6 +377,7 @@ const DA: LandingStrings = {
     error: "Beskeden kom ikke igennem. Prøv igen, eller skriv direkte til os nedenfor.",
     altTitle: "Foretrækker du email?",
     altBody: "Skriv til os når som helst — vi læser det hele:",
+    whatsapp: "Skriv på WhatsApp",
     backHome: "Tilbage til forsiden",
   },
 };
@@ -499,6 +502,7 @@ const SV: LandingStrings = {
     error: "Det gick inte att skicka. Försök igen eller mejla oss direkt nedan.",
     altTitle: "Föredrar du e-post?",
     altBody: "Skriv till oss när som helst — vi läser allt:",
+    whatsapp: "Chatta på WhatsApp",
     backHome: "Tillbaka till startsidan",
   },
 };
@@ -623,6 +627,7 @@ const NO: LandingStrings = {
     error: "Meldingen kom ikke gjennom. Prøv igjen, eller send oss en e-post direkte nedenfor.",
     altTitle: "Foretrekker du e-post?",
     altBody: "Skriv til oss når som helst — vi leser alt:",
+    whatsapp: "Chat på WhatsApp",
     backHome: "Tilbake til forsiden",
   },
 };
@@ -747,6 +752,7 @@ const DE: LandingStrings = {
     error: "Das hat nicht geklappt. Bitte erneut versuchen oder direkt unten mailen.",
     altTitle: "Lieber per E-Mail?",
     altBody: "Schreiben Sie uns jederzeit — wir lesen alles:",
+    whatsapp: "Per WhatsApp schreiben",
     backHome: "Zurück zur Startseite",
   },
 };
@@ -871,6 +877,7 @@ const NL: LandingStrings = {
     error: "Versturen is niet gelukt. Probeer het opnieuw of mail ons direct hieronder.",
     altTitle: "Liever e-mail?",
     altBody: "Schrijf ons wanneer je wilt — we lezen alles:",
+    whatsapp: "Chat via WhatsApp",
     backHome: "Terug naar de startpagina",
   },
 };
@@ -995,6 +1002,7 @@ const FR: LandingStrings = {
     error: "L'envoi a échoué. Réessayez ou écrivez-nous directement ci-dessous.",
     altTitle: "Vous préférez l'e-mail ?",
     altBody: "Écrivez-nous à tout moment — nous lisons tout :",
+    whatsapp: "Discuter sur WhatsApp",
     backHome: "Retour à l'accueil",
   },
 };
