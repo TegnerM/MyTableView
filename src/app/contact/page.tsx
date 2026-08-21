@@ -81,8 +81,10 @@ export default async function ContactPage({ searchParams }: PageProps) {
             <div className="lp-contact-alt">
               <h2>{c.altTitle}</h2>
               <p>{c.altBody}</p>
-              <EmailLink showAddress className="lp-contact-email" />
-              <WhatsAppLink className="lp-wa-btn">{c.whatsapp}</WhatsAppLink>
+              <div className="lp-contact-ways">
+                <EmailLink showAddress className="lp-contact-email" />
+                <WhatsAppLink className="lp-wa-btn">{c.whatsapp}</WhatsAppLink>
+              </div>
             </div>
 
             <Link href="/" className="lp-contact-back">
