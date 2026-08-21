@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Fraunces } from "next/font/google";
 import { EmailLink } from "@/components/EmailLink";
+import { OperatorCard } from "@/components/OperatorCard";
 import { TrackBeacon } from "@/components/TrackBeacon";
 import "../home.css";
 import "../legal.css";
@@ -71,6 +72,7 @@ export default function TermsPage() {
             <EmailLink showAddress /> or the{" "}
             <Link href="/contact">contact page</Link>.
           </p>
+          <OperatorCard />
 
           <h2>2. The service</h2>
           <p>
