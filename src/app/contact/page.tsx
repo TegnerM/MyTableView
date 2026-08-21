@@ -7,6 +7,7 @@ import { EmailLink } from "@/components/EmailLink";
 import { TrackBeacon } from "@/components/TrackBeacon";
 import { getLandingStrings, resolveLandingLocale } from "@/lib/i18n/landing";
 import "../home.css";
+import "../legal.css";
 import "./contact.css";
 
 /**
@@ -107,7 +108,11 @@ export default async function ContactPage({ searchParams }: PageProps) {
 
       <footer className="lp-footer">
         <span>© {new Date().getFullYear()} MyTableView</span>
-        <Link href="/">{c.backHome}</Link>
+        <span className="lp-footer-links">
+          <Link href="/">{c.backHome}</Link>
+          <Link href="/terms">{t.nav.terms}</Link>
+          <Link href="/privacy">{t.nav.privacy}</Link>
+        </span>
       </footer>
     </div>
   );

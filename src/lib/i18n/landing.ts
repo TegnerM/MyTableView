@@ -7,6 +7,8 @@
 
 const EN = {
   nav: {
+    terms: "Terms",
+    privacy: "Privacy",
     products: "Products",
     features: "Features",
     pricing: "Pricing",
@@ -131,6 +133,8 @@ export type LandingStrings = typeof EN;
 
 const ES: LandingStrings = {
   nav: {
+    terms: "Términos",
+    privacy: "Privacidad",
     products: "Productos",
     features: "Funciones",
     pricing: "Precios",
@@ -253,6 +257,8 @@ const ES: LandingStrings = {
 
 const DA: LandingStrings = {
   nav: {
+    terms: "Vilkår",
+    privacy: "Privatliv",
     products: "Produkter",
     features: "Funktioner",
     pricing: "Priser",
@@ -375,6 +381,8 @@ const DA: LandingStrings = {
 
 const SV: LandingStrings = {
   nav: {
+    terms: "Villkor",
+    privacy: "Integritet",
     products: "Produkter",
     features: "Funktioner",
     pricing: "Priser",
@@ -497,6 +505,8 @@ const SV: LandingStrings = {
 
 const NO: LandingStrings = {
   nav: {
+    terms: "Vilkår",
+    privacy: "Personvern",
     products: "Produkter",
     features: "Funksjoner",
     pricing: "Priser",
@@ -619,6 +629,8 @@ const NO: LandingStrings = {
 
 const DE: LandingStrings = {
   nav: {
+    terms: "AGB",
+    privacy: "Datenschutz",
     products: "Produkte",
     features: "Funktionen",
     pricing: "Preise",
@@ -741,6 +753,8 @@ const DE: LandingStrings = {
 
 const NL: LandingStrings = {
   nav: {
+    terms: "Voorwaarden",
+    privacy: "Privacy",
     products: "Producten",
     features: "Functies",
     pricing: "Prijzen",
@@ -863,6 +877,8 @@ const NL: LandingStrings = {
 
 const FR: LandingStrings = {
   nav: {
+    terms: "Conditions",
+    privacy: "Confidentialité",
     products: "Produits",
     features: "Fonctionnalités",
     pricing: "Tarifs",

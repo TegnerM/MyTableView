@@ -1,0 +1,72 @@
+/* ============================================================
+   Legal pages (/terms, /privacy) — quiet, readable, landing
+   palette. Shared by both documents.
+   ============================================================ */
+
+.lp-legal {
+  background: var(--lp-ivory);
+  padding: 3.2rem 0 4.4rem;
+}
+
+.lp-legal-doc {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 0 1.6rem;
+}
+
+.lp-legal-doc h1 {
+  font-size: 2.1rem;
+  line-height: 1.15;
+  margin: 0 0 0.4rem;
+}
+
+.lp-legal-updated {
+  font-size: 0.82rem;
+  color: var(--lp-muted);
+  margin: 0 0 2.2rem;
+}
+
+.lp-legal-doc h2 {
+  font-size: 1.15rem;
+  margin: 2.1rem 0 0.6rem;
+}
+
+.lp-legal-doc p {
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: #33404c;
+  margin: 0 0 0.9rem;
+}
+
+.lp-legal-doc ul {
+  margin: 0 0 0.9rem;
+  padding-left: 1.3rem;
+}
+
+.lp-legal-doc li {
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: #33404c;
+  margin-bottom: 0.45rem;
+}
+
+.lp-legal-doc a {
+  color: var(--lp-orange-d);
+  font-weight: 600;
+}
+
+.lp-legal-note {
+  border: 1px solid var(--lp-line);
+  border-left: 3px solid var(--lp-orange);
+  background: var(--lp-cream);
+  border-radius: 10px;
+  padding: 0.85rem 1.1rem;
+  font-size: 0.88rem;
+  color: var(--lp-muted);
+  margin: 0 0 2rem;
+}
+
+.lp-footer-links {
+  display: flex;
+  gap: 1.2rem;
+}

@@ -7,6 +7,7 @@ import { TrackBeacon } from "@/components/TrackBeacon";
 import { PLANS, type Plan } from "@/lib/billing/plans";
 import { getLandingStrings, resolveLandingLocale } from "@/lib/i18n/landing";
 import "./home.css";
+import "./legal.css";
 
 /**
  * Marketing landing page — the 2026 redesign.
@@ -450,7 +451,11 @@ export default async function HomePage({ searchParams }: PageProps) {
 
       <footer className="lp-footer">
         <span>© {new Date().getFullYear()} MyTableView</span>
-        <Link href="/contact">{t.nav.contact}</Link>
+        <span className="lp-footer-links">
+          <Link href="/contact">{t.nav.contact}</Link>
+          <Link href="/terms">{t.nav.terms}</Link>
+          <Link href="/privacy">{t.nav.privacy}</Link>
+        </span>
       </footer>
     </div>
   );
